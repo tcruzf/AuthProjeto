@@ -1,0 +1,59 @@
+@model ControllRR.Application.Dto.UserDto
+@{
+    ViewData["Title"] = "Cadastro de Usuario";
+}
+    <div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/Users/GetAll">Usuarios</a></li>
+          <li class="breadcrumb-item active">Adicionar</li>
+    </ol>
+</div>
+<div class="row">
+<div class="col-md-12">
+<br>
+<div class="container">
+<div class="row">
+<div class="col-12">
+<div class="card">
+<div class="card-header text-center bg-dark text-white">
+<div class="row align-items-center">
+<div class="col-md-12">
+<h5>Novo Usuario do Sistema</h5>
+</div>
+</div>
+</div>
+<div class="card mt-4">
+<div class="card-header">Data::
+</div>
+<div class="card-body">
+<div class="row">
+<form asp-controller="Users" asp-action="CreateNewUser" method="post">
+    <div class="row">
+    <div class="col">
+    <label asp-for="Name"></label>
+    <input asp-for="Name" class="form-control input-sm" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+     <div class="col">
+    <label asp-for="Phone"></label>
+    <input asp-for="Phone" class="form-control input-sm" />
+    <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+    <div class="col">
+    <label asp-for="Register"></label>
+    <input asp-for="Register" class="form-control input-sm" />
+    <span asp-validation-for="Register" class="text-danger"></span>
+    </div> 
+    </div>
+    <div class="mt-4">
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+</form>
+</div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+}

@@ -1,0 +1,51 @@
+@model ControllRR.Application.Dto.MaintenanceDto;
+@{
+    ViewData["Title"]="Detalhes Manutenção";
+    var statusNow = "Finished";
+}
+<div class="container">
+    <h2 class="my-4">@ViewData["Title"]</h2>
+ 
+    <div class="card">
+        <div class="card-header">
+            Data:: -- Consulta de Manutenção de Serviço ou atendimento externo
+        </div>
+        <div class="card-body">
+            <div class="row">
+                    <div class="col-md-6">
+                        <h6>Identificador: @Html.DisplayFor(model => model.Id)</h6>
+                        <hr>
+                        <ul class="list-group list-group-flush">
+                            <p>
+                            <li class="list-group-item"><strong>Descrição: </strong>@Html.DisplayFor(model => model.Description)</li>
+                            </p>
+                            <li class="list-group-item">Data abertura: @Html.DisplayFor(model => model.OpenDate)</li>
+                             <li class="list-group-item">Data fechamento: @Html.DisplayFor(model => model.CloseDate)</li>
+                             @if(Model.Status != null){
+                                 <li class="list-group-item">Status: @Html.DisplayFor(model => model.Status)</li>
+                             }else{
+                                 <li class="list-group-item">Status: Nãou Foi possivel encontra ou Status da manutenção</li>
+                             }
+                            <li class="list-group-item">Responsavel Tecnico: @Html.DisplayFor(model => model.User.Name)</li>
+                            <li class="list-group-item">Identificador: @Html.DisplayFor(model => model.Device.Identifier)</li>
+                            <li class="list-group-item">Setor: @Html.DisplayFor(model => model.Device.Sector.Location)</li>
+                            <li class="list-group-item">Endereço: @Html.DisplayFor(model => model.Device.Sector.Address)</li>
+                            <li class="list-group-item">Solicitante: @Html.DisplayFor(model => model.Device.Sector.RequesterName)</li>
+
+                            
+                            <!-- -->
+                        </ul>
+                    </div>
+            </div>
+        </div>
+    </div>
+ <div class="mt-4">
+        <form asp-action="Delete">
+        <input type="hidden" asp-for="Id"/>
+        <input type="submit" class="btn btn-danger" value="Delete">
+        <a asp-action="ChangeMaintenance" class="btn btn-warning" asp-route-id="@Model.Id">Editar</a>
+        <a asp-action="Print" class="btn btn-info" asp-route-id="@Model.Id">Imprimir</a>
+        <a asp-controller="Maintenances" asp-action="Finalize" class="btn btn-success" asp-route-id="@Model.Id">Fechar</a>
+    </form>
+</div>  
+</div>

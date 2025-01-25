@@ -1,0 +1,65 @@
+@model ControllRR.Application.Dto.DeviceDto;
+@{
+    ViewData["Title"]="Lista de ordem de serviço por equipamentos";
+}
+<div class="container">
+    <h2 class="my-4">@ViewData["Title"]</h2>
+<p>
+    <strong>Patrimonio:</strong> @Model.Identifier<br />
+    <strong>Setor:</strong> @Model.Sector.Name<br />
+    <strong>Modelo:</strong> @Model.Model</br>
+    
+    <hr>
+  
+</p>
+ 
+ 
+    <div class="card">
+        <div class="card-header">
+            Detalhes das ordens existentes
+        </div>
+        <div class="card-body">
+            <div class="row">
+                    <div class="col-md-6"
+                     </div>
+            </div>
+        </div>
+    
+@if (Model.Maintenances != null && Model.Maintenances.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Numero OS</th>
+                <th>Descrição</th>
+                <th>Abertura</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var maintenance in Model.Maintenances)
+        {
+            <tr>
+                <td>@maintenance.MaintenanceNumber</td>
+                <td>@maintenance.SimpleDesc</td>
+                <td>@maintenance.OpenDate</td>
+                <td>@maintenance.Status</td>
+                <td>
+                    <a asp-controller="Maintenances" asp-action="ChangeMaintenance" class="btn btn-success" asp-route-id="@maintenance.Id">Editar</a>
+                    <a asp-controller="Maintenances" asp-action="Details" class="btn btn-primary" asp-route-id="@maintenance.Id">Detailhes</a>
+                    <a asp-controller="Maintenances" asp-action="Delete" class="btn btn-danger" asp-route-id="@maintenance.Id">Deletar</a>
+            </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+           
+        
+    
+    
+}
+else
+{
+    <p>Não há ordens de serviço cadastrados para este dispositivo!</p>
+}

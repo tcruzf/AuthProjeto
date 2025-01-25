@@ -1,0 +1,40 @@
+@model ControllRR.Application.Dto.DeviceDto;
+@{
+    ViewData["Title"]="Detalhes Equipamento";
+    var statusNow = "Finished";
+}
+<div class="container">
+    <h2 class="my-4">@ViewData["Title"]</h2>
+ 
+    <div class="card">
+        <div class="card-header">
+            Data:: -- Consulta de Equipamento de Informatica
+        </div>
+        <div class="card-body">
+            <div class="row">
+                    <div class="col-md-6">
+                        <h6>Patrimonio: @Html.DisplayFor(model => model.Identifier)</h6>
+                        <hr>
+                        <ul class="list-group list-group-flush">
+                            <p>
+                            <li class="list-group-item"><strong>Tipo: </strong>@Html.DisplayFor(model => model.Type)</li>
+                            </p>
+                            <li class="list-group-item">Descrição: @Html.DisplayFor(model => model.DeviceDescription)</li>
+                             <li class="list-group-item">Modelo: @Html.DisplayFor(model => model.Model)</li>
+                                 <li class="list-group-item">Numero Serie: @Html.DisplayFor(model => model.SerialNumber)</li>
+                            <li class="list-group-item">Setor de Alocação: @Html.DisplayFor(model => model.Sector.Name)</li>
+                            <!-- -->
+                        </ul>
+                    </div>
+            </div>
+        </div>
+    </div>
+ <div class="mt-4">
+        <form asp-action="Delete">
+        <input type="hidden" asp-for="Id"/>
+        <input type="submit" class="btn btn-danger" value="Delete">
+        <a asp-action="Index" class="btn btn-primary">Voltar</a>
+        <a asp-action="Edit" class="btn btn-warning" asp-route-id="@Model.Id">Editar</a>
+    </form>
+</div>  
+</div>

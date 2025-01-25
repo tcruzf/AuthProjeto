@@ -1,0 +1,101 @@
+@model IEnumerable<ControllRR.Application.Dto.DocumentDto>
+
+@{
+    ViewData["Title"] = "Upload de Arquivos";
+}
+@if (TempData["ErrorDetails"] != null)
+{
+    <div class="alert alert-danger">
+        @Html.Raw(TempData["ErrorDetails"])
+    </div>
+}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Arquivos</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item active">Arquivos</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Selecionar arquivo...
+        </div>
+        <div class="card-body">
+            <form asp-action="FileUpload" enctype="multipart/form-data" method="post">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="file" id="fileInput" required>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="description" placeholder="Descrição" required>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group mb-3">
+                            <button class="btn btn-primary btn-block" type="submit">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Lista de Arquivos
+        </div>
+        <div class="card-body">
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-warning">@TempData["ErrorMessage"]</div>
+            }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descrição</th>
+                        <th>Nome do Arquivo</th>
+                        <th>Criação At</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (Model != null && Model.Any())
+                {    
+                    @foreach (var document in Model)
+                    {
+                        <tr>
+                            <td>@document.Id</td>
+                            <td>@document.Description</td>
+                            <td>@document.DocumentName</td>
+                            <td>@document.UploadedAt</td>
+                            <td>
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@document.Id">Deletar</a>
+                                <a class="btn btn-sm btn-success" href="@Url.Content("~/uploads/" + document.DocumentName)">Baixar</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                   <tr>
+                   <td colspan="5">Nenhum documento encontrado.</td>
+                   </tr>  
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+}

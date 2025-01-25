@@ -1,0 +1,123 @@
+@model ControllRR.Presentation.ViewModels.MaintenanceViewModel;
+ @using ControllRR.Domain.Enums
+@{
+    ViewData["Title"] = "Criar nova Manutenção";
+}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/Maintenances/MaintenanceList">Manutenções</a></li>
+          <li class="breadcrumb-item active">Criar</li>
+    </ol>
+</div>
+<div class="row">
+<div class="col-md-12">
+<br>
+<div class="container">
+<div class="row">
+<div class="col-12">
+<div class="card">
+<div class="card-header text-center bg-dark text-white">
+<div class="row align-items-center">
+<div class="col-md-12">
+<h5>Nova Entrada::</h5>
+</div>
+</div>
+</div>
+<div class="card mt-4">
+<div class="card-header">Data::
+</div>
+<div class="card-body">
+<div class="row">
+<form asp-controller="Maintenances" asp-action="New" method="post">
+    <div class="row">
+    
+     <div class="col">
+    <label asp-for="MaintenanceDto.OpenDate"></label>
+    <input asp-for="MaintenanceDto.OpenDate" class="form-control input-sm" />
+    <span asp-validation-for="MaintenanceDto.OpenDate" class="text-danger"></span>
+    </div>
+    <div class="col">
+    <label asp-for="MaintenanceDto.SimpleDesc"></label>
+    <input asp-for="MaintenanceDto.SimpleDesc" class="form-control input-sm" />
+    <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
+    </div> 
+    <div class="col">
+   <label asp-for="MaintenanceDto.User" class="control-label"></label>
+   <select asp-for="MaintenanceDto.UserId" asp-items="@(new SelectList(Model.UserDto, "Id", "Name" ))" class="form-control"></select>
+    </div>
+    <div class="col">
+    <label asp-for="MaintenanceDto.Device" class="control-label"></label>
+    <input id="deviceSearch" class="form-control" placeholder="Procure por modelo, serial ou tipo" />
+    <input type="hidden" id="deviceId" name="MaintenanceDto.DeviceId" />
+    </div>
+     <div class="col">
+     <label asp-for="MaintenanceDto.Status" class="control-label"></label>
+    <select asp-for="MaintenanceDto.Status" class="form-control" asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
+    </div
+   <div class="form-group">
+   <label asp-for="MaintenanceDto.Description"></label>
+    <textarea asp-for="MaintenanceDto.Description" class="form-control" id="MaintenanceDescription" rows="14"></textarea>
+    <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
+  </div>
+    </div>
+    <div class="mt-4">
+    <button type="submit" class="btn btn-success">Salvar</button>
+    </div>
+</form>
+</div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+
+   
+   <script type="text/javascript">
+$(document).ready(function () {
+$("#Seller_DepartmentId").change(function () {
+var f = $("form");
+f.submit(function () {
+var productData = f.serialize();
+$.post(f.attr("action"), Seller_Department, function (result, status) {
+if (result !== null) {
+$("#Seller_Department").text(result.Seller_Department);
+}
+else {
+alert('Invalid ID');
+}
+});
+});
+});
+});
+
+</script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <script>
+        $(document).ready(function () {
+            $("#deviceSearch").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Devices/Search',
+                        type: 'GET',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data.map(device => ({
+                                label: `${device.model} (${device.serialNumber}) - ${device.identifier}`,
+                                value: device.id
+                            })));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $("#deviceSearch").val(ui.item.label);
+                    $("#deviceId").val(ui.item.value);
+                    return false;
+                }
+            });
+        });
+    </script>
+}

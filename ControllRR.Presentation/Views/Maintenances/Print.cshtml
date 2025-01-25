@@ -1,0 +1,120 @@
+@model ControllRR.Application.Dto.MaintenanceDto
+
+@{
+    ViewData["Title"]="Detalhes Manutenção";
+    var statusNow = "Finished";
+}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impressão de Ordem de Serviços</title>
+    <style type="text/css">
+        .line { border: 1px dotted #000; width: 100%; margin: auto; margin-top: 1px; margin-bottom: 1px; }
+        .line-one { border: 1px solid #000; width: 100%; margin: auto; margin-top: 1px; margin-bottom: 1px; }
+
+        #printable { display: none; }
+
+        #media print {
+            #non-printable { display: none; }
+            #printable { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-body">
+        <div class="panel-heading text-center">
+            <h2><strong>Ordem de Serviço</strong></h2>
+        </div>
+        <div id="printArea">
+            <div class="panel-body">
+                <fieldset>
+                    <h4><strong>SOLICITAÇÃO DE SERVIÇO INTERNO- Nº : @Html.DisplayFor(model => model.MaintenanceNumber)</strong></h4>
+                    <h4><strong>Status de Atendimento: @Html.DisplayFor(model => model.Status)</strong></h4>
+                    <h6><strong>Tec: @Html.DisplayFor(model => model.User.Name) </strong></h6>
+                    <h6><strong>Telefone: @Html.DisplayFor(model => model.User.Phone) </strong></h6>
+                    <h6><strong>Matricula: @Html.DisplayFor(model => model.User.Register) </strong></h6>
+                   <hr>
+                    <div class="line-one"></div>
+                    <strong>Informações Gerais do Solicitante:</strong>
+                    <div class="line"></div>
+                    <p>
+                        <strong>Nome:</strong> [ @Html.DisplayFor(model => model.Device.Sector.RequesterName) ]
+                        <strong>Setor:</strong> [ @Html.DisplayFor(model => model.Device.Sector.Location) ]
+                     </p>
+                    <p>
+                        <strong>Endereço:</strong> @Html.DisplayFor(model => model.Device.Sector.Address)
+                        - <strong>Número:</strong> @Html.DisplayFor(model => model.Device.Sector.Number)
+                        - <strong>Bairro:</strong> @Html.DisplayFor(model => model.Device.Sector.Neighborhood)
+                        - <strong>Cidade:</strong> @Html.DisplayFor(model => model.Device.Sector.City)
+                        - <strong>CEP:</strong> @Html.DisplayFor(model => model.Device.Sector.Cep)
+                    </p>
+                    
+                    <div class="line-one"></div>
+
+                    <strong>Informações do Equipamento:</strong>
+                     <div class="line"></div>
+                    <p>
+                        <strong>Modelo:</strong> [ @Html.DisplayFor(model => model.Device.Model) ]
+                        - <strong>N. Série:</strong> [ @Html.DisplayFor(model => model.Device.SerialNumber)]
+                        - <strong>Marca:</strong> [ @Html.DisplayFor(model => model.Device.Model)]
+                        - <strong>Tipo:</strong> PC [ ] - Notebook [ ] - Tablelt [ ] 
+                    </p>
+                    <p>
+                        <strong>Situação:</strong> [_________]
+                        - <strong>Estado:</strong> [_________]
+                        - <strong>Login:</strong> [Login]
+                        - <strong>Senha:</strong> [Senha]
+                    </p>
+                    <div class="line-one"></div>
+
+                    <p><strong>Problema Relatado/Demanda:</strong> @Html.DisplayFor(model => model.SimpleDesc)</p>
+                    <p><strong>Descrição geral do problema:</strong> @Html.DisplayFor(model => model.Description)</p>
+                    <p><strong>Parecer Tecnico:</strong> </p>
+                    <td style='width:20%'><textarea rows="3"  style='width:100%' name="observacao" id="observacao"></textarea></td>
+                     <div class="line-one"></div>
+                    <p>
+                        <strong>Data de abertura:</strong>@Html.DisplayFor(model => model.OpenDate)
+                        - <strong>Hora Início:</strong> [____:___]
+                        <strong>Data de fech.:</strong>@Html.DisplayFor(model => model.OpenDate)
+                        - <strong>Hora Término:</strong> [____:___]
+                    </p>
+                    <p>
+                        
+                    </p>
+                    <p>
+                        <strong>Assinatura do Solicitante :</strong> _________________________________ 
+                    </p>
+                    <p>
+                        <strong>Assinatura do Técnico Resp :</strong> ________________________________
+                    </p>
+                    <p><strong>Data de Registro:</strong> [Data de Registro]</p>
+                    <p><strong>OBS:</strong> [Observação]</p>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Salvar OS</button>
+        <button type="button" class="btn btn-danger">Arquivar/Deletar</button>
+        <button type="button" class="btn btn-info">Editar OS</button>
+        <button type="button" class="btn btn-success">Nova OS</button>
+        <a class="btn btn-warning" href="#" role="button">Lista de OS</a>
+        <a class="btn btn-default" href="#" role="button">Finalizar OS</a>
+        <input class="btn btn-default" type="button" onclick="printDiv('printArea')" value="Imprimir">
+    </div>
+
+    <script type="text/javascript">
+        function printDiv(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+
+            window.print();
+
+            document.body.innerHTML = originalContents;
+        }
+    </script>
+</body>
+

@@ -1,0 +1,64 @@
+@model ControllRR.Application.Dto.UserDto
+<div class="container">
+    <h2 class="my-4">@ViewData["Title"]</h2>
+<p>
+    <strong>Nome:</strong> @Model.Name<br />
+    <strong>Telefone:</strong> @Model.Phone<br />
+    <strong>Registro:</strong> @Model.Register
+    <hr>
+    <a asp-action="GetAll" class="btn btn-primary">Voltar</a>
+    <a asp-action="CreateNewUser" class="btn btn-success">Novo</a>
+    
+</p>
+
+ 
+    <div class="card">
+        <div class="card-header">
+            Detalhes
+        </div>
+        <div class="card-body">
+            <div class="row">
+                    <div class="col-md-6"
+                     </div>
+            </div>
+        </div>
+    
+@if (Model.Maintenances != null && Model.Maintenances.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th>Abertura</th>
+                <th>Fechamento</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var maintenance in Model.Maintenances)
+        {
+            <tr>
+                <td>@maintenance.SimpleDesc</td>
+                <td>@maintenance.OpenDate.ToString("dd/MM/yyyy")</td>
+                <td>@maintenance.CloseDate.ToString("dd/MM/yyyy")</td>
+                <td>@maintenance.Status</td>
+                <td>
+                    <a asp-controller="Maintenances" asp-action="Edit" class="btn btn-success" asp-route-id="@maintenance.Id">Editar</a>
+                    <a asp-controller="Maintenances" asp-action="Details" class="btn btn-primary" asp-route-id="@maintenance.Id">Detailhes</a>
+                    <a asp-controller="Maintenances" asp-action="Delete" class="btn btn-danger" asp-route-id="@maintenance.Id">Deletar</a>
+                    <a asp-controller="Maintenances" asp-action="Finalize" class="btn btn-warning" asp-route-id="@maintenance.Id">Fechar</a>
+            </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+           
+        
+    
+    
+}
+else
+{
+    <p>Não há manutenções cadastradas para este usuário.</p>
+}
