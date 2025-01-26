@@ -18,7 +18,7 @@ public class DocumentsController : Controller
         _webHostEnvironment = webHostEnvironment;
     }
 
-    [Authorize(Roles = "Member, Admin")]
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> FileUpload()
     {
@@ -28,7 +28,7 @@ public class DocumentsController : Controller
     }
     // Todo 
     // Alterar FileUpload e mover para serviços 
-    [Authorize(Roles = "Member, Admin")]
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> FileUpload(IFormFile file, string description)

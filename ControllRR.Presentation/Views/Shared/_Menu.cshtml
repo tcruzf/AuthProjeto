@@ -1,95 +1,102 @@
- <nav class="navbar navbar-expand-sm bg-dark navbar-dark"> <!--principal->
+@using ControllRR.Domain.Entities
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+  
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark"> <!--principal->
           <div class="container-fluid">  <!--largura total-->
-             <button type="button" class="navbar-toggler collapsed" data-toggle="collapse"> <!--menu toggle -->
-              <span class="navbar-toggler-icon"></span> 
-            </button>
-             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"> <!--para agrupar e ocultar-->
-                <ul class="navbar-nav">
-                   <li class="nav-item"><a asp-action="Index"  asp-controller="Home" class="nav-link">Home</a>
-               
-                   </li>
-                <div class="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                   Manutenções
-                  </a>
-                   <div class="dropdown-menu" >
-                    <a class="dropdown-item" asp-action="MaintenanceList"  asp-controller="Maintenances">Listar</a>
-                     <a class="dropdown-item" asp-action="New"  asp-controller="Maintenances">Nova</a>
-                     <a class="dropdown-item" asp-action="MaintenanceList"  asp-controller="Maintenances">Filtrar</a>
-                     <a class="dropdown-item" asp-action="List"  asp-controller="Maintenances">Desativado</a>
-                   
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Logs</a>
-                  </div>
-                  </div>
-                   <div class="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                   Usuarios
-                  </a>
-                   <div class="dropdown-menu" >
-                    <a class="dropdown-item" asp-action="GetAll"  asp-controller="Users">Listar</a>
-                     <a class="dropdown-item" asp-action="CreateNewUser"  asp-controller="Users">Novo</a>
-                     <a class="dropdown-item" asp-action="UserSettings"  asp-controller="Users">Configurar</a>
-                   
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Logs</a>
-                  </div>
-                  </div>
-                  <div class="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Setores
-                  </a>
-                   <div class="dropdown-menu" >
-                    <a class="dropdown-item" asp-action="GetAll"  asp-controller="Sectors">Ver Todos</a>
-                     <a class="dropdown-item" asp-action="CreateNewSector"  asp-controller="Sectors">Novo</a>
-                     <a class="dropdown-item" asp-action="New"  asp-controller="Sectors">Insert</a>
-                   
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Logs</a>
-                  </div>
-                  </div>
-                    <div class="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                   Dispositivos
-                  </a>
-                   <div class="dropdown-menu" >
-                    <a class="dropdown-item" asp-action="Index"  asp-controller="Devices">Listar</a>
-                     <a class="dropdown-item" asp-action="CreateNew"  asp-controller="Devices">Novo</a>
-                     <a class="dropdown-item" asp-action="List"  asp-controller="Devices">Buscar</a>
-                   
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Logs</a>
-                  </div>
-                  </div>
-                    <div class="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                   Arquivos
-                  </a>
-                   <div class="dropdown-menu" >
-                    <a class="dropdown-item" asp-action="FileUpload"  asp-controller="Documents">Enviar Documentos</a>
-                     <a class="dropdown-item" asp-action="SimpleSearch"  asp-controller="SalesRecords">Manuais</a>
-                     <a class="dropdown-item" asp-action="GroupingSearch"  asp-controller="SalesRecords">Memorandos</a>
-                     <a class="dropdown-item" asp-action="GroupingSearch"  asp-controller="SalesRecords">Oficios</a>
-                     <a class="dropdown-item" asp-action="GroupingSearch"  asp-controller="SalesRecords">Documentos Internos</a>
-                     <a class="dropdown-item" asp-action="GroupingSearch"  asp-controller="SalesRecords">Frequencia</a>
-                   
-                   
-                  </div>
-                  </div>
-                   <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Sistema
-                  </a>
-                   <div class="dropdown-menu" >
-                    <a class="dropdown-item" href="Identity/Account/Manage">Conta</a>
-                    <a class="dropdown-item" href="#">Backup</a>
-                    <a class="dropdown-item" href="#">Status Servidor</a>
-                    <a class="dropdown-item" href="#">Chat online</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/Identity/Account/Logout">Sair</a>
-                  </div>
-                </div>
-                </ul>
-                </div>
+  <button type="button" class="navbar-toggler collapsed" data-toggle="collapse"> <!--menu toggle -->
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"> <!--para agrupar e ocultar-->
+    <ul class="navbar-nav">
+      <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link">Home</a>
+
+      </li>
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Manutenções
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" asp-action="MaintenanceList" asp-controller="Maintenances">Listar</a>
+          <a class="dropdown-item" asp-action="New" asp-controller="Maintenances">Nova</a>
+          <a class="dropdown-item" asp-action="MaintenanceList" asp-controller="Maintenances">Filtrar</a>
+          <a class="dropdown-item" asp-action="List" asp-controller="Maintenances">Desativado</a>
+
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Logs</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Usuarios
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" asp-action="GetAll" asp-controller="Users">Listar</a>
+          <a class="dropdown-item" asp-action="CreateNewUser" asp-controller="Users">Novo</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Logs</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Setores
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" asp-action="GetAll" asp-controller="Sectors">Ver Todos</a>
+          <a class="dropdown-item" asp-action="CreateNewSector" asp-controller="Sectors">Novo</a>
+          <a class="dropdown-item" asp-action="New" asp-controller="Sectors">Insert</a>
+
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Logs</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Dispositivos
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" asp-action="Index" asp-controller="Devices">Listar</a>
+          <a class="dropdown-item" asp-action="CreateNew" asp-controller="Devices">Novo</a>
+          <a class="dropdown-item" asp-action="List" asp-controller="Devices">Buscar</a>
+
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Inventario</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Arquivos
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" asp-action="FileUpload" asp-controller="Documents">Enviar Documentos</a>
+          <a class="dropdown-item" asp-action="SimpleSearch" asp-controller="SalesRecords">Manuais</a>
+          <a class="dropdown-item" asp-action="GroupingSearch" asp-controller="SalesRecords">Memorandos</a>
+          <a class="dropdown-item" asp-action="GroupingSearch" asp-controller="SalesRecords">Oficios</a>
+          <a class="dropdown-item" asp-action="GroupingSearch" asp-controller="SalesRecords">Documentos Internos</a>
+          <a class="dropdown-item" asp-action="GroupingSearch" asp-controller="SalesRecords">Frequencia</a>
+
+
+        </div>
+      </div>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          Sistema
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="~/Identity/Account/Manage">Minha Conta</a>
+              @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+    {
+          <a class="dropdown-item" href="~/Identity/Account/Register">Cadastrar Operador</a>
+          }
+          <a class="dropdown-item" href="#">Status Servidor</a>
+          <a class="dropdown-item" href="#">Chat online</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="~/Identity/Account/Logout">Sair</a>
+        </div>
+  </div>
+  </ul>
+  </div>
 
 </nav>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using ControllRR.Application.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace ControlRR.Controllers;
@@ -24,23 +25,25 @@ public class DevicesController : Controller
         _sectorService = sectorService;
         _controllRRContext = controllRRContext;
     }
-   
+
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Index()
     {
         var devices = await _deviceService.FindAllAsync();
         return View(devices);
     }
-   
+
     public async Task<IActionResult> List()
     {
 
         return View();
     }
-   
+
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     public async Task<JsonResult> GetList()
     {
-      var draw = Request.Form["draw"].FirstOrDefault();
+        var draw = Request.Form["draw"].FirstOrDefault();
         var start = Convert.ToInt32(Request.Form["start"].FirstOrDefault() ?? "0");
         var length = Convert.ToInt32(Request.Form["length"].FirstOrDefault() ?? "10");
         var searchValue = Request.Form["search[value]"].FirstOrDefault()?.ToLower();
@@ -53,11 +56,11 @@ public class DevicesController : Controller
         return Json(result);
     }// End GetList
 
-   
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> Search(string term)
     {
-         if (string.IsNullOrWhiteSpace(term))
+        if (string.IsNullOrWhiteSpace(term))
         {
             return Json(new List<object>());
         }
@@ -69,10 +72,10 @@ public class DevicesController : Controller
 
         return Json(devices);
     }
-    
-    
 
-   
+
+
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Details(int id)
     {
         var device = await _deviceService.FindByIdAsync(id);
@@ -87,15 +90,15 @@ public class DevicesController : Controller
         }
         return View(device);
     }
-    
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> GetMaintenances(int id)
     {
 
         var device = await _deviceService.GetMaintenancesAsync(id);
-       
-       
-        if(device == null)
+
+
+        if (device == null)
         {
             System.Console.WriteLine("Device é null aqui!");
         }
@@ -111,7 +114,7 @@ public class DevicesController : Controller
         return View(device);
 
     }
-    
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> CreateNew()
     {
@@ -120,7 +123,7 @@ public class DevicesController : Controller
         return View(viewModel);
     }
 
-   
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateNew(DeviceDto deviceDto)
@@ -141,7 +144,7 @@ public class DevicesController : Controller
         return RedirectToAction(nameof(Index));
 
     }
-   
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> Edit(int? id)
     {
@@ -159,7 +162,7 @@ public class DevicesController : Controller
         DeviceViewModel viewModel = new DeviceViewModel { Sector = sector, DeviceDto = device };
         return View(viewModel);
     }
-   
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int? id, DeviceDto deviceDto)
@@ -187,7 +190,7 @@ public class DevicesController : Controller
 
     }
 
-   
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Error(string message)
     {
         var viewModel = new ErrorViewModel
