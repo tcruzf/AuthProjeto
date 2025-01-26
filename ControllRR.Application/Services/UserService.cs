@@ -37,6 +37,13 @@ public class UserService : IUserService
        
     }
 
+    /// <summary>
+    /// Insere um usuario com base nas informações passadas pelo controller
+    /// Recebe um UserDTO do tipo 'DTO' e faz o mapeamento para um objeto do tipo User
+    /// Transfere as informações para o repository e faz a chamada para salvar as informações
+    /// </summary>
+    /// <param name="userDto"></param>
+    /// <returns></returns>
     public async Task InsertAsync(UserDto userDto)
     {
         var user = _mapper.Map<User>(userDto);

@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
+using ControllRR.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,10 +28,10 @@ public class SectorsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateNewSector(SectorDto sectorDto)
     {
-        if(!ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-             TempData["SuccessMessage"] = "Setor inserido com sucesso!";
-             return View(sectorDto);
+            TempData["SuccessMessage"] = "Setor inserido com sucesso!";
+            return View(sectorDto);
         }
         await _sectorService.InsertAsync(sectorDto);
         return RedirectToAction("GetAll");
@@ -58,6 +60,42 @@ public class SectorsController : Controller
             start, length, searchValue, sortColumn, sortDirection);
 
         return Json(result);
+    }
+
+    [Authorize(Roles = "Manager, Admin")]
+    public async Task<IActionResult> SectorDetails(int id)
+    {
+        if(id == null)
+        {
+            return RedirectToAction(nameof(Error), new { message = "Não foi fornecido um id valido!"});
+        }
+        
+        var sector = await _sectorService.FindByIdAsync(id);
+        if(sector == null)
+        {
+            return RedirectToAction(nameof(Error), new { messgae = "O setor informado não foi encontrado."});
+        }
+        return View(sector);
+
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<IActionResult> SectorEdit(int id)
+    {
+        var sector = await _sectorService.FindByIdAsync(id);
+        return View(sector);
+    }
+
+    [Authorize(Roles = "Manager, Admin")]
+    public async Task<IActionResult> Error(string message)
+    {
+        var viewModel = new ErrorViewModel
+        {
+            Message = message,
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        };
+        return View(viewModel);
     }
 
 }

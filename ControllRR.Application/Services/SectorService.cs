@@ -16,9 +16,11 @@ public class SectorService : ISectorService
         _mapper = mapper;
     }
 
-    public async Task<List<Sector>> FindAllAsync()
+    public async Task<List<SectorDto>> FindAllAsync()
     {
-        return await _sectorRepository.FindAllAsync();
+        var sectors = await _sectorRepository.FindAllAsync();
+        return _mapper.Map<List<SectorDto>>(sectors);
+
     }
 
     public async Task InsertAsync(SectorDto sectorDto)
@@ -27,9 +29,11 @@ public class SectorService : ISectorService
         await _sectorRepository.InsertAsync(sector);
     }
 
-    public async Task<Sector> FindByIdAsync(int id)
+    public async Task<SectorDto> FindByIdAsync(int id)
     {
-        return await _sectorRepository.FindByIdAsync(id);
+        var sector = await _sectorRepository.FindByIdAsync(id);
+        return _mapper.Map<SectorDto>(sector);
+
     }
 
     public async Task<object> GetSectorAsync(int start, int length, string searchValue, string sortColumn, string sortDirection)

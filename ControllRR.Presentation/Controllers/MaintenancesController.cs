@@ -36,6 +36,7 @@ public class MaintenancesController : Controller
         var obj = await _maintenanceService.FindAllAsync();
         return View(obj);
     }
+    
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Details(int id)
     {

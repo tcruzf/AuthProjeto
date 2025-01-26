@@ -25,11 +25,10 @@
                             </p>
                             <li class="list-group-item">Data abertura: @Html.DisplayFor(model => model.OpenDate)</li>
                              <li class="list-group-item">Data fechamento: @Html.DisplayFor(model => model.CloseDate)</li>
-    using ControllRR.Domain.Entities;
                              @if(Model.Status != null){
                                  <li class="list-group-item">Status: @Html.DisplayFor(model => model.Status)</li>
                              }else{
-                                 <li class="list-group-item">Status: Nãou Foi possivel encontra ou Status da manutenção</li>
+                                 <li class="list-group-item">Status: Não Foi possivel encontrar o Status da manutenção</li>
                              }
                             <li class="list-group-item">Responsavel Tecnico: @Html.DisplayFor(model => model.User.Name)</li>
                             <li class="list-group-item">Identificador: @Html.DisplayFor(model => model.Device.Identifier)</li>

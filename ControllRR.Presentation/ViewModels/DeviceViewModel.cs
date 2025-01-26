@@ -8,5 +8,5 @@ public class DeviceViewModel
 {
     public DeviceDto DeviceDto { get; set; }
     public ICollection<MaintenanceDto>? MaintenanceDtos { get; set; }
-    public ICollection<Sector> Sector { get; set; }
+    public ICollection<SectorDto> Sector { get; set; }
 }

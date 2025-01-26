@@ -66,8 +66,8 @@
             searchable: false,
             render: function(data, type, row) {
                 return `
-                    <a class="btn btn-sm btn-success" href="/Devices/GetMaintenances/${row.deviceId}"><span class="fa fa-eye"></span> Ver</a></button>
-                    <a class="btn btn-sm btn-warning" href="/Devices/Details/${row.id}"><span class="fa fa-edit"></span> Editar</a></button>
+                    <a class="btn btn-sm btn-success" href="/Sectors/SectorDetails/${row.id}"><span class="fa fa-eye"></span> Ver</a></button>
+                    <a class="btn btn-sm btn-warning" href="/Sectors/SectorEdit/${row.id}"><span class="fa fa-edit"></span> Editar</a></button>
                 `;
             }
         }

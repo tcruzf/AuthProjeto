@@ -1,3 +1,8 @@
+/*
+    UsersController
+    Responsavel por lidar com a interação e ações relacionadas aos usuarios 
+    
+*/
 using System.Diagnostics;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;

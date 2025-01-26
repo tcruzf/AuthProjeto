@@ -151,7 +151,7 @@ public class DevicesController : Controller
             return RedirectToAction(nameof(Error), new { message = "Dispositivo não encontrado - Erro" });
         }
 
-        List<Sector> sector = await _sectorService.FindAllAsync();
+        List<SectorDto> sector = await _sectorService.FindAllAsync();
         DeviceViewModel viewModel = new DeviceViewModel { Sector = sector, DeviceDto = device };
         return View(viewModel);
     }
@@ -162,7 +162,7 @@ public class DevicesController : Controller
     {
         if (!ModelState.IsValid)
         {
-            List<Sector> sector = await _sectorService.FindAllAsync();
+            List<SectorDto> sector = await _sectorService.FindAllAsync();
             var viewModel = new DeviceViewModel { DeviceDto = deviceDto, Sector = sector };
             return View(viewModel);
         }
