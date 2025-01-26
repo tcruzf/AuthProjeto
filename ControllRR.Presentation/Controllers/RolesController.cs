@@ -13,15 +13,13 @@ namespace ControllRR.Presentation.Controllers;
 
 public class RolesController : Controller
 {
-  
+
     private readonly IApplicationUserService _applicationUserService;
-
-
     private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailSender _emailSender;
-        private readonly ILogger _logger;
-        private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IEmailSender _emailSender;
+    private readonly ILogger _logger;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public RolesController(IApplicationUserService applicationUserService,
      IUserService userService,
@@ -30,7 +28,7 @@ public class RolesController : Controller
             IEmailSender emailSender,
             RoleManager<IdentityRole> roleManager,
             ILogger<IApplicationUserService> logger
-      
+
       )
 
     {
@@ -40,10 +38,9 @@ public class RolesController : Controller
         _roleManager = roleManager;
         _logger = logger;
 
-
-
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> ListUser()
     {
         var user = await _applicationUserService.FindAllAsync();
@@ -51,6 +48,7 @@ public class RolesController : Controller
 
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> AlterUser(string email)
     {
@@ -58,12 +56,13 @@ public class RolesController : Controller
         return View(users);
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     public async Task<IActionResult> AlterUser(string email, string role)
     {
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(role))
         {
-            return BadRequest("Email e role são obrigatórios.");
+            return BadRequest("Email e permissões são obrigatórios.");
         }
 
         var result = await _applicationUserService.AddUserRoleAsync(email, role);
@@ -75,7 +74,5 @@ public class RolesController : Controller
         return NotFound("Usuário não encontrado ou erro ao adicionar role.");
     }
 
-  
 
-   
 }

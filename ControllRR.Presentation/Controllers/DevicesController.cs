@@ -9,9 +9,7 @@ using System.Linq.Dynamic.Core;
 using ControllRR.Application.Dto;
 using Microsoft.AspNetCore.Authorization;
 
-
 namespace ControlRR.Controllers;
-
 public class DevicesController : Controller
 {
 
@@ -54,7 +52,7 @@ public class DevicesController : Controller
             start, length, searchValue, sortColumn, sortDirection);
 
         return Json(result);
-    }// End GetList
+    }
 
     [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
@@ -73,8 +71,6 @@ public class DevicesController : Controller
         return Json(devices);
     }
 
-
-
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Details(int id)
     {
@@ -90,6 +86,7 @@ public class DevicesController : Controller
         }
         return View(device);
     }
+
     [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> GetMaintenances(int id)
@@ -114,6 +111,7 @@ public class DevicesController : Controller
         return View(device);
 
     }
+
     [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> CreateNew()
@@ -131,19 +129,14 @@ public class DevicesController : Controller
         System.Console.WriteLine(deviceDto);
         if (!ModelState.IsValid)
         {
-
-            // Minha unica forma de debug fora do debug
-            //System.Console.WriteLine(device.Description);
-
             var sector = await _sectorService.FindAllAsync();
             var viewModel = new DeviceViewModel { Sector = sector };
-            // Printar System.Console.WriteLine(viewModel);
             return View(viewModel);
         }
         await _deviceService.InsertAsync(deviceDto);
         return RedirectToAction(nameof(Index));
-
     }
+
     [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> Edit(int? id)

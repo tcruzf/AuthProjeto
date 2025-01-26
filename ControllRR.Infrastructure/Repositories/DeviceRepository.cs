@@ -1,10 +1,13 @@
+/*
+    Classe DeviceRepository
+    Lida com a inserção, consulta e remoção de dispositivos do sistema
+
+
+*/
+
 using System.Linq.Dynamic.Core;
 using ControllRR.Infrastructure.Data.Context;
-
 using ControllRR.Domain.Entities;
-
-//using ControlRR.Services.Exceptions;
-//using ControlRR.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControllRR.Infrastructure.Exceptions;
@@ -20,6 +23,11 @@ public class DeviceRepository : IDeviceRepository
     {
         _controllRRContext = controllRRContext;
     }
+
+    
+    /// O metodo abaixo retorna uma lista de dispositivos, inclue os setores quais estão localizados e as manutenções abertas
+    ///  e relacionadas a ele
+    ///  Retorna lista de devices(dispositivos) 
     public async Task<List<Device>> FindAllAsync()
     {
         return await _controllRRContext.Devices
@@ -28,14 +36,17 @@ public class DeviceRepository : IDeviceRepository
         .ToListAsync();
     }
 
-    public async Task<Device> FindByIdAsync(int id)
+    // Busca um dispositivo com base em um inteiro(Id)   
+    public async Task<Device?> FindByIdAsync(int id)
     {
         return await _controllRRContext.Devices
         .Include(x => x.Sector)
         .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<Device> GetMaintenancesAsync(int id)
+    // Busca informações sobre um determinado dispositivo com base no seu Id.
+    // Inclue na busca todas as manutenções relacionadas a ele e também seu setor
+    public async Task<Device?> GetMaintenancesAsync(int id)
     {
         return await _controllRRContext.Devices
         .Include(x => x.Maintenances)
@@ -43,6 +54,7 @@ public class DeviceRepository : IDeviceRepository
         .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    // Cria um novo dispositivo
     public async Task InsertAsync(Device device)
     {
         await _controllRRContext.AddAsync(device);
@@ -50,15 +62,20 @@ public class DeviceRepository : IDeviceRepository
 
     }
 
+    // Realiza a persistencia de informações alteradas de um determinado dispositivo
     public async Task UpdateAsync(Device device)
     {
+        // Verica se o dispositivo existe (com base no Id) no banco de dados
         bool existDevice = await _controllRRContext.Devices.AnyAsync(x => x.Id == device.Id);
 
+        // Caso não exista, lança a exception
         if (!existDevice)
         {
             throw new NotFoundException("Objeto não encontrado");
 
         }
+        // Tenta realizar o update com base nas informações vindas do service, caso não tenha nenhuma informação
+        // invalida, então realiza a persistencia dos novos dados no banco de dados.
         try
         {
             _controllRRContext.Devices.Update(device);
@@ -70,11 +87,13 @@ public class DeviceRepository : IDeviceRepository
         }
     }
 
+    // Realiza a persistencia dos dados.
     public async Task SaveChangesAsync()
     {
         await _controllRRContext.SaveChangesAsync();
     }
 
+    // Metodo utilizado para busca dinamica de informações através de datatables
      public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetDevicesAsync(
        int start,
        int length,

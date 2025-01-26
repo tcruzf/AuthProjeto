@@ -1,3 +1,8 @@
+/*
+    Em desenvolvimento
+    Classe ApplicationUserService
+    Responsavel pelos serviços relacionados aos logins de usuarios.
+*/
 using AutoMapper;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Exceptions;

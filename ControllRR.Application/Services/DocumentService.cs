@@ -1,5 +1,3 @@
-
-
 using AutoMapper;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
@@ -43,16 +41,17 @@ public class DocumentService : IDocumentService
             throw new ArgumentException("Arquivo não fornecido.");
 
         }
-        try{
-        string uniqueFileName = await _fileStorageService.SaveFileAsync(documentDto.FormFile, "uploads");
+        try
+        {
+            string uniqueFileName = await _fileStorageService.SaveFileAsync(documentDto.FormFile, "uploads");
 
-        documentDto.DocumentName = uniqueFileName;
-        documentDto.UploadedAt = DateTime.Now;
+            documentDto.DocumentName = uniqueFileName;
+            documentDto.UploadedAt = DateTime.Now;
 
-        var document = _mapper.Map<Document>(documentDto);
-        await _documentRepository.AddAsync(document);
-        await _documentRepository.SaveChangesAsync();
-        return documentDto;
+            var document = _mapper.Map<Document>(documentDto);
+            await _documentRepository.AddAsync(document);
+            await _documentRepository.SaveChangesAsync();
+            return documentDto;
         }
         catch (Exception ex)
         {

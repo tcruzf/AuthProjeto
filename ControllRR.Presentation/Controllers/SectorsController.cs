@@ -1,5 +1,6 @@
 using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControllRR.Presentation.Controllers;
@@ -12,12 +13,15 @@ public class SectorsController : Controller
         _sectorService = sectorService;
     }
 
+
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> CreateNewSector()
     {
         return View();
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateNewSector(SectorDto sectorDto)
@@ -32,12 +36,14 @@ public class SectorsController : Controller
 
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         return View();
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     public async Task<IActionResult> GetList()
     {

@@ -18,7 +18,7 @@ public class SectorService : ISectorService
 
     public async Task<List<Sector>> FindAllAsync()
     {
-       return await _sectorRepository.FindAllAsync();
+        return await _sectorRepository.FindAllAsync();
     }
 
     public async Task InsertAsync(SectorDto sectorDto)
@@ -32,21 +32,21 @@ public class SectorService : ISectorService
         return await _sectorRepository.FindByIdAsync(id);
     }
 
-     public async Task<object> GetSectorAsync(int start, int length, string searchValue, string sortColumn, string sortDirection)
+    public async Task<object> GetSectorAsync(int start, int length, string searchValue, string sortColumn, string sortDirection)
     {
-       (IEnumerable<object> data, int totalRecords, int filteredRecords) =
-             await _sectorRepository.GetSectorAsync(start, length, searchValue, sortColumn, sortDirection);
+        (IEnumerable<object> data, int totalRecords, int filteredRecords) =
+              await _sectorRepository.GetSectorAsync(start, length, searchValue, sortColumn, sortDirection);
 
         return new
         {
-            draw = Guid.NewGuid().ToString(), // Pode ajustar conforme necessário
+            draw = Guid.NewGuid().ToString(),
             recordsTotal = totalRecords,
             recordsFiltered = filteredRecords,
             data
         };
     }
 
-    
 
-  
+
+
 }

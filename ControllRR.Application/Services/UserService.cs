@@ -1,3 +1,7 @@
+/*
+    Classe UserService
+    Responsavel por lidar com todos os serviços relacionados a usuarios
+*/
 using AutoMapper;
 using ControllRR.Application.Interfaces;
 using ControllRR.Domain.Entities;
@@ -41,7 +45,14 @@ public class UserService : IUserService
        await _userRepository.SaveChangesAsync();
     }
 
-
+    /// <summary>
+    ///  Remove um usuario com base no id(int) fornecido.
+    ///  Caso o usuario tenha manutenções, a remoção não poderá ser concluida.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task RemoveAsync(int id)
     {
        var obj = await _userRepository.FindByIdAsync(id);

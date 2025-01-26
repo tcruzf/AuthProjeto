@@ -3,6 +3,7 @@ using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
 using ControllRR.Infrastructure.Exceptions;
 using ControllRR.Presentation.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Mysqlx;
 
@@ -16,28 +17,34 @@ public class UsersController : Controller
     {
         _userService = userService;
     }
+
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Index()
     {
         return View();
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> GetAll()
     {
         var users = await _userService.FindAllAsync();
         return View(users);
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> UserDetails(int id)
     {
         var user = await _userService.FindByIdAsync(id);
         return View(user);
     }
+
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> CreateNewUser()
     {
         return View();
     }
-
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateNewUser(UserDto userDto)
@@ -46,9 +53,10 @@ public class UsersController : Controller
         {
             return View(userDto);
         }
-        try{
-        await _userService.InsertAsync(userDto);
-         TempData["SuccessMessage"] = "Usuário Inserido com sucesso.";
+        try
+        {
+            await _userService.InsertAsync(userDto);
+            TempData["SuccessMessage"] = "Usuário Inserido com sucesso.";
         }
         catch (Exception ex)
         {
@@ -58,7 +66,7 @@ public class UsersController : Controller
 
     }
 
-
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RemoveUser(int id)
     {
         if (!User.Identity.IsAuthenticated)
@@ -86,6 +94,7 @@ public class UsersController : Controller
 
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Error(string message)
     {
         var viewModel = new ErrorViewModel

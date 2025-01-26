@@ -1,3 +1,7 @@
+/*
+    Classe MaintenanceRepository
+    Lida com as operações de inserção, alteração e remoção das manutenções no banco de dados
+*/
 using ControllRR.Infrastructure.Data.Context;
 using ControllRR.Domain.Entities;
 using System.Linq.Dynamic.Core;

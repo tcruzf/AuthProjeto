@@ -1,9 +1,10 @@
+/*
+    Classe UserRepository
+    Lida com as operações de inserção, alteração e remoção de usuarios no banco de dados
+*/
+
 using ControllRR.Infrastructure.Data.Context;
-
 using ControllRR.Domain.Entities;
-
-//using ControlRR.Services.Exceptions;
-//using ControlRR.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControllRR.Infrastructure.Exceptions;

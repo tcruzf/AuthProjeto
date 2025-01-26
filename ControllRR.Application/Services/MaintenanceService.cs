@@ -37,8 +37,8 @@ public class MaintenanceService : IMaintenanceService
     public async Task InsertAsync(MaintenanceDto maintenanceDto)
     {
         var maintenance = _mapper.Map<Maintenance>(maintenanceDto);
-        
-       await _maintenanceRepository.InsertAsync(maintenance);
+
+        await _maintenanceRepository.InsertAsync(maintenance);
         //await _maintenanceRepository.SaveChangesAsync();
     }
 
@@ -51,13 +51,13 @@ public class MaintenanceService : IMaintenanceService
     public async Task UpdateAsync(MaintenanceDto maintenanceDto)
     {
         var maintenance = _mapper.Map<Maintenance>(maintenanceDto);
-       await _maintenanceRepository.UpdateAsync(maintenance);
-       //await _maintenanceRepository.SaveChangesAsync();
+        await _maintenanceRepository.UpdateAsync(maintenance);
+        //await _maintenanceRepository.SaveChangesAsync();
     }
 
     public async Task FinalizeAsync(int id)
     {
-      await  _maintenanceRepository.FinalizeAsync(id);
+        await _maintenanceRepository.FinalizeAsync(id);
 
     }
     //

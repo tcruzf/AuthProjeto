@@ -1,3 +1,7 @@
+/*
+    Classe SectorRepository
+    Lida com as operações de inserção, alteração e remoção dos setores no banco de dados
+*/
 using System.Linq.Dynamic.Core;
 using ControllRR.Infrastructure.Data.Context;
 using ControllRR.Domain.Entities;
