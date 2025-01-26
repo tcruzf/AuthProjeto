@@ -102,5 +102,25 @@ public class SectorRepository : ISectorRepository
         return (data, totalRecords, filteredCount);
     }
 
+    public async Task UpdateAsync(Sector sector)
+    {
+        bool hasAny = await _controllRRContext.Sectors.AnyAsync(x => x.Id == sector.Id);
+        if (!hasAny)
+        {
+             throw new NotFoundException("Id Não encontrado!");
+        }
+        try
+        {
+             _controllRRContext.Sectors.Update(sector);
+             await _controllRRContext.SaveChangesAsync();
+
+        }
+        catch(DbConcurrencyException e)
+        {
+            throw new DbConcurrencyException(e.Message);
+        }
+
+    }
+
   
 }

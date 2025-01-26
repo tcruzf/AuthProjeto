@@ -15,5 +15,6 @@ public interface ISectorRepository
            string searchValue,
            string sortColumn,
            string sortDirection);
+    Task UpdateAsync(Sector sector);
 
 }

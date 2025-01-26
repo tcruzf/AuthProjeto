@@ -36,7 +36,7 @@ public class MaintenancesController : Controller
         var obj = await _maintenanceService.FindAllAsync();
         return View(obj);
     }
-    
+
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Details(int id)
     {
@@ -182,6 +182,7 @@ public class MaintenancesController : Controller
         try
         {
             await _maintenanceService.UpdateAsync(maintenanceDto);
+            TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
             return RedirectToAction(nameof(MaintenanceList));
         }
         catch (ApplicationException e)

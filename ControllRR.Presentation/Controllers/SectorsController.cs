@@ -65,15 +65,15 @@ public class SectorsController : Controller
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> SectorDetails(int id)
     {
-        if(id == null)
+        if (id == null)
         {
-            return RedirectToAction(nameof(Error), new { message = "Não foi fornecido um id valido!"});
+            return RedirectToAction(nameof(Error), new { message = "Não foi fornecido um id valido!" });
         }
-        
+
         var sector = await _sectorService.FindByIdAsync(id);
-        if(sector == null)
+        if (sector == null)
         {
-            return RedirectToAction(nameof(Error), new { messgae = "O setor informado não foi encontrado."});
+            return RedirectToAction(nameof(Error), new { messgae = "O setor informado não foi encontrado." });
         }
         return View(sector);
 
@@ -85,6 +85,31 @@ public class SectorsController : Controller
     {
         var sector = await _sectorService.FindByIdAsync(id);
         return View(sector);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<IActionResult> SectorEdit(int? id, SectorDto sectorDto)
+    {
+        if (!ModelState.IsValid)
+        {   TempData["ErrorMessage"] = "Setor não pode ser alterado";
+            var sectorView = await _sectorService.FindByIdAsync(id.Value);
+            return View(sectorView);
+        }
+        try
+        {
+            await _sectorService.UpdateAsync(sectorDto);
+            TempData["SuccessMessage"] = "Setor alterado com sucesso.";
+            return RedirectToAction(nameof(GetAll));
+            
+        }
+        catch(ApplicationException e)
+        {
+            return RedirectToAction(nameof(Error), new { message = e.Message });
+        }
+        
+        
+
     }
 
     [Authorize(Roles = "Manager, Admin")]

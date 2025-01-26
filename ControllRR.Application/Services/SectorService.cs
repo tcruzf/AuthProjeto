@@ -50,6 +50,12 @@ public class SectorService : ISectorService
         };
     }
 
+    public async Task UpdateAsync(SectorDto sectorDto)
+    {
+        var sector = _mapper.Map<Sector>(sectorDto);
+        await _sectorRepository.UpdateAsync(sector);
+
+    }
 
 
 

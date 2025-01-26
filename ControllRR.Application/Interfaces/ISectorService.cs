@@ -14,4 +14,6 @@ public interface ISectorService
     string searchValue,
     string sortColumn,
     string sortDirection);
+
+    Task UpdateAsync(SectorDto sectorDto);
 }
