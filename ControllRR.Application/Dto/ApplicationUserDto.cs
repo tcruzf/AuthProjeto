@@ -15,9 +15,7 @@ public class ApplicationUserDto
     [StringLength(20, MinimumLength = 5, ErrorMessage = "{0} minimo {2} e no maximo {1} caracteres")]
     public string Phone { get; set; }
     [Display(Name = "Matricula")]
-    public double Register { get; set; }
-    public ICollection<Maintenance>? Maintenances { get; set; }
-
+    public int Register { get; set; }
      public string? Role { get; set; }
 
 

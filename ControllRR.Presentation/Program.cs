@@ -31,8 +31,11 @@ builder.Services.AddAutoMapper(typeof(MaintenanceMappingProfile));
 builder.Services.AddAutoMapper(typeof(DeviceMappingProfile));
 builder.Services.AddAutoMapper(typeof(SectorMappingProfile));
 builder.Services.AddAutoMapper(typeof(DocumentMappingProfile));
+builder.Services.AddAutoMapper(typeof(ApplicationUserMappingProfile));
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 // Registrar serviços
+builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
@@ -44,6 +47,7 @@ builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<ISectorService, SectorService>();
 builder.Services.AddScoped<ISectorRepository, SectorRepository>();
+builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
 // Adicionar suporte ao MVC e Razor Pages
 builder.Services.AddControllersWithViews();

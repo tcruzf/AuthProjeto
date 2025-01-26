@@ -1,0 +1,90 @@
+@model IEnumerable<ControllRR.Application.Dto.ApplicationUserDto>
+@{
+    ViewData["Title"]="Usuarios do Sistema";
+}
+
+<!--<div class="row">
+    <div class="col-md-6">
+        <form class="form-horizontal" asp-action="FindUserName">
+            <fieldset>
+                <legend>Buscar por nome de usuario</legend>
+                <div class="form-group">
+                    <label for="findUser" class="col-lg-2 control-label">Usuario</label>
+                    <div class="col-lg-10">
+                        <input type="text" name="minDate" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div> -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+ <div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item active">Usuarios</li>
+          <li class="breadcrumb-item active">Principal</li>
+    </ol>
+    <div class="mt-4">
+         <a asp-action="CreateNewUser" class="btn btn-primary">Novo</a>
+       
+    </div>
+
+           <div class="card-body">
+            <div class="row">
+<table class="table table-striped table-hover">
+    <thead>
+        <tr class="success">
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                 @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th>
+                 @Html.DisplayNameFor(model => model.Register)
+            </th>
+             <th>
+                Ação
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+      @foreach(var item in Model)
+      {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+             <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+             <td>
+                @Html.DisplayFor(modelItem => item.Register)
+            </td>
+             <td>
+                    <a asp-action="EditUser" class="btn btn-success" asp-route-id="@item.Id">Editar</a>
+                    <a asp-action="UserDetails" class="btn btn-primary" asp-route-id="@item.Id">Detalhes</a>
+                    <a asp-action="RemoveUser" class="btn btn-danger" asp-route-id="@item.Id">Deletar</a>
+            </td>
+        </tr>
+      }
+    </tbody>
+</table>

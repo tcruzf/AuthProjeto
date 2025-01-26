@@ -7,17 +7,19 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using ControllRR.Domain.Entities;
+using ControllRR.Domain.Enums;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 namespace ControllRR.Presentation.Areas.Identity.Pages.Account
-{ 
+{
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -26,13 +28,15 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -40,6 +44,7 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -47,10 +52,20 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
+        public List<SelectListItem> UserRoles { get; set; } = new List<SelectListItem>();
 
         public class InputModel
         {
             public int Register { get; set; }
+            public string Name { get; set; }
+
+            [Required]
+            [Display(Name = "Permissões")]
+            public ApplicationUserRoles Role { get; set; }
+            public List<SelectListItem> Roles { get; set; } = new List<SelectListItem>();
+
+
+
 
             [Required]
             [EmailAddress]
@@ -73,24 +88,54 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            UserRoles = _roleManager.Roles.Select(role => new SelectListItem
+            {
+                Value = role.Name,
+                Text = role.Name
+            }).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            System.Console.WriteLine(Input.Role);
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
                 user.Register = Input.Register;
+                user.Name = Input.Name;
+                user.Role = Input.Role.ToString();
+
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
-              
+
+
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    var role = Input.Role.ToString(); // Obter o nome da role
+                    if (await _roleManager.RoleExistsAsync(role))
+                    {
+                        var roleAssignResult = await _userManager.AddToRoleAsync(user, role);
 
+                        if (!roleAssignResult.Succeeded)
+                        {
+                            foreach (var error in roleAssignResult.Errors)
+                            {
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                            return Page();
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Role selecionada não existe.");
+                        return Page();
+                    }
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

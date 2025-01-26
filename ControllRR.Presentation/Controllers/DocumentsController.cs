@@ -2,6 +2,7 @@ using System.Diagnostics;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
 using ControllRR.Presentation.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -17,6 +18,7 @@ public class DocumentsController : Controller
         _webHostEnvironment = webHostEnvironment;
     }
 
+    [Authorize(Roles = "Member, Admin")]
     [HttpGet]
     public async Task<IActionResult> FileUpload()
     {
@@ -26,6 +28,7 @@ public class DocumentsController : Controller
     }
     // Todo 
     // Alterar FileUpload e mover para serviços 
+    [Authorize(Roles = "Member, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> FileUpload(IFormFile file, string description)

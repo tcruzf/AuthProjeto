@@ -1,6 +1,8 @@
 ﻿@page
+@using ControllRR.Domain.Entities
 @model LoginModel
-
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = "Entrar";
 }
@@ -38,9 +40,12 @@
                     <p>
                         <a id="forgot-password" asp-page="./ForgotPassword">Esqueci minha senha</a>
                     </p>
+                    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+         {
                     <p>
                         <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrar um novo usuario</a>
                     </p>
+                    }
                     <p>
                         <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Reenviar email de confirmação</a>
                     </p>

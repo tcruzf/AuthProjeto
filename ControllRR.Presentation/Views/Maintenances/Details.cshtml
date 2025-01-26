@@ -1,3 +1,7 @@
+@using ControllRR.Domain.Entities
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
 @model ControllRR.Application.Dto.MaintenanceDto;
 @{
     ViewData["Title"]="Detalhes Manutenção";
@@ -21,6 +25,7 @@
                             </p>
                             <li class="list-group-item">Data abertura: @Html.DisplayFor(model => model.OpenDate)</li>
                              <li class="list-group-item">Data fechamento: @Html.DisplayFor(model => model.CloseDate)</li>
+    using ControllRR.Domain.Entities;
                              @if(Model.Status != null){
                                  <li class="list-group-item">Status: @Html.DisplayFor(model => model.Status)</li>
                              }else{
@@ -42,7 +47,10 @@
  <div class="mt-4">
         <form asp-action="Delete">
         <input type="hidden" asp-for="Id"/>
+         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+         {
         <input type="submit" class="btn btn-danger" value="Delete">
+        }
         <a asp-action="ChangeMaintenance" class="btn btn-warning" asp-route-id="@Model.Id">Editar</a>
         <a asp-action="Print" class="btn btn-info" asp-route-id="@Model.Id">Imprimir</a>
         <a asp-controller="Maintenances" asp-action="Finalize" class="btn btn-success" asp-route-id="@Model.Id">Fechar</a>
