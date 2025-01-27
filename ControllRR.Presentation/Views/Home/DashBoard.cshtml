@@ -1,0 +1,214 @@
+@{
+    ViewData["Title"] = "Gerência de Manutenções";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard/Home</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f9;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .card h3 {
+      font-size: 2em;
+      margin: 0;
+    }
+
+    .card p {
+      margin: 10px 0;
+      font-size: 1em;
+      color: #666;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #007bff;
+      font-size: 0.9em;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    .card.bg-info {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .card.bg-primary {
+      background: #007bff;
+      color: white;
+    }
+
+    .card.bg-warning {
+      background: #ffc107;
+      color: white;
+    }
+
+    .card.bg-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 3em;
+      opacity: 0.2;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .quick-actions a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 120px;
+      height: 100px;
+      color: #333;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .quick-actions a:hover {
+      background-color: #f4f6f9;
+      transform: translateY(-5px);
+    }
+
+    .quick-actions a i {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1 class="text-center"></h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+      <li class="breadcrumb-item active">Principal</li>
+    </ol>
+  </div>
+
+  <div class="dashboard">
+    <div class="card bg-info">
+      <h3>451</h3>
+      <p>Dispositivos</p>
+      <a href="/Devices">Exibir tudo</a>
+    </div>
+
+    <div class="card bg-primary">
+      <h3>53<sup>%</sup></h3>
+      <p>Memória Livre</p>
+      <a href="#">Ver carga servidor</a>
+      <div class="icon">💾</div>
+    </div>
+
+    <div class="card bg-warning">
+      <h3>44</h3>
+      <p>Atendimentos externos</p>
+      <a href="#">Ver atendimentos</a>
+      <div class="icon">📣</div>
+    </div>
+
+    <div class="card bg-danger">
+      <h3>65</h3>
+      <p>Manutenções abertas</p>
+      <a href="#">Ver todas</a>
+      <div class="icon">💰</div>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <a href="/Stock/Home">
+      <i class="fas fa-barcode"></i>
+      Estoque
+    </a>
+     <a href="/Maintenances/MaintenanceList">
+      <i class="fas fa-file"></i>
+     Manutenções
+    </a>
+    <a href="/Users/GetAll">
+      <i class="fas fa-users"></i>
+      Usuários
+    </a>
+     <a href="/Sectors/GetAll">
+      <i class="fa fa-home"></i>
+      Setores
+    </a>
+     <a href="/Devices/List">
+      <i class="fas fa-laptop"></i>
+      Dispositivos
+    </a>
+    <a href="/Documents/FileUpload">
+      <i class="fas fa-inbox"></i>
+      Arquivos
+    </a>
+    <a href="/Messages/GetAll">
+      <i class="fas fa-envelope"></i>
+      Mensagens
+    </a>
+    <a href="/Identity/Account/Register">
+      <i class="fas fa-fw fa-lock"></i>
+      Logins
+    </a>
+    <a href="/Identity/Account/Manage">
+      <i class="fas fa-cog"></i>
+      Configuração
+    </a>
+    <a href="/backup">
+      <i class="fas fa-save"></i>
+      Backup
+    </a>
+    <a href="/Services/Status">
+      <i class="fas fa-server"></i>
+      Status Serviços
+    </a>
+    <a href="/Reports/Home">
+      <i class="fa fa-signal"></i>
+      Gráficos
+    </a>
+  </div>
+</div>
+</body>
+</html>

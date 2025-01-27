@@ -9,7 +9,7 @@ using System.Linq.Dynamic.Core;
 using ControllRR.Application.Dto;
 using Microsoft.AspNetCore.Authorization;
 
-namespace ControlRR.Controllers;
+namespace ControllRR.Presentation.Controllers;
 public class DevicesController : Controller
 {
 

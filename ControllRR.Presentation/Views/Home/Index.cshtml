@@ -1,18 +1,23 @@
-﻿@{
-    ViewData["Title"] = "Gerência de Manutenções";
-}
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard/Home</title>
+  <title>Dashboard de Manutenções</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    /* Reset básico */
+    * {
       margin: 0;
       padding: 0;
-      background-color: #f4f6f9;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
     }
 
     .container {
@@ -21,194 +26,248 @@
       padding: 20px;
     }
 
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      color: #666;
+    }
+
     .dashboard {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
+      margin-bottom: 40px;
     }
 
     .card {
       background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       padding: 20px;
-      position: relative;
-      overflow: hidden;
       text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
     .card h3 {
-      font-size: 2em;
-      margin: 0;
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #007bff;
     }
 
     .card p {
-      margin: 10px 0;
-      font-size: 1em;
+      font-size: 1rem;
       color: #666;
+      margin-bottom: 15px;
     }
 
     .card a {
       text-decoration: none;
       color: #007bff;
-      font-size: 0.9em;
-      margin-top: 10px;
+      font-weight: 500;
       display: inline-block;
+      margin-top: 10px;
     }
 
-    .card.bg-info {
-      background: #17a2b8;
-      color: white;
-    }
-
-    .card.bg-primary {
-      background: #007bff;
-      color: white;
-    }
-
-    .card.bg-warning {
-      background: #ffc107;
-      color: white;
-    }
-
-    .card.bg-danger {
-      background: #dc3545;
-      color: white;
-    }
-
-    .icon {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 3em;
-      opacity: 0.2;
+    .card a:hover {
+      text-decoration: underline;
     }
 
     .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 15px;
-      justify-content: center;
-      margin-top: 20px;
+      margin-bottom: 40px;
     }
 
-    .quick-actions a {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
+    .quick-action {
       background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      width: 120px;
-      height: 100px;
-      color: #333;
-      font-size: 14px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s, transform 0.3s;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .quick-actions a:hover {
-      background-color: #f4f6f9;
+    .quick-action:hover {
       transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
-    .quick-actions a i {
-      font-size: 24px;
-      margin-bottom: 5px;
+    .quick-action i {
+      font-size: 2rem;
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+
+    .quick-action span {
+      font-size: 1rem;
+      color: #333;
+      display: block;
+    }
+
+    .charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .chart {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .chart h4 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    .chart canvas {
+      width: 100% !important;
+      height: 200px !important;
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1 class="text-center"></h1>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-      <li class="breadcrumb-item active">Principal</li>
-    </ol>
+  <div class="container">
+    <!-- Cabeçalho -->
+
+    <!-- Cards de Estatísticas -->
+    <div class="dashboard">
+      <div class="card">
+        <h3>451</h3>
+        <p>Dispositivos</p>
+        <a href="/Devices">Ver detalhes</a>
+      </div>
+      <div class="card">
+        <h3>53%</h3>
+        <p>Memória Livre</p>
+        <a href="#">Ver carga do servidor</a>
+      </div>
+      <div class="card">
+        <h3>44</h3>
+        <p>Atendimentos Externos</p>
+        <a href="#">Ver atendimentos</a>
+      </div>
+      <div class="card">
+        <h3>65</h3>
+        <p>Manutenções Abertas</p>
+        <a href="#">Ver todas</a>
+      </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="quick-actions">
+      <div class="quick-action">
+          <a href="/Stock/Home">
+        <i class="fas fa-barcode"></i>
+        <span>Estoque</span>
+          </a>
+      </div>
+      <div class="quick-action">
+        <a href="/Maintenances/MaintenanceList">
+        <i class="fas fa-file"></i>
+        <span>Manutenções</span>
+        </a>
+      </div>
+      <div class="quick-action">
+        <a href="/Users/GetAll">
+        <i class="fas fa-users"></i>
+        <span>Usuarios</span>
+        </a>
+      </div>
+      <div class="quick-action">
+         <a href="/Sectors/GetAll">
+        <i class="fas fa-home"></i>
+        <span>Setores</span>
+        </a>
+      </div>
+      <div class="quick-action">
+        <a href="/Devices/List">
+        <i class="fas fa-laptop"></i>
+        <span>Dispositivos</span>
+        </a>
+      </div>
+      <div class="quick-action">
+        <a href="/Sectors/GetAll">
+        <i class="fas fa-server"></i>
+        <span>Arquivos</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="charts">
+      <div class="chart">
+        <h4>Uso de Memória</h4>
+        <canvas id="memoryChart"></canvas>
+      </div>
+      <div class="chart">
+        <h4>Manutenções por Mês</h4>
+        <canvas id="maintenanceChart"></canvas>
+      </div>
+    </div>
   </div>
 
-  <div class="dashboard">
-    <div class="card bg-info">
-      <h3>451</h3>
-      <p>Dispositivos</p>
-      <a href="/Devices">Exibir tudo</a>
-    </div>
+  <!-- Scripts para Gráficos (Chart.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Gráfico de Uso de Memória
+    const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+    const memoryChart = new Chart(memoryCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Usada', 'Livre'],
+        datasets: [{
+          data: [47, 53],
+          backgroundColor: ['#ff6384', '#36a2eb'],
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    });
 
-    <div class="card bg-primary">
-      <h3>53<sup>%</sup></h3>
-      <p>Memória Livre</p>
-      <a href="#">Ver carga servidor</a>
-      <div class="icon">💾</div>
-    </div>
-
-    <div class="card bg-warning">
-      <h3>44</h3>
-      <p>Atendimentos externos</p>
-      <a href="#">Ver atendimentos</a>
-      <div class="icon">📣</div>
-    </div>
-
-    <div class="card bg-danger">
-      <h3>65</h3>
-      <p>Manutenções abertas</p>
-      <a href="#">Ver todas</a>
-      <div class="icon">💰</div>
-    </div>
-  </div>
-
-  <div class="quick-actions">
-    <a href="/Stock/Home">
-      <i class="fas fa-barcode"></i>
-      Estoque
-    </a>
-     <a href="/Maintenances/MaintenanceList">
-      <i class="fas fa-file"></i>
-     Manutenções
-    </a>
-    <a href="/Users/GetAll">
-      <i class="fas fa-users"></i>
-      Usuários
-    </a>
-     <a href="/Sectors/GetAll">
-      <i class="fa fa-home"></i>
-      Setores
-    </a>
-     <a href="/Devices/List">
-      <i class="fas fa-laptop"></i>
-      Dispositivos
-    </a>
-    <a href="/Documents/FileUpload">
-      <i class="fas fa-inbox"></i>
-      Arquivos
-    </a>
-    <a href="/Messages/GetAll">
-      <i class="fas fa-envelope"></i>
-      Mensagens
-    </a>
-    <a href="/Identity/Account/Register">
-      <i class="fas fa-fw fa-lock"></i>
-      Logins
-    </a>
-    <a href="/Identity/Account/Manage">
-      <i class="fas fa-cog"></i>
-      Configuração
-    </a>
-    <a href="/backup">
-      <i class="fas fa-save"></i>
-      Backup
-    </a>
-    <a href="/Services/Status">
-      <i class="fas fa-server"></i>
-      Status Serviços
-    </a>
-    <a href="/Reports/Home">
-      <i class="fa fa-signal"></i>
-      Gráficos
-    </a>
-  </div>
-</div>
+    // Gráfico de Manutenções por Mês
+    const maintenanceCtx = document.getElementById('maintenanceChart').getContext('2d');
+    const maintenanceChart = new Chart(maintenanceCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+        datasets: [{
+          label: 'Manutenções',
+          data: [12, 19, 8, 15, 10, 7],
+          backgroundColor: '#007bff',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
 </body>
 </html>
