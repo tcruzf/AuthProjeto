@@ -15,13 +15,13 @@ public class SectorDto
     [Required(ErrorMessage ="O campo {0} é obrigatorio")]
     public string Location { get; set; }
   
-    [Display(Name = "Solicitante")]
+    [Display(Name = "Solicitante/Responsável")]
     [Required(ErrorMessage ="O campo {0} é obrigatorio")]
     public string RequesterName { get; set; }
     [Display(Name = "Endereço")]
     [Required(ErrorMessage ="O campo {0} é obrigatorio")]
     public string Address { get; set; }
-    [Display(Name = "Numero")]
+    [Display(Name = "Número")]
     [Required(ErrorMessage ="O campo {0} é obrigatorio")]
     public string Number { get; set; }
      [Display(Name = "Bairro")]
