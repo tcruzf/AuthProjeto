@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using ControllRR.Domain.Entities;
 using ControllRR.Domain.Enums;
 using ControllRR.Infrastructure.Data.Context;
@@ -9,7 +10,7 @@ namespace ControllRR.Infrastructure.Data.Seeding;
 
 public class SeedingService
 {
-    public static void Initialize(IServiceProvider serviceProvider)
+    public static async Task Initialize(IServiceProvider serviceProvider)
     {
     using (var _context = new ControllRRContext(
         serviceProvider.GetRequiredService<DbContextOptions<ControllRRContext>>()))
@@ -97,11 +98,19 @@ public class SeedingService
                 Maintenance m3 = new Maintenance(3, "PC molhou", "PC molhou", new DateTime(2024, 09, 10), new DateTime(2024, 09, 15), MaintenanceStatus.Finalizada, usr3, dv3, 412 );
                 Maintenance m4 = new Maintenance(4, "PC pegou fogo após o coler parar de girar", "Pegou Fogo", new DateTime(2024, 09, 18), new DateTime(2024, 09, 28), MaintenanceStatus.Pendente, usr4, dv4, 1233);
                 Maintenance m5 = new Maintenance(5, "Formatar","Format", new DateTime(2024, 10, 18), new DateTime(2024, 10, 28), MaintenanceStatus.Aguardando, usr1, dv5, 11298 );
+
+                //Stock(int id, string? productName, string? productDescription, int productQuantity, string? productApplication, string? productReference) 
+                Stock st1 = new Stock(1, "Fonte Atx 500w", "Fonte para computador - Tipo: ATX", 30, "Desktop padrão ATX", "PC convencional");
+                //StockManagement(int id, DateTime movementDate, StockMovementType movementType, int quantity, Stock stock)
+                StockManagement stmgt = new StockManagement(1, new DateTime(2024,09,10), StockMovementType.Entrada, 30, st1);
+
                 
                 _context.AddRange(usr1, usr2, usr3, usr4, usr5, usr6, usr7, usr8);
                 _context.AddRange(s1, s2, s3, s4, s5, s6, s7);
                 _context.AddRange(dv1, dv2, dv3, dv4, dv5, dv6, dv7, dv8);
                 _context.AddRange(m1, m2, m3, m4, m5);
+                _context.AddRange(st1);
+                _context.AddRange(stmgt);
                 _context.SaveChanges();
         
         }

@@ -23,6 +23,8 @@ namespace ControllRR.Infrastructure.Data.Context;
         public virtual DbSet<Document> Documents { get; set;}
         public virtual DbSet<MaintenanceNumberControl> MaintenanceNumberControls{ get; set; }
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public virtual DbSet<Stock> Stocks{ get; set; }
+        public virtual DbSet<StockManagement> StockManagements{ get; set; }
         
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

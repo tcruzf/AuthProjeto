@@ -83,6 +83,7 @@ public class MaintenancesController : Controller
         return View(viewModel);
 
     }
+
     [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -110,7 +111,7 @@ public class MaintenancesController : Controller
 
 
         await _maintenanceService.InsertAsync(maintenanceDto);
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(MaintenanceList));
     }
 
     [Authorize(Roles = "Manager, Admin")]
@@ -232,8 +233,9 @@ public class MaintenancesController : Controller
     {
         try
         {
+
             await _maintenanceService.RemoveAsync(id);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(UsersController.Index));
         }
         catch (IntegrityException e)
         {

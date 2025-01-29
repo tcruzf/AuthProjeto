@@ -249,6 +249,57 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.ToTable("Sectors");
                 });
 
+            modelBuilder.Entity("ControllRR.Domain.Entities.Stock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductApplication")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProductDescription")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ProductQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductReference")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.StockManagement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("MovementDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("MovementType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StockId");
+
+                    b.ToTable("StockManagements");
+                });
+
             modelBuilder.Entity("ControllRR.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -431,6 +482,17 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ControllRR.Domain.Entities.StockManagement", b =>
+                {
+                    b.HasOne("ControllRR.Domain.Entities.Stock", "Stock")
+                        .WithMany("Movements")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -490,6 +552,11 @@ namespace ControllRR.Infrastructure.Data.Migrations
             modelBuilder.Entity("ControllRR.Domain.Entities.Sector", b =>
                 {
                     b.Navigation("Devices");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.Stock", b =>
+                {
+                    b.Navigation("Movements");
                 });
 
             modelBuilder.Entity("ControllRR.Domain.Entities.User", b =>

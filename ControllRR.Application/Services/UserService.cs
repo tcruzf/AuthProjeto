@@ -23,18 +23,18 @@ public class UserService : IUserService
     }
     public async Task<List<UserDto>> FindAllAsync()
     {
-        var user = await  _userRepository.FindAllAsync();
+        var user = await _userRepository.FindAllAsync();
         return _mapper.Map<List<UserDto>>(user);
 
     }
 
     public async Task<UserDto> FindByIdAsync(int id)
     {
-       
+
         var user = await _userRepository.FindByIdAsync(id);
         return _mapper.Map<UserDto>(user);
-        
-       
+
+
     }
 
     /// <summary>
@@ -48,8 +48,8 @@ public class UserService : IUserService
     {
         var user = _mapper.Map<User>(userDto);
 
-       await _userRepository.InsertAsync(user);
-       await _userRepository.SaveChangesAsync();
+        await _userRepository.InsertAsync(user);
+        await _userRepository.SaveChangesAsync();
     }
 
     /// <summary>
@@ -62,20 +62,27 @@ public class UserService : IUserService
     /// <exception cref="InvalidOperationException"></exception>
     public async Task RemoveAsync(int id)
     {
-       var obj = await _userRepository.FindByIdAsync(id);
+        var obj = await _userRepository.FindByIdAsync(id);
 
-         if(obj == null)
-        {   
+        if (obj == null)
+        {
             throw new NotFoundException("Usuario não encontrado");
         }
 
-        if(obj.Maintenances != null && obj.Maintenances.Any())
+        if (obj.Maintenances != null && obj.Maintenances.Any())
         {
             throw new InvalidOperationException("Não é possivel remover usuario que tenha manutenções registradas!");
         }
 
-      // await _userRepository.SaveChangesAsync();
+        // await _userRepository.SaveChangesAsync();
 
+    }
+
+    public async Task UpdateAsync(UserDto userDto)
+    {
+        var user = _mapper.Map<User>(userDto);
+        await _userRepository.UpdateAsync(user);
+        //await _userRepository.SaveChangesAsync();
     }
 
 }

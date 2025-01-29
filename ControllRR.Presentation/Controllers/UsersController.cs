@@ -26,7 +26,8 @@ public class UsersController : Controller
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Index()
     {
-        return View();
+        var user = await _userService.FindAllAsync();
+        return View("Views/Users/GetAll.cshtml", user);
     }
 
     [Authorize(Roles = "Manager, Admin")]
@@ -96,6 +97,49 @@ public class UsersController : Controller
             TempData["ErrorMessage"] = "Ocorreu um erro inesperado ao tentar excluir o usuário.";
         }
         return RedirectToAction("GetAll");
+
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Manager, Admin")]
+    public async Task<IActionResult> ChangeUser(int? id)
+    {
+        if (id == null)
+        {
+            return RedirectToAction(nameof(Error), new { message = "O id fornecido não é valido!" });
+        }
+        var user = await _userService.FindByIdAsync(id.Value);
+        if (user == null)
+        {
+            return RedirectToAction(nameof(Error), new { message = "Usuario não encontrado!" });
+        }
+        return View(user);
+
+    }
+
+
+    [Authorize(Roles = "Manager, Admin")]
+    [HttpPost]
+    public async Task<IActionResult> ChangeUser(int? id, UserDto userDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            TempData["SuccessMessage"] = "Usuario não pode ser alterado!";
+            var userData = await _userService.FindByIdAsync(id.Value);
+            return View(userData);
+        }
+
+        try
+        {
+            await _userService.UpdateAsync(userDto);
+            TempData["SuccessMessage"] = "Usuario alterado com sucesso!";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (ApplicationException e)
+        {
+            return RedirectToAction(nameof(Error), new { message = e.Message });
+        }
+
 
     }
 

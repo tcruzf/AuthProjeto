@@ -32,6 +32,7 @@ builder.Services.AddAutoMapper(typeof(DeviceMappingProfile));
 builder.Services.AddAutoMapper(typeof(SectorMappingProfile));
 builder.Services.AddAutoMapper(typeof(DocumentMappingProfile));
 builder.Services.AddAutoMapper(typeof(ApplicationUserMappingProfile));
+builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 // Registrar serviços
 builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
@@ -58,15 +59,16 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     SeedingService.Initialize(services);
-     SeedUser.InitializeAsync(services);
-   
-  var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    SeedUser.InitializeAsync(services);
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var roles = new[] { "Admin", "Manager", "Member" };
 
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
         {
+            System.Console.WriteLine(roleManager.ToString());
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
@@ -84,7 +86,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>

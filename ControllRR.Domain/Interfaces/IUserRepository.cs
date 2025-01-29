@@ -4,10 +4,11 @@ namespace ControllRR.Domain.Interfaces;
 
 public interface IUserRepository
 {
-     Task<List<User>> FindAllAsync();
-    Task<User> FindByIdAsync(int id);
-    Task InsertAsync(User user);
+      Task<List<User>> FindAllAsync();
+      Task<User> FindByIdAsync(int id);
+      Task InsertAsync(User user);
 
-     Task SaveChangesAsync();
+      Task SaveChangesAsync();
       Task RemoveAsync(int id);
+      Task UpdateAsync(User user);
 }

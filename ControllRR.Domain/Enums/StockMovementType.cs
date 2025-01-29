@@ -1,5 +1,6 @@
 namespace ControllRR.Domain.Enums;
 
+
 public enum StockMovementType
 {
     Entrada = 1,

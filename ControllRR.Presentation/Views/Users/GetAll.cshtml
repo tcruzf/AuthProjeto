@@ -43,7 +43,7 @@
           <li class="breadcrumb-item active">Principal</li>
     </ol>
     <div class="mt-4">
-         <a asp-action="CreateNewUser" class="btn btn-primary">Novo</a>
+         <a asp-action="CreateNewUser" class="btn btn-success fa fa-edit"> Novo Usuario</a>
        
     </div>
 
@@ -80,9 +80,8 @@
                 @Html.DisplayFor(modelItem => item.Register)
             </td>
              <td>
-                    <a asp-action="EditUser" class="btn btn-success" asp-route-id="@item.Id">Editar</a>
-                    <a asp-action="UserDetails" class="btn btn-primary" asp-route-id="@item.Id">Detalhes</a>
-                    <a asp-action="RemoveUser" class="btn btn-danger" asp-route-id="@item.Id">Deletar</a>
+                    <a asp-action="UserDetails" class="btn btn-primary fa fa-eye" asp-route-id="@item.Id"> Detalhes</a>
+                    <a asp-action="RemoveUser" class="btn btn-danger fa fa-trash" asp-route-id="@item.Id"> Deletar</a>
             </td>
         </tr>
       }

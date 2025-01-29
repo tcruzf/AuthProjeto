@@ -51,6 +51,23 @@ public class UserRepository : IUserRepository
 
     }
 
+    public async Task UpdateAsync(User user)
+    {
+        bool hasAny = await _controllRRContext.Users.AnyAsync(x => x.Id == user.Id);
+        if(!hasAny)
+        {
+            throw new NotFoundException("Id Não encontrado!");
+        }
+        try
+        {
+            _controllRRContext.Update(user);
+            await _controllRRContext.SaveChangesAsync();
+        }
+        catch (DbConcurrencyException e)
+        {
+            throw new DbConcurrencyException(e.Message);
+        }
+    }
     
 
       public async Task SaveChangesAsync()
