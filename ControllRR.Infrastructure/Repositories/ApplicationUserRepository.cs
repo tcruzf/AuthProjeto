@@ -40,7 +40,7 @@ public class ApplicationUserRepository : IApplicationUserRepository
     {   
        
         return await _controllRRContext.ApplicationUsers
-        .FirstOrDefaultAsync(x => x.Id == id);
+        .FirstOrDefaultAsync(x => x.OperatorId == id);
 
     }
     // Adiciona novo usuario ao sistema
@@ -55,7 +55,7 @@ public class ApplicationUserRepository : IApplicationUserRepository
     public async Task RemoveAsync(int id)
     {
         var obj = await _controllRRContext.ApplicationUsers
-        .FirstOrDefaultAsync(u => u.Id == id);
+        .FirstOrDefaultAsync(u => u.OperatorId == id);
 
         _controllRRContext.Remove(obj);
         await _controllRRContext.SaveChangesAsync();

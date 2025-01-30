@@ -46,7 +46,7 @@
     </div> 
     <div class="col">
    <label asp-for="MaintenanceDto.User" class="control-label"></label>
-   <select asp-for="MaintenanceDto.UserId" asp-items="@(new SelectList(Model.UserDto, "Id", "Name" ))" class="form-control"></select>
+   <select asp-for="MaintenanceDto.ApplicationUserId" asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name" ))" class="form-control"></select>
     </div>
      <div class="col">
     <label asp-for="MaintenanceDto.DeviceId"></label>

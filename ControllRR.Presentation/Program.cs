@@ -32,7 +32,7 @@ builder.Services.AddAutoMapper(typeof(DeviceMappingProfile));
 builder.Services.AddAutoMapper(typeof(SectorMappingProfile));
 builder.Services.AddAutoMapper(typeof(DocumentMappingProfile));
 builder.Services.AddAutoMapper(typeof(ApplicationUserMappingProfile));
-builder.Services.AddAutoMapper(typeof(UserMappingProfile));
+//builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 // Registrar serviços
 builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();

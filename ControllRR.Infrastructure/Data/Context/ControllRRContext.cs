@@ -16,7 +16,7 @@ namespace ControllRR.Infrastructure.Data.Context;
             : base(options)
         {
         }
-        public virtual DbSet<User> Users { get; set; }
+        //public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Device> Devices{ get; set; }
         public virtual DbSet<Maintenance> Maintenances { get; set;}
         public virtual DbSet<Sector> Sectors { get; set;}

@@ -53,7 +53,7 @@ public class UsersController : Controller
     [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateNewUser(UserDto userDto)
+    public async Task<IActionResult> CreateNewUser(ApplicationUserDto userDto)
     {
         if (!ModelState.IsValid)
         {
@@ -120,7 +120,7 @@ public class UsersController : Controller
 
     [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
-    public async Task<IActionResult> ChangeUser(int? id, UserDto userDto)
+    public async Task<IActionResult> ChangeUser(int? id, ApplicationUserDto userDto)
     {
         if (!ModelState.IsValid)
         {

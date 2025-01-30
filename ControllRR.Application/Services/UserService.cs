@@ -21,18 +21,18 @@ public class UserService : IUserService
         _userRepository = userRepository;
         _mapper = mapper;
     }
-    public async Task<List<UserDto>> FindAllAsync()
+    public async Task<List<ApplicationUserDto>> FindAllAsync()
     {
         var user = await _userRepository.FindAllAsync();
-        return _mapper.Map<List<UserDto>>(user);
+        return _mapper.Map<List<ApplicationUserDto>>(user);
 
     }
 
-    public async Task<UserDto> FindByIdAsync(int id)
+    public async Task<ApplicationUserDto> FindByIdAsync(int id)
     {
 
         var user = await _userRepository.FindByIdAsync(id);
-        return _mapper.Map<UserDto>(user);
+        return _mapper.Map<ApplicationUserDto>(user);
 
 
     }
@@ -44,9 +44,9 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="userDto"></param>
     /// <returns></returns>
-    public async Task InsertAsync(UserDto userDto)
+    public async Task InsertAsync(ApplicationUserDto userDto)
     {
-        var user = _mapper.Map<User>(userDto);
+        var user = _mapper.Map<ApplicationUser>(userDto);
 
         await _userRepository.InsertAsync(user);
         await _userRepository.SaveChangesAsync();
@@ -78,9 +78,9 @@ public class UserService : IUserService
 
     }
 
-    public async Task UpdateAsync(UserDto userDto)
+    public async Task UpdateAsync(ApplicationUserDto userDto)
     {
-        var user = _mapper.Map<User>(userDto);
+        var user = _mapper.Map<ApplicationUser>(userDto);
         await _userRepository.UpdateAsync(user);
         //await _userRepository.SaveChangesAsync();
     }

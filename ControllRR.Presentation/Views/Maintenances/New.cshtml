@@ -44,8 +44,8 @@
     <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
     </div> 
     <div class="col">
-   <label asp-for="MaintenanceDto.User" class="control-label"></label>
-   <select asp-for="MaintenanceDto.UserId" asp-items="@(new SelectList(Model.UserDto, "Id", "Name" ))" class="form-control"></select>
+   <label asp-for="MaintenanceDto.UserApplicationUser" class="control-label"></label>
+   <select asp-for="MaintenanceDto.ApplicationUserId" asp-items="@(new SelectList(Model.ApplicationUserDto, "OperatorId", "Name" ))" class="form-control"></select>
     </div>
     <div class="col">
     <label asp-for="MaintenanceDto.Device" class="control-label"></label>

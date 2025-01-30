@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    [Migration("20250128232242_StockMigrations")]
-    partial class StockMigrations
+    [Migration("20250129235016_ApplicationUsers")]
+    partial class ApplicationUsers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,7 +59,13 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
+                    b.Property<int>("OperatorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Phone")
                         .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
@@ -160,6 +166,9 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int>("ApplicationUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CloseDate")
                         .HasColumnType("datetime(6)");
 
@@ -183,14 +192,14 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserApplicationUserId")
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserApplicationUserId");
 
                     b.ToTable("Maintenances");
                 });
@@ -301,30 +310,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.HasIndex("StockId");
 
                     b.ToTable("StockManagements");
-                });
-
-            modelBuilder.Entity("ControllRR.Domain.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<double>("Register")
-                        .HasColumnType("double");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -474,15 +459,13 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ControllRR.Domain.Entities.User", "User")
+                    b.HasOne("ControllRR.Domain.Entities.ApplicationUser", "UserApplicationUser")
                         .WithMany("Maintenances")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserApplicationUserId");
 
                     b.Navigation("Device");
 
-                    b.Navigation("User");
+                    b.Navigation("UserApplicationUser");
                 });
 
             modelBuilder.Entity("ControllRR.Domain.Entities.StockManagement", b =>
@@ -547,6 +530,11 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ControllRR.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("Maintenances");
+                });
+
             modelBuilder.Entity("ControllRR.Domain.Entities.Device", b =>
                 {
                     b.Navigation("Maintenances");
@@ -560,11 +548,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
             modelBuilder.Entity("ControllRR.Domain.Entities.Stock", b =>
                 {
                     b.Navigation("Movements");
-                });
-
-            modelBuilder.Entity("ControllRR.Domain.Entities.User", b =>
-                {
-                    b.Navigation("Maintenances");
                 });
 #pragma warning restore 612, 618
         }

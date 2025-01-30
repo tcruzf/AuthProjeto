@@ -58,9 +58,9 @@ public class MaintenancesController : Controller
     {
 
         var users = await _userService.FindAllAsync();
-        var userDto = users.Select(u => new UserDto
+        var applicationUserDto = users.Select(u => new ApplicationUserDto
         {
-            Id = u.Id,
+            OperatorId = u.OperatorId,
             Name = u.Name,
             Phone = u.Phone,
             Register = u.Register
@@ -79,7 +79,7 @@ public class MaintenancesController : Controller
             SectorId = d.SectorId
         });
 
-        var viewModel = new MaintenanceViewModel { UserDto = userDto, DeviceDto = device };
+        var viewModel = new MaintenanceViewModel { ApplicationUserDto = applicationUserDto, DeviceDto = device };
         return View(viewModel);
 
     }
@@ -94,16 +94,16 @@ public class MaintenancesController : Controller
 
 
             var user = await _userService.FindAllAsync();
-            var userDto = user.Select(u => new UserDto
+            var applicationUserDto = user.Select(u => new ApplicationUserDto
             {
-                Id = u.Id,
+                OperatorId = u.OperatorId,
                 Name = u.Name,
                 Phone = u.Phone,
                 Register = u.Register
 
             }).ToList();
             var device = await _deviceService.FindAllAsync();
-            var viewModel = new MaintenanceViewModel { MaintenanceDto = maintenanceDto, UserDto = userDto, DeviceDto = device };
+            var viewModel = new MaintenanceViewModel { MaintenanceDto = maintenanceDto, ApplicationUserDto = applicationUserDto, DeviceDto = device };
 
 
             return View(viewModel);
@@ -147,15 +147,15 @@ public class MaintenancesController : Controller
 
         var device = await _deviceService.FindByIdAsync(maintenance.Device.Id);
         var users = await _userService.FindAllAsync();
-        var userDto = users.Select(u => new UserDto
+        var applicationUserDto = users.Select(u => new ApplicationUserDto
         {
-            Id = u.Id,
+            OperatorId = u.OperatorId,
             Name = u.Name,
             Phone = u.Phone,
             Register = u.Register
 
         }).ToList();
-        MaintenanceViewModel viewModel = new MaintenanceViewModel { UserDto = userDto, MaintenanceDto = maintenance };
+        MaintenanceViewModel viewModel = new MaintenanceViewModel { ApplicationUserDto = applicationUserDto, MaintenanceDto = maintenance };
         return View(viewModel);
     }
 
@@ -167,16 +167,16 @@ public class MaintenancesController : Controller
         if (!ModelState.IsValid)
         {
             var users = await _userService.FindAllAsync();
-            var userDto = users.Select(u => new UserDto
+            var applicationUserDto = users.Select(u => new ApplicationUserDto
             {
-                Id = u.Id,
+                OperatorId= u.OperatorId,
                 Name = u.Name,
                 Phone = u.Phone,
                 Register = u.Register
 
             }).ToList();
 
-            MaintenanceViewModel viewModel = new MaintenanceViewModel { UserDto = userDto, MaintenanceDto = maintenanceDto };
+            MaintenanceViewModel viewModel = new MaintenanceViewModel { ApplicationUserDto = applicationUserDto, MaintenanceDto = maintenanceDto };
             return View(viewModel);
         }
 

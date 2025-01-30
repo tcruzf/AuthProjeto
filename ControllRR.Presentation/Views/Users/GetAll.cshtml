@@ -1,4 +1,4 @@
-@model IEnumerable<ControllRR.Application.Dto.UserDto>
+@model IEnumerable<ControllRR.Application.Dto.ApplicationUserDto>
 @{
     ViewData["Title"]="Usuarios do Sistema";
 }
@@ -80,8 +80,8 @@
                 @Html.DisplayFor(modelItem => item.Register)
             </td>
              <td>
-                    <a asp-action="UserDetails" class="btn btn-primary fa fa-eye" asp-route-id="@item.Id"> Detalhes</a>
-                    <a asp-action="RemoveUser" class="btn btn-danger fa fa-trash" asp-route-id="@item.Id"> Deletar</a>
+                    <a asp-action="UserDetails" class="btn btn-primary fa fa-eye" asp-route-id="@item.OperatorId"> Detalhes</a>
+                    <a asp-action="RemoveUser" class="btn btn-danger fa fa-trash" asp-route-id="@item.OperatorId"> Deletar</a>
             </td>
         </tr>
       }

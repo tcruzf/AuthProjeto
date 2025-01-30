@@ -1,4 +1,4 @@
-@model ControllRR.Application.Dto.UserDto
+@model ControllRR.Application.Dto.ApplicationUserDto
 
 <div class="container">
     <h2 class="my-4">@ViewData["Title"]</h2>
@@ -8,7 +8,7 @@
         <strong>Registro:</strong> @Model.Register
         <hr>
         <a asp-action="GetAll" class="btn btn-primary">Voltar</a>
-        <a asp-controller="Users" asp-action="ChangeUser" class="btn btn-danger" asp-route-id="@Model.Id">Editar Usuario</a>
+        <a asp-controller="Users" asp-action="ChangeUser" class="btn btn-danger" asp-route-id="@Model.OperatorId">Editar Usuario</a>
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Criar Nova OS</button>
     </p>
 

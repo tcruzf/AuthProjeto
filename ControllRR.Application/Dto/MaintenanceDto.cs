@@ -25,7 +25,8 @@ public class MaintenanceDto
     [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
     public DateTime CloseDate { get; set; }
     public MaintenanceStatus Status { get; set; }
-    public int UserId { get; set; }
+    public int ApplicationUserId { get; set; }
+      public ApplicationUser? UserApplicationUser { get; set; }
     [Display(Name = "Usuario")]
     public UserDto? User { get; set; }
     [Display(Name = "Dispositivo")]

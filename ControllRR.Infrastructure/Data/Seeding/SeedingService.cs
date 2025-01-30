@@ -64,14 +64,14 @@ public class SeedingService
                 Device dv8 = new Device(8,"PC Positivo", "15521", "ST00214", "985GTR", "maquina nova que veio com defeito");
                 */
                // User(int id, string name, string phone, double register)
-                User usr1 = new User(1, "Thiago Ferc", "38998235679", 17155);
-                User usr2 = new User(2, "Gabriel Fernandes", "38999885544", 14111);
-                User usr3 = new User(3, "Fernanda Vieira", "38555544141", 15412);
-                User usr4 = new User(4, "Maria Aparecida", "996633254", 18190);
-                User usr5 = new User(5, "Bruno Henrique", "38941253698", 19820);
-                User usr6 = new User(6, "Pedro Carlos ", "38998235779", 13145);
-                User usr7 = new User(7, "Pedro Antonio", "38998236579", 1828);
-                User usr8 = new User(8, "Joao Paulo Silva", "38998235680", 1929);
+                ApplicationUser usr1 = new ApplicationUser(1, "Thiago Ferc", "38998235679", 17155, "Member");
+                ApplicationUser usr2 = new ApplicationUser(2, "Gabriel Fernandes", "38999885544", 14111, "Member");
+                ApplicationUser usr3 = new ApplicationUser(3, "Fernanda Vieira", "38555544141", 15412, "Member");
+                ApplicationUser usr4 = new ApplicationUser(4, "Maria Aparecida", "996633254", 18190, "Member");
+                ApplicationUser usr5 = new ApplicationUser(5, "Bruno Henrique", "38941253698", 19820, "Member");
+                ApplicationUser usr6 = new ApplicationUser(6, "Pedro Carlos ", "38998235779", 13145, "Member");
+                ApplicationUser usr7 = new ApplicationUser(7, "Pedro Antonio", "38998236579", 1828, "Member");
+                ApplicationUser usr8 = new ApplicationUser(8, "Joao Paulo Silva", "38998235680", 1929, "Member");
                 /*
                 User usr1 = new User(1, "Thiago Ferc", "38998235679", 17155, new DateTime(2024, 09, 22));
                 User usr2 = new User(2, "Gabriel Fernandes", "38999885544", 14111, new DateTime(2024, 05, 22));

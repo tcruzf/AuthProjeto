@@ -21,6 +21,15 @@
     </style>
 </head>
 <body>
+     <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Salvar OS</button>
+        <button type="button" class="btn btn-danger">Arquivar/Deletar</button>
+        <button type="button" class="btn btn-info">Editar OS</button>
+        <button type="button" class="btn btn-success">Nova OS</button>
+        <a class="btn btn-warning" href="#" role="button">Lista de OS</a>
+        <a class="btn btn-default" href="#" role="button">Finalizar OS</a>
+        <input class="btn btn-default" type="button" onclick="printDiv('printArea')" value="Imprimir">
+    </div>
     <div class="modal-body">
         <div class="panel-heading text-center">
             <h2><strong>Ordem de Serviço</strong></h2>
@@ -94,15 +103,7 @@
         </div>
     </div>
 
-    <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Salvar OS</button>
-        <button type="button" class="btn btn-danger">Arquivar/Deletar</button>
-        <button type="button" class="btn btn-info">Editar OS</button>
-        <button type="button" class="btn btn-success">Nova OS</button>
-        <a class="btn btn-warning" href="#" role="button">Lista de OS</a>
-        <a class="btn btn-default" href="#" role="button">Finalizar OS</a>
-        <input class="btn btn-default" type="button" onclick="printDiv('printArea')" value="Imprimir">
-    </div>
+   
 
     <script type="text/javascript">
         function printDiv(divName) {

@@ -11,8 +11,8 @@ public class Maintenance
     public DateTime OpenDate { get; set; }
     public DateTime CloseDate { get; set; }
     public MaintenanceStatus Status { get; set; }
-    public int UserId { get; set; }
-    public User? User { get; set; }
+    public int ApplicationUserId { get; set; }
+    public ApplicationUser? UserApplicationUser { get; set; }
     public Device? Device { get; set; }
     public int DeviceId { get; set; }
 
@@ -23,7 +23,7 @@ public class Maintenance
     {
 
     }
-    public Maintenance(int id, string description, string simpleDesc, DateTime openDate, DateTime closeDate, MaintenanceStatus status, User user, Device device, int maintenanceNumber)
+    public Maintenance(int id, string description, string simpleDesc, DateTime openDate, DateTime closeDate, MaintenanceStatus status, ApplicationUser user, Device device, int maintenanceNumber)
     //public Maintenance(int id, string description, string simpleDesc, DateTime openDate, DateTime closeDate, MaintenanceStatus status, int maintenanceNumber)
     {
         Id = id;
@@ -32,7 +32,7 @@ public class Maintenance
         OpenDate = openDate;
         CloseDate = closeDate;
         Status = status;
-        User = user;
+        UserApplicationUser = user;
         Device = device;
         MaintenanceNumber = maintenanceNumber;
     }

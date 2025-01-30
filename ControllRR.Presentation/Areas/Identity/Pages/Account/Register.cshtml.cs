@@ -57,7 +57,10 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
         public class InputModel
         {
             public int Register { get; set; }
-            public string Name { get; set; }
+            public string? Name { get; set; }
+            public string? Phone { get; set; }
+
+            public ICollection<Maintenance>? Maintenances { get; set;}
 
             [Required]
             [Display(Name = "Permissões")]

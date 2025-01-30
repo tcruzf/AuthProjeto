@@ -80,9 +80,9 @@
                 @Html.DisplayFor(modelItem => item.Register)
             </td>
              <td>
-                    <a asp-action="EditUser" class="btn btn-success" asp-route-id="@item.Id">Editar</a>
-                    <a asp-action="UserDetails" class="btn btn-primary" asp-route-id="@item.Id">Detalhes</a>
-                    <a asp-action="RemoveUser" class="btn btn-danger" asp-route-id="@item.Id">Deletar</a>
+                    <a asp-action="EditUser" class="btn btn-success" asp-route-id="@item.OperatorId">Editar</a>
+                    <a asp-action="UserDetails" class="btn btn-primary" asp-route-id="@item.OperatorId">Detalhes</a>
+                    <a asp-action="RemoveUser" class="btn btn-danger" asp-route-id="@item.OperatorId">Deletar</a>
             </td>
         </tr>
       }

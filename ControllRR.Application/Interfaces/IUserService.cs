@@ -4,11 +4,11 @@ namespace ControllRR.Application.Interfaces;
 
 public interface IUserService
 {
-    Task<List<UserDto>> FindAllAsync();
-    Task<UserDto> FindByIdAsync(int id);
-    Task InsertAsync(UserDto user);
+    Task<List<ApplicationUserDto>> FindAllAsync();
+    Task<ApplicationUserDto> FindByIdAsync(int id);
+    Task InsertAsync(ApplicationUserDto user);
     Task RemoveAsync(int id);
-    Task UpdateAsync(UserDto userDto);
+    Task UpdateAsync(ApplicationUserDto userDto);
 
 
 }
