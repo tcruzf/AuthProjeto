@@ -6,7 +6,7 @@ namespace ControllRR.Application.Dto;
 
 public class ApplicationUserDto
 {
-     public string Id { get; set; }
+    public string Id { get; set; }
     //public int OperatorId { get; set; }
     [Display(Name = "Nome")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]

@@ -12,9 +12,8 @@ public class Maintenance
     public DateTime? CloseDate { get; set; }
     public MaintenanceStatus Status { get; set; }
     // Entidade Maintenance
-    public string? ApplicationUserId { get; set; } // ✅ Tipo string para compatibilidade com IdentityUser
-    public ApplicationUser? ApplicationUser { get; set; } // ✅ Nome simplificado
-
+    public string? ApplicationUserId { get; set; }
+    public ApplicationUser? ApplicationUser { get; set; } 
     public Device? Device { get; set; }
     public int? DeviceId { get; set; }
 
@@ -35,9 +34,9 @@ public class Maintenance
         CloseDate = closeDate;
         Status = status;
         ApplicationUser = user;
-        ApplicationUserId = user?.Id; // ✅ Definir FK
+        ApplicationUserId = user?.Id; //Definir FK
         Device = device;
-        DeviceId = device?.Id ?? 0; // ✅
+        DeviceId = device?.Id ?? 0; 
         MaintenanceNumber = maintenanceNumber;
     }
 
