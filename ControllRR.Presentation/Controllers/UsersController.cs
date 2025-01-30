@@ -6,10 +6,13 @@
 using System.Diagnostics;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
+using ControllRR.Domain.Entities;
 using ControllRR.Infrastructure.Exceptions;
 using ControllRR.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Mysqlx;
 
 namespace ControllRR.Presentation.Controllers;
@@ -17,6 +20,7 @@ namespace ControllRR.Presentation.Controllers;
 public class UsersController : Controller
 {
     private readonly IUserService _userService;
+ 
 
     public UsersController(IUserService userService)
     {
@@ -48,17 +52,23 @@ public class UsersController : Controller
     [HttpGet]
     public async Task<IActionResult> CreateNewUser()
     {
+        //_roleManager.ToString();
         return View();
     }
+
     [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateNewUser(ApplicationUserDto userDto)
     {
+        
+        /*
+        //_userManager.CreateAsync(userDto);
         if (!ModelState.IsValid)
         {
+            TempData["SuccessMessage"] = "Usuário Não foi inserio!";
             return View(userDto);
-        }
+        } */
         try
         {
             await _userService.InsertAsync(userDto);

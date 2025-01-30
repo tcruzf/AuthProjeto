@@ -1,4 +1,4 @@
-@model ControllRR.Application.Dto.UserDto
+@model ControllRR.Application.Dto.ApplicationUserDto
 @{
     ViewData["Title"] = "Cadastro de Usuario";
 }
@@ -46,6 +46,21 @@
     <input asp-for="Register" class="form-control input-sm" />
     <span asp-validation-for="Register" class="text-danger"></span>
     </div> 
+      <div class="col">
+        <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+           <div class="col">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="col">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
     </div>
     <div class="mt-4">
     <button type="submit" class="btn btn-primary">Salvar</button>

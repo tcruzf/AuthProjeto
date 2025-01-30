@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using ControllRR.Application.Dto;
+using ControllRR.Application.Interfaces;
 using ControllRR.Domain.Entities;
 using ControllRR.Domain.Enums;
 using Microsoft.AspNetCore.Authentication;
@@ -18,8 +20,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
+using Microsoft.AspNetCore.Authorization;
+
+
 namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 {
+    [Authorize(Roles = "Admin")] // Adicione esta linha
+
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -29,6 +36,8 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUserService _userService;
+
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -36,7 +45,10 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-             RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IUserService userService
+             )
+
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -45,6 +57,7 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _userService = userService;
         }
 
         [BindProperty]
@@ -60,11 +73,11 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
             public string? Name { get; set; }
             public string? Phone { get; set; }
 
-            public ICollection<Maintenance>? Maintenances { get; set;}
+            public ICollection<Maintenance>? Maintenances { get; set; }
 
             [Required]
             [Display(Name = "Permissões")]
-            public ApplicationUserRoles Role { get; set; }
+            public string Role { get; set; }
             public List<SelectListItem> Roles { get; set; } = new List<SelectListItem>();
 
 
@@ -87,21 +100,29 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
+            if (!User.IsInRole("Admin")) // Substitua "Admin" pela role desejada
+            {
+                return RedirectToPage("/Account/AccessDenied"); // Ou redirecione para outra página
+            }
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            UserRoles = _roleManager.Roles.Select(role => new SelectListItem
-            {
-                Value = role.Name,
-                Text = role.Name
-            }).ToList();
+            UserRoles = _roleManager.Roles
+                 .Select(role => new SelectListItem { Value = role.Name, Text = role.Name })
+                 .ToList();
+                    return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            System.Console.WriteLine(Input.Role);
+
             returnUrl ??= Url.Content("~/");
+            // Verifica se o usuário atual tem permissão
+            if (!User.IsInRole("Admin"))
+            {
+                return RedirectToPage("/Account/AccessDenied");
+            }
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {

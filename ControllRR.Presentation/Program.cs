@@ -26,6 +26,16 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.S
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
+// Configurar cookies de autenticação
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+});
+
+
 // Configurar AutoMapper
 builder.Services.AddAutoMapper(typeof(MaintenanceMappingProfile));
 builder.Services.AddAutoMapper(typeof(DeviceMappingProfile));
