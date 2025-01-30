@@ -17,7 +17,8 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    //[AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public class ResendEmailConfirmationModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;

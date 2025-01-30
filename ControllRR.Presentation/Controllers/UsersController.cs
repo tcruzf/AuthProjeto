@@ -72,7 +72,7 @@ public class UsersController : Controller
         try
         {
             await _userService.InsertAsync(userDto);
-            TempData["SuccessMessage"] = "Usuário Inserido com sucesso.";
+            //TempData["SuccessMessage"] = "Usuário Inserido com sucesso.";
         }
         catch (Exception ex)
         {

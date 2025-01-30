@@ -11,8 +11,13 @@ using Microsoft.EntityFrameworkCore;
 using MySql.EntityFrameworkCore.Extensions;
 using Microsoft.AspNetCore.Identity;
 using ControllRR.Domain.Entities;
+using AutoMapper;
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options => 
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 // Adicionar o DbContext com MySQL
 builder.Services.AddEntityFrameworkMySQL()
     .AddDbContext<ControllRRContext>(options =>
@@ -37,16 +42,25 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 // Configurar AutoMapper
-builder.Services.AddAutoMapper(typeof(MaintenanceMappingProfile));
-builder.Services.AddAutoMapper(typeof(DeviceMappingProfile));
-builder.Services.AddAutoMapper(typeof(SectorMappingProfile));
-builder.Services.AddAutoMapper(typeof(DocumentMappingProfile));
-builder.Services.AddAutoMapper(typeof(ApplicationUserMappingProfile));
+builder.Services.AddAutoMapper(
+    typeof(MaintenanceMappingProfile),
+    typeof(DeviceMappingProfile),
+    typeof(SectorMappingProfile),
+    typeof(DocumentMappingProfile),
+    typeof(ApplicationUserMappingProfile),
+    typeof(StockMappingProfile),
+    typeof(StockManagementMappingProfile)
+);
+
+
+
 //builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 // Registrar serviços
 builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
+builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
@@ -59,6 +73,10 @@ builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<ISectorService, SectorService>();
 builder.Services.AddScoped<ISectorRepository, SectorRepository>();
 builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
+builder.Services.AddScoped<IStockManagementService, StockManagementService>();
+builder.Services.AddScoped<IStockManagementRepository, StockManagementRepository>();
+
+
 
 // Adicionar suporte ao MVC e Razor Pages
 builder.Services.AddControllersWithViews();
@@ -83,6 +101,11 @@ using (var scope = app.Services.CreateScope())
         }
     }
 }
+
+var configuration = new MapperConfiguration(cfg => 
+    cfg.AddProfile<StockMappingProfile>());
+configuration.AssertConfigurationIsValid(); // Vai lançar exceção se houver erros
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

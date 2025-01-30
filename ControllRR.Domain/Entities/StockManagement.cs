@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ControllRR.Domain.Enums;
 
 namespace ControllRR.Domain.Entities;
@@ -20,6 +21,7 @@ public class StockManagement
     // O LinQ é inteligente o suficiente para entender que é um vinculo com a class Stock
     // Referncia => https://learn.microsoft.com/en-us/ef/ef6/fundamentals/relationships
     public int StockId { get; set; }
+    [JsonIgnore]
     public Stock Stock { get; set; } = null!;
 
     // Construtor vazio - Quando usar?

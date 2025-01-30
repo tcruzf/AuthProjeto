@@ -1,0 +1,43 @@
+@using ControllRR.Domain.Entities
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@model List<ControllRR.Application.Dto.StockDto>
+@{
+    ViewData["Title"]="Detalhes Manutenção";
+    var statusNow = "Finished";
+}
+<div class="container">
+    <h2 class="my-4">@ViewData["Title"]</h2>
+    
+    @foreach (var product in Model)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                Produto: @product.ProductName
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>ID:</strong> @product.Id</li>
+                            <li class="list-group-item"><strong>Descrição:</strong> @product.ProductDescription</li>
+                            <li class="list-group-item"><strong>Quantidade:</strong> @product.ProductQuantity</li>
+                            <li class="list-group-item"><strong>Aplicação:</strong> @product.ProductApplication</li>
+                            <li class="list-group-item"><strong>Referência:</strong> @product.ProductReference</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <form asp-action="Delete" asp-route-id="@product.Id">
+                    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        <input type="submit" class="btn btn-danger" value="Excluir">
+                    }
+                    <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-warning">Editar</a>
+                </form>
+            </div>
+        </div>
+    }
+</div>

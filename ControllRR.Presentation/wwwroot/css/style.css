@@ -1,0 +1,87 @@
+/* Variáveis CSS - Facilita manutenção */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --font-primary: 'Roboto', sans-serif;
+  }
+  
+  /* Reset básico */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-primary);
+  }
+  
+  body {
+    background-color: var(--light-color);
+    color: var(--dark-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Container principal */
+  .container {
+    flex: 1;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  /* Navbar estilizada */
+  .navbar {
+    background-color: var(--dark-color) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .nav-link {
+    color: var(--light-color) !important;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-link:hover {
+    color: var(--primary-color) !important;
+  }
+  
+  .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  /* Cards */
+  .card {
+    background: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-3px);
+  }
+  
+  /* Botões */
+  .btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.5rem 1.5rem;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Gráficos */
+  .chart-container {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }

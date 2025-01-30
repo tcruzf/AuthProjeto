@@ -1,0 +1,126 @@
+@using ControllRR.Domain.Entities
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@model ControllRR.Presentation.ViewModels.StockViewModel
+@{
+    ViewData["Title"]="Detalhes Manutenção";
+    var statusNow = "Finished";
+}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/Stock/Index">Estoque</a></li>
+          <li class="breadcrumb-item active">Criar</li>
+    </ol>
+</div>
+<div class="row">
+<div class="col-md-12">
+<br>
+<div class="container"> 
+<div class="row">
+<div class="col-12">
+<div class="card">
+<div class="card-header text-center bg-dark text-white">
+<div class="row align-items-center">
+<div class="col-md-12">
+<h5>Nova Entrada::</h5>
+</div>
+</div>
+</div>
+<div class="card mt-4">
+<div class="card-header">Data::
+</div>
+<div class="card-body">
+<div class="row">
+
+     <div class="col">
+    <label asp-for="StockDto.ProductName" class="control-label"></label>
+    <input id="productSearch" class="form-control" placeholder="Procure por modelo, serial ou tipo" />
+    <input type="hidden" id="productId" name="StockDto.ProductId" />
+    </div>
+     <div class="col">
+    <label asp-for="StockDto.ProductDescription"></label>
+    <input asp-for="StockDto.ProductDescription" id="StockDto_ProductDescription" class="form-control" />
+    <span asp-validation-for="StockDto.ProductDescription" class="text-danger"></span>
+</div>
+
+<div class="col">
+    <label asp-for="StockDto.ProductApplication"></label>
+    <input asp-for="StockDto.ProductApplication" id="StockDto_ProductApplication" class="form-control" />
+    <span asp-validation-for="StockDto.ProductApplication" class="text-danger"></span>
+</div>
+
+<div class="col">
+    <label asp-for="StockDto.ProductReference"></label>
+    <input asp-for="StockDto.ProductReference" id="StockDto_ProductReference" class="form-control" />
+    <span asp-validation-for="StockDto.ProductReference" class="text-danger"></span>
+</div>
+
+   
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+
+   
+   <script type="text/javascript">
+$(document).ready(function () {
+$("#Seller_DepartmentId").change(function () {
+var f = $("form");
+f.submit(function () {
+var productData = f.serialize();
+$.post(f.attr("action"), Seller_Department, function (result, status) {
+if (result !== null) {
+$("#Seller_Department").text(result.Seller_Department);
+}
+else {
+alert('Invalid ID');
+}
+});
+});
+});
+});
+
+</script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <script>
+    $(document).ready(function () {
+        $("#productSearch").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Stocks/Search',
+                    type: 'GET',
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.productName + " - " + item.productDescription,
+                                value: item.productName,
+                                id: item.id,
+                                desc: item.productDescription,
+                                app: item.productApplication,
+                                ref: item.productReference
+                            };
+                        }));
+                    }
+                });
+            },
+            select: function (event, ui) {
+                // Preenche todos os campos
+                $("#productSearch").val(ui.item.label);
+                $("#productId").val(ui.item.id);
+                $("#StockDto_ProductDescription").val(ui.item.desc);
+                $("#StockDto_ProductApplication").val(ui.item.app);
+                $("#StockDto_ProductReference").val(ui.item.ref);
+                
+                return false;
+            }
+        });
+    });
+</script>
+}
