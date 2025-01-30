@@ -353,8 +353,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     OpenDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CloseDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    ApplicationUserId = table.Column<int>(type: "int", nullable: false),
-                    UserApplicationUserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                    ApplicationUserId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
                     MaintenanceNumber = table.Column<int>(type: "int", nullable: false)
@@ -363,8 +362,8 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 {
                     table.PrimaryKey("PK_Maintenances", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Maintenances_AspNetUsers_UserApplicationUserId",
-                        column: x => x.UserApplicationUserId,
+                        name: "FK_Maintenances_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -419,14 +418,14 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 column: "SectorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Maintenances_ApplicationUserId",
+                table: "Maintenances",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Maintenances_DeviceId",
                 table: "Maintenances",
                 column: "DeviceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Maintenances_UserApplicationUserId",
-                table: "Maintenances",
-                column: "UserApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockManagements_StockId",

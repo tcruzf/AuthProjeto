@@ -45,7 +45,7 @@
     <span asp-validation-for="MaintenanceDto.CloseDate" class="text-danger"></span>
     </div> 
     <div class="col">
-   <label asp-for="MaintenanceDto.User" class="control-label"></label>
+   <label asp-for="MaintenanceDto.ApplicationUser" class="control-label"></label>
    <select asp-for="MaintenanceDto.ApplicationUserId" asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name" ))" class="form-control"></select>
     </div>
      <div class="col">

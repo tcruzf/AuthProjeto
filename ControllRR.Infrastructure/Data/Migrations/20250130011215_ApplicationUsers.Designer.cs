@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    [Migration("20250129235016_ApplicationUsers")]
+    [Migration("20250130011215_ApplicationUsers")]
     partial class ApplicationUsers
     {
         /// <inheritdoc />
@@ -166,8 +166,8 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ApplicationUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("CloseDate")
                         .HasColumnType("datetime(6)");
@@ -192,14 +192,11 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserApplicationUserId")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("UserApplicationUserId");
+                    b.HasIndex("DeviceId");
 
                     b.ToTable("Maintenances");
                 });
@@ -453,19 +450,19 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ControllRR.Domain.Entities.Maintenance", b =>
                 {
+                    b.HasOne("ControllRR.Domain.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("Maintenances")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("ControllRR.Domain.Entities.Device", "Device")
                         .WithMany("Maintenances")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ControllRR.Domain.Entities.ApplicationUser", "UserApplicationUser")
-                        .WithMany("Maintenances")
-                        .HasForeignKey("UserApplicationUserId");
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Device");
-
-                    b.Navigation("UserApplicationUser");
                 });
 
             modelBuilder.Entity("ControllRR.Domain.Entities.StockManagement", b =>

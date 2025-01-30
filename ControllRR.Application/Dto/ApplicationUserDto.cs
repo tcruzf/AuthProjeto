@@ -6,8 +6,8 @@ namespace ControllRR.Application.Dto;
 
 public class ApplicationUserDto
 {
-    // public int Id { get; set; }
-    public int OperatorId { get; set; }
+     public string Id { get; set; }
+    //public int OperatorId { get; set; }
     [Display(Name = "Nome")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
     [StringLength(20, MinimumLength = 5, ErrorMessage = "{0} minimo {2} e no maximo {1} caracteres")]

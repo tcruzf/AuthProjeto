@@ -46,7 +46,7 @@ public class MaintenanceService : IMaintenanceService
     {
         await _maintenanceRepository.RemoveAsync(id);
 
-    }
+    } 
 
     public async Task UpdateAsync(MaintenanceDto maintenanceDto)
     {

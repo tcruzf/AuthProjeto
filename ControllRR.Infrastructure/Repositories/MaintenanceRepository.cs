@@ -23,14 +23,14 @@ public class MaintenanceRepository : IMaintenanceRepository
     {
 
         return await _controllRRContext.Maintenances
-        .Include(x => x.ApplicationUserId)
+        .Include(x => x.ApplicationUser)
         .ToListAsync();
     }
 
     public async Task<Maintenance> FindByIdAsync(int id)
     {
         return await _controllRRContext.Maintenances
-            .Include(x => x.UserApplicationUser)
+            .Include(x => x.ApplicationUser)
             .Include(x => x.Device)
              .Include(x => x.Device.Sector)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -103,7 +103,7 @@ public class MaintenanceRepository : IMaintenanceRepository
     {
         var query = _controllRRContext.Maintenances
             .Include(x => x.Device)
-            .Include(x => x.UserApplicationUser)
+            .Include(x => x.ApplicationUser)
             .AsQueryable();
 
         // Filtragem
@@ -114,7 +114,7 @@ public class MaintenanceRepository : IMaintenanceRepository
                 (x.Device.SerialNumber != null && x.Device.SerialNumber.ToLower().Contains(searchValue)) ||
                 (x.Description != null && x.Description.ToLower().Contains(searchValue)) ||
                 (x.Device != null && x.Device.Model != null && x.Device.Model.ToLower().Contains(searchValue)) ||
-                (x.UserApplicationUser != null && x.UserApplicationUser.Name != null && x.UserApplicationUser.Name.ToLower().Contains(searchValue)) ||
+                (x.ApplicationUser != null && x.ApplicationUser.Name != null && x.ApplicationUser.Name.ToLower().Contains(searchValue)) ||
                 (x.Device != null && x.Device.Identifier != null && x.Device.Identifier.ToLower().Contains(searchValue)));
         }
 
@@ -143,7 +143,7 @@ public class MaintenanceRepository : IMaintenanceRepository
                 MaintenanceNumber = x.MaintenanceNumber,
                 Description = x.Description,
                 Device = x.Device.Model,
-                User = x.UserApplicationUser.Name,
+                User = x.ApplicationUser.Name,
                 Identifier = x.Device.Identifier,
                 SerialNumber = x.Device.SerialNumber,
                 DeviceId = x.DeviceId//
