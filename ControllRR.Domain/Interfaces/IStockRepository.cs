@@ -1,5 +1,4 @@
 using ControllRR.Domain.Entities;
-
 namespace ControllRR.Domain.Interfaces;
 
 public interface IStockRepository

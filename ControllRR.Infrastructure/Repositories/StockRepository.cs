@@ -1,3 +1,4 @@
+using ControllRR.Application.Dto;
 using ControllRR.Domain.Entities;
 using ControllRR.Domain.Interfaces;
 using ControllRR.Infrastructure.Data.Context;
@@ -24,11 +25,12 @@ public class StockRepository : IStockRepository
     public async Task<List<Stock>> SearchAsync(string term)
     {
         return await _controllRRContext.Stocks
-        //.Include(x => x.Movements)
-         .Where(d => d.ProductName.Contains(term) ||
-                     d.ProductDescription.Contains(term) ||
-                     d.ProductReference.Contains(term) ||
-                     d.ProductApplication.Contains(term))
-         .ToListAsync();
+             .Where(s => s.ProductName.Contains(term) ||
+                        s.ProductDescription.Contains(term) ||
+                        s.ProductReference.Contains(term) ||
+                        s.ProductApplication.Contains(term))
+             .Include(s => s.Movements) // Carrega relacionamento se necessário
+             .ToListAsync();
     }
+
 }
