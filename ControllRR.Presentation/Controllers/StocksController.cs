@@ -13,6 +13,10 @@ public class StocksController : Controller
         _stockService = stockService;
     }
     
+    public async Task<IActionResult> NewProduct()
+    {
+        return View();
+    }
     public async Task<IActionResult> GetProducts()
     {
         var stockProduct = await _stockService.FindAllAsync();

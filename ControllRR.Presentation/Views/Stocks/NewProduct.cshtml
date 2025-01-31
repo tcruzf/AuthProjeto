@@ -1,0 +1,135 @@
+@using ControllRR.Domain.Entities
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@model ControllRR.Presentation.ViewModels.StockViewModel
+@{
+    ViewData["Title"]="Detalhes Produto";
+    var statusNow = "Finished";
+}
+   <div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/Users/GetAll">Estoque</a></li>
+          <li class="breadcrumb-item active">Inserir Produto</li>
+    </ol>
+</div>
+
+ <!-- Modal -->
+    <div id="StockProduct" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-green-gradient">
+                    <h4 class="modal-title">Adicionar Concentrador</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form name="EdCad" id="name" method="post" action="" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="nameMK">Apelido</label>
+                            <input class="form-control" type="text" name="nameMK" id="nameMK" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ipMK">IP Concentrador</label>
+                            <input class="form-control" type="text" name="ipMK" id="ipMK" required placeholder="Ex: 10.10.10.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="userMK">Usuário Concentrador</label>
+                            <input class="form-control" type="text" name="userMK" id="userMK" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="senhaMK">Senha Concentrador</label>
+                            <input class="form-control" type="text" name="senhaMK" id="senhaMK" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="portMK">Porta Concentrador</label>
+                            <input class="form-control" type="text" name="portMK" id="portMK" required placeholder="8728">
+                        </div>
+                        <div class="form-group">
+                            <label for="radiusIP">IP Radius</label>
+                            <input class="form-control" type="text" name="radiusIP" id="radiusIP" placeholder="IP Radius">
+                        </div>
+                        <div class="form-group">
+                            <label for="passRadius">Senha Radius</label>
+                            <input class="form-control" type="text" name="passRadius" id="passRadius" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <label for="portRadius">Porta Radius</label>
+                            <input class="form-control" type="text" name="portRadius" id="portRadius" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoMK">Servidor</label>
+                            <select name="tipoMK" class="form-control" id="tipoMK">
+                                <option>Selecione...</option>
+                                <option value="Mikrotik">Mikrotik</option>
+                                <option value="Linux">Linux</option>
+                            </select>
+                        </div>
+                        <div class="form-group text-right">
+                            <input name="Tsenha" type="submit" class="btn bg-green" id="Tsenha" value="Cadastrar">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row">
+<div class="col-md-12">
+<br>
+<div class="container">
+<div class="row">
+<div class="col-12">
+<div class="card">
+<div class="card-header text-center bg-dark text-white">
+<div class="row align-items-center">
+<div class="col-md-12">
+<h5>Lançamento de Produto :: Entrada Estoque</h5>
+</div>
+</div>
+</div>
+<div class="card mt-4">
+<div class="card-header">Informações do Produto::
+</div>
+<div class="card-body">
+<div class="row">
+<form asp-controller="Stocks" asp-action="NewProduct" method="post">
+    <div class="row">
+    <div class="col">
+    <label asp-for="StockDto.ProductName" class="control-label"></label>
+    <input asp-for="StockDto.ProductName" id="StockDto.ProductProductName" class="form-control" />
+    <span asp-validation-for="StockDto.ProductName" class="text-danger"></span>
+    </div>
+     <div class="col">
+    <label asp-for="StockDto.ProductDescription"></label>
+    <input asp-for="StockDto.ProductDescription" id="StockDto.ProductDescription" class="form-control" />
+    <span asp-validation-for="StockDto.ProductDescription" class="text-danger"></span>
+    </div>
+    <div class="col">
+    <label asp-for="StockDto.ProductApplication"></label>
+    <input asp-for="StockDto.ProductApplication" id="StockDto.ProductApplication" class="form-control" />
+    <span asp-validation-for="StockDto.ProductApplication" class="text-danger"></span>
+    </div> 
+    <div class="col">
+     <label asp-for="StockDto.ProductReference"></label>
+    <input asp-for="StockDto.ProductReference" id="StockDto.ProductReference" class="form-control" />
+    <span asp-validation-for="StockDto.ProductReference" class="text-danger"></span>
+    </div>
+     <div class="col">
+     <label asp-for="StockDto.ProductQuantity"></label>
+    <input asp-for="StockDto.ProductQuantity" id="StockDto.ProductQuantity" class="form-control" />
+    <span asp-validation-for="StockDto.ProductQuantity" class="text-danger"></span>
+    </div>
+    <div class="mt-4">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#StockProduct">Inser Movimentação</button>
+    <button type="submit" class="btn btn-primary">Salvar Produto</button>
+    </div>
+</form>
+</div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+}

@@ -33,4 +33,11 @@ public class StockRepository : IStockRepository
              .ToListAsync();
     }
 
+   public async Task InsertAsync(Stock stock)
+    {
+      
+       await _controllRRContext.Stocks.AddAsync(stock);
+       await _controllRRContext.SaveChangesAsync();
+    }
+
 }

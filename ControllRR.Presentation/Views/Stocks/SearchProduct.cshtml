@@ -4,7 +4,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @model ControllRR.Presentation.ViewModels.StockViewModel
 @{
-    ViewData["Title"]="Detalhes Manutenção";
+    ViewData["Title"]="Detalhes Produto";
     var statusNow = "Finished";
 }
 <div class="container-fluid px-4">
@@ -12,7 +12,7 @@
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="/Stock/Index">Estoque</a></li>
-          <li class="breadcrumb-item active">Criar</li>
+          <li class="breadcrumb-item active">Buscar</li>
     </ol>
 </div>
 <div class="row">
@@ -25,12 +25,12 @@
 <div class="card-header text-center bg-dark text-white">
 <div class="row align-items-center">
 <div class="col-md-12">
-<h5>Nova Entrada::</h5>
+<h5>::Buscar Item em Estoque::</h5>
 </div>
 </div>
 </div>
 <div class="card mt-4">
-<div class="card-header">Data::
+<div class="card-header">INFORMAÇÕES::
 </div>
 <div class="card-body">
 <div class="row">
@@ -56,6 +56,30 @@
     <label asp-for="StockDto.ProductReference"></label>
     <input asp-for="StockDto.ProductReference" id="StockDto_ProductReference" class="form-control" />
     <span asp-validation-for="StockDto.ProductReference" class="text-danger"></span>
+</div>
+<div class="col">
+    <label asp-for="StockDto.ProductQuantity"></label>
+    <input asp-for="StockDto.ProductQuantity" id="StockDto_ProductQuantity" class="form-control" />
+    <span asp-validation-for="StockDto.ProductQuantity" class="text-danger"></span>
+</div>
+
+<!-- Adicione esta seção abaixo dos campos existentes -->
+<div class="card mt-4">
+    <div class="card-header">Movimentações deste Item</div>
+    <div class="card-body">
+        <table class="table table-striped" id="movementsTable">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- As linhas serão preenchidas via JavaScript -->
+            </tbody>
+        </table>
+    </div>
 </div>
 
    
@@ -97,29 +121,54 @@ alert('Invalid ID');
                     type: 'GET',
                     data: { term: request.term },
                     success: function (data) {
-                        response($.map(data, function (item) {
-                            return {
-                                label: item.productName + " - " + item.productDescription,
-                                value: item.productName,
-                                id: item.id,
-                                desc: item.productDescription,
-                                app: item.productApplication,
-                                ref: item.productReference
-                            };
-                        }));
-                    }
+    response($.map(data, function (item) {
+        return {
+            label: item.productName + " - " + item.productDescription,
+            value: item.productName,
+            id: item.id,
+            desc: item.productDescription,
+            app: item.productApplication,
+            ref: item.productReference,
+            qtt: item.productQuantity,
+            movements: item.movements 
+        };
+    }));
+}
                 });
             },
             select: function (event, ui) {
-                // Preenche todos os campos
-                $("#productSearch").val(ui.item.label);
-                $("#productId").val(ui.item.id);
-                $("#StockDto_ProductDescription").val(ui.item.desc);
-                $("#StockDto_ProductApplication").val(ui.item.app);
-                $("#StockDto_ProductReference").val(ui.item.ref);
-                
-                return false;
-            }
+    // Preenche os campos do Stock
+    $("#productSearch").val(ui.item.label);
+    $("#productId").val(ui.item.id);
+    $("#StockDto_ProductDescription").val(ui.item.desc);
+    $("#StockDto_ProductApplication").val(ui.item.app);
+    $("#StockDto_ProductReference").val(ui.item.ref);
+    $("#StockDto_ProductQuantity").val(ui.item.qtt);
+
+    // Limpa a tabela de movimentações
+    $("#movementsTable tbody").empty();
+
+    // Preenche as movimentações (se houver)
+    if (ui.item.movements && ui.item.movements.length > 0) {
+        $.each(ui.item.movements, function(index, movement) {
+            $("#movementsTable tbody").append(
+                `<tr>
+                    <td>${movement.formattedMovementDate}</td>
+                    <td>${movement.movementType}</td>
+                    <td>${movement.quantity}</td>
+                </tr>`
+            );
+        });
+    } else {
+        $("#movementsTable tbody").append(
+            `<tr>
+                <td colspan="3">Nenhuma movimentação registrada.</td>
+            </tr>`
+        );
+    }
+    
+    return false;
+}
         });
     });
 </script>

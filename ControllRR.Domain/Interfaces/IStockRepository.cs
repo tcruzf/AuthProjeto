@@ -5,4 +5,6 @@ public interface IStockRepository
 {
      Task<List<Stock>> FindAllAsync();
      Task<List<Stock>> SearchAsync(string term);
+     Task InsertAsync(Stock stock);
+     
 }
