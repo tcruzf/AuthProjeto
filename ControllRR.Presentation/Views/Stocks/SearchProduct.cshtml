@@ -7,6 +7,46 @@
     ViewData["Title"]="Detalhes Produto";
     var statusNow = "Finished";
 }
+
+<!-- Modal para Movimentações -->
+<div id="movementModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h4 class="modal-title">Adicionar Movimentação</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="movementForm" asp-controller="Stocks" asp-action="AddMovement" method="post">
+                    <input type="hidden" id="StockId" name="StockId" />
+                    
+                    <div class="form-group">
+                        <label>Tipo de Movimentação</label>
+                        <select class="form-control" name="MovementType" required>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Saida">Saída</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantidade</label>
+                        <input type="number" class="form-control" name="Quantity" required min="1" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data</label>
+                        <input type="date" class="form-control" name="MovementDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    </div>
+
+                    <div class="form-group text-right">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container-fluid px-4">
     <h1 class="mt-4"></h1>
     <ol class="breadcrumb mb-4">
@@ -14,10 +54,16 @@
         <li class="breadcrumb-item"><a href="/Stock/Index">Estoque</a></li>
           <li class="breadcrumb-item active">Buscar</li>
     </ol>
+    <div class="mt-4">
+         <a asp-action="CreateNewUser" class="btn btn-danger fa fa-edit"> Alterar Produto</a>
+         <button type="button" class="btn btn-success fa fa-edit" data-toggle="modal" data-target="#movementModal">Inser Movimentação</button>   
+         <button type="button" class="btn btn-success fa fa-edit" data-toggle="modal" data-target="#movementModal" onclick="prepareMovementModal()"> Inserir Movimentação </button>    
+    </div>
 </div>
 <div class="row">
 <div class="col-md-12">
 <br>
+
 <div class="container"> 
 <div class="row">
 <div class="col-12">
@@ -171,5 +217,64 @@ alert('Invalid ID');
 }
         });
     });
+</script>
+<script>
+    function prepareMovementModal() {
+        // Pega o ID do produto selecionado
+        var stockId = $("#productId").val();
+        
+        if (!stockId) {
+            alert("Selecione um produto primeiro!");
+            $("#movementModal").modal("hide");
+            return;
+        }
+
+        // Preenche o campo oculto com o ID do produto
+        $("#StockId").val(stockId);
+    }
+
+    // Submit do formulário via AJAX
+    $("#movementForm").submit(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: $(this).attr("action"),
+            type: "POST",
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $("#movementModal").modal("hide");
+                    // Atualiza a tabela de movimentações
+                    loadMovements($("#productId").val());
+                } else {
+                    alert("Erro: " + response.message);
+                }
+            }
+        });
+    });
+
+    function loadMovements(stockId) {
+        $.get("/Stocks/GetMovements/" + stockId, function(data) {
+            $("#movementsTable tbody").empty();
+            
+            if (data.length > 0) {
+                $.each(data, function(index, movement) {
+                    $("#movementsTable tbody").append(
+                        `<tr>
+                            <td>${new Date(movement.movementDate).toLocaleDateString()}</td>
+                            <td>${movement.movementType}</td>
+                            <td>${movement.quantity}</td>
+                        </tr>`
+                    );
+                });
+            } else {
+                $("#movementsTable tbody").append(
+                    `<tr>
+                        <td colspan="3">Nenhuma movimentação registrada.</td>
+                    </tr>`
+                );
+            }
+        });
+    }
 </script>
 }

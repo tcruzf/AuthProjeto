@@ -17,7 +17,6 @@ public class StockDto
     public string? ProductDescription { get; set; }
     [Display(Name = "Quantidade")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
-    [StringLength(20, MinimumLength = 5, ErrorMessage = "{0} minimo {2} e no maximo {1} caracteres")]
     public int ProductQuantity { get; set; }
     [Display(Name = "Aplicação do Produto")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]

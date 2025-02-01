@@ -14,6 +14,12 @@ public class StockManagementRepository : IStockManagementRepository
         _controllRRContext = controllRRContext;
     }
 
+    public async Task AddAsync(StockManagement stock)
+    {
+        await _controllRRContext.AddAsync(stock);
+        await SaveChangesAsync();
+    }
+
     //Return all Stock Itens
     public async Task<List<StockManagement>> FindAllAsync()
     {
@@ -22,6 +28,16 @@ public class StockManagementRepository : IStockManagementRepository
         return stockProductInfo;
     }
 
+    
+
+      public async Task SaveChangesAsync()
+    {
+        await _controllRRContext.SaveChangesAsync();
+    }
+
+
+
+    
     
 
 }

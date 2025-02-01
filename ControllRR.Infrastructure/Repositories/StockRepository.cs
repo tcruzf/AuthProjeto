@@ -33,11 +33,23 @@ public class StockRepository : IStockRepository
              .ToListAsync();
     }
 
-   public async Task InsertAsync(Stock stock)
+    public async Task InsertAsync(Stock stock)
     {
-      
-       await _controllRRContext.Stocks.AddAsync(stock);
-       await _controllRRContext.SaveChangesAsync();
+
+        await _controllRRContext.Stocks.AddAsync(stock);
+        await _controllRRContext.SaveChangesAsync();
     }
 
+    public async Task<Stock?> GetByIdAsync(int id)
+    {
+        return await _controllRRContext.Stocks
+            .Include(s => s.Movements)
+            .FirstOrDefaultAsync(s => s.Id == id);
+    }
+
+    public async Task UpdateAsync(Stock stock)
+    {
+        _controllRRContext.Stocks.Update(stock);
+        await _controllRRContext.SaveChangesAsync();
+    }
 }
