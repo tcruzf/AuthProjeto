@@ -26,28 +26,29 @@ public class StockManagementService : IStockManagementService
         return _mapper.Map<List<StockManagementDto>>(stockProductInfo);
     }
 
-     public async Task AddMovementAsync(int stockId, StockMovementType type, int quantity)
+     public async Task AddMovementAsync(int stockId, StockMovementType type, int quantity, DateTime movementDate)
     {
-        // 1. Busca o stock
-        var stock = await _stockRepository.GetByIdAsync(stockId); // ◀️ Você precisa implementar este método!
+         Console.WriteLine($"Tipo recebido: {type} ({(int)type})"); // Log para depuração
+      
+        var stock = await _stockRepository.GetByIdAsync(stockId); // 
 
-        // 2. Atualiza quantidade
+
         if (type == StockMovementType.Entrada)
             stock.ProductQuantity += quantity;
         else
             stock.ProductQuantity -= quantity;
 
-        // 3. Validação crítica
+        
         if (stock.ProductQuantity < 0)
             throw new InvalidOperationException("Estoque não pode ser negativo!");
 
-        // 4. Cria movimentação
+       
         var movement = new StockManagement
         {
             StockId = stockId,
             MovementType = type,
             Quantity = quantity,
-            MovementDate = DateTime.Now
+            MovementDate = movementDate
         };
 
         await _stockManagementRepository.AddAsync(movement);
@@ -59,4 +60,6 @@ public class StockManagementService : IStockManagementService
         var stock = await _stockRepository.GetByIdAsync(stockId);
         return stock.ProductQuantity;
     }
+
+    
 }

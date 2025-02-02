@@ -24,8 +24,10 @@ public class StocksController : Controller
         _stockRepository = stockRepository;
     }
 
+    [HttpGet]
     public async Task<IActionResult> NewProduct()
     {
+
         return View();
     }
 
@@ -44,7 +46,7 @@ public class StocksController : Controller
 
         try
         {
-             TempData["SuccessMessage"] = "Produto inserido com sucesso!";
+            TempData["SuccessMessage"] = "Produto inserido com sucesso!";
             // Usa o serviço para toda a lógica
             var createdStock = await _stockService.CreateProductWithInitialMovementAsync(model.StockDto);
             return RedirectToAction("GetProducts");
@@ -80,10 +82,55 @@ public class StocksController : Controller
         }
 
         var products = await _stockService.Search(term);
-        return Json(products); // Agora serializa corretamente
+        // return Json(products); // Agora serializa corretamente
+        return Json(products.Select(p => new
+        {
+            id = p.Id,
+            productName = p.ProductName,
+            productDescription = p.ProductDescription,
+            productApplication = p.ProductApplication,
+            productReference = p.ProductReference,
+            productQuantity = p.ProductQuantity,
+            movements = p.Movements.Select(m => new
+            {
+                formattedMovementDate = m.MovementDate.ToString("yyyy-MM-dd"),
+                movementType = m.MovementType == m.MovementType ? "Entrada" : "Saída",
+                quantity = m.Quantity,
+                movementDate = m.MovementDate  // para uso no reloadProductData()
+            }).ToList()
+        }));
     }
 
-    
+    [HttpGet("GetProduct/{id}")]
+    public async Task<IActionResult> GetProduct(int id)
+    {
+        var product = await _stockRepository.GetByIdAsync(id);
+        return Json(new
+        {
+            productQuantity = product.ProductQuantity,
+            movements = product.Movements.Select(m => new
+            {
+                movementDate = m.MovementDate,
+                movementType = m.MovementType,
+                quantity = m.Quantity
+            })
+        });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddMovement(int stockId, StockMovementType type, int quantity, DateTime movementDate)
+    {
+        System.Console.WriteLine(type.ToString());
+        try
+        {
+            await _stockManagementService.AddMovementAsync(stockId, type, quantity, movementDate);
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
 
 
 

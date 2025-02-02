@@ -37,7 +37,13 @@ public class StockManagementRepository : IStockManagementRepository
 
 
 
-    
+    public async Task<List<StockManagement>> GetByStockIdAsync(int stockId)
+    {
+        return await _controllRRContext.StockManagements
+            .Where(m => m.StockId == stockId)
+            .OrderByDescending(m => m.MovementDate)
+            .ToListAsync();
+    }
     
 
 }

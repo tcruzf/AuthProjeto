@@ -1,10 +1,11 @@
 @using ControllRR.Domain.Entities
+@using ControllRR.Domain.Enums
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 @model ControllRR.Presentation.ViewModels.StockViewModel
 @{
-    ViewData["Title"]="Detalhes Produto";
+    ViewData["Title"] = "Detalhes Produto";
     var statusNow = "Finished";
 }
 
@@ -19,14 +20,15 @@
             <div class="modal-body">
                 <form id="movementForm" asp-controller="Stocks" asp-action="AddMovement" method="post">
                     <input type="hidden" id="StockId" name="StockId" />
-                    
+
                     <div class="form-group">
                         <label>Tipo de Movimentação</label>
                         <select class="form-control" name="MovementType" required>
-                            <option value="Entrada">Entrada</option>
-                            <option value="Saida">Saída</option>
+                            <option value="1">Entrada</option>
+                            <option value="2">Saída</option>
                         </select>
                     </div>
+
 
                     <div class="form-group">
                         <label>Quantidade</label>
@@ -35,7 +37,8 @@
 
                     <div class="form-group">
                         <label>Data</label>
-                        <input type="date" class="form-control" name="MovementDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        <input type="date" class="form-control" name="MovementDate"
+                            value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
                     </div>
 
                     <div class="form-group text-right">
@@ -52,229 +55,237 @@
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="/Stock/Index">Estoque</a></li>
-          <li class="breadcrumb-item active">Buscar</li>
+        <li class="breadcrumb-item active">Buscar</li>
     </ol>
     <div class="mt-4">
-         <a asp-action="CreateNewUser" class="btn btn-danger fa fa-edit"> Alterar Produto</a>
-         <button type="button" class="btn btn-success fa fa-edit" data-toggle="modal" data-target="#movementModal">Inser Movimentação</button>   
-         <button type="button" class="btn btn-success fa fa-edit" data-toggle="modal" data-target="#movementModal" onclick="prepareMovementModal()"> Inserir Movimentação </button>    
+        <a asp-action="CreateNewUser" class="btn btn-danger fa fa-edit"> Alterar Produto</a>
+        <!-- <button type="button" class="btn btn-success fa fa-edit" data-toggle="modal" data-target="#movementModal">Inser           Movimentação</button> -->
+        <button type="button" class="btn btn-success fa fa-edit" data-toggle="modal" data-target="#movementModal"
+            onclick="prepareMovementModal()"> Inserir Movimentação </button>
     </div>
 </div>
 <div class="row">
-<div class="col-md-12">
-<br>
+    <div class="col-md-12">
+        <br>
 
-<div class="container"> 
-<div class="row">
-<div class="col-12">
-<div class="card">
-<div class="card-header text-center bg-dark text-white">
-<div class="row align-items-center">
-<div class="col-md-12">
-<h5>::Buscar Item em Estoque::</h5>
-</div>
-</div>
-</div>
-<div class="card mt-4">
-<div class="card-header">INFORMAÇÕES::
-</div>
-<div class="card-body">
-<div class="row">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header text-center bg-dark text-white">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <h5>::Buscar Item em Estoque::</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-header">INFORMAÇÕES::
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
 
-     <div class="col">
-    <label asp-for="StockDto.ProductName" class="control-label"></label>
-    <input id="productSearch" class="form-control" placeholder="Procure por modelo, serial ou tipo" />
-    <input type="hidden" id="productId" name="StockDto.ProductId" />
-    </div>
-     <div class="col">
-    <label asp-for="StockDto.ProductDescription"></label>
-    <input asp-for="StockDto.ProductDescription" id="StockDto_ProductDescription" class="form-control" />
-    <span asp-validation-for="StockDto.ProductDescription" class="text-danger"></span>
-</div>
+                                    <div class="col">
+                                        <label asp-for="StockDto.ProductName" class="control-label"></label>
+                                        <input id="productSearch" class="form-control"
+                                            placeholder="Procure por modelo, serial ou tipo" />
+                                        <input type="hidden" id="productId" name="StockDto.ProductId" />
+                                    </div>
+                                    <div class="col">
+                                        <label asp-for="StockDto.ProductDescription"></label>
+                                        <input asp-for="StockDto.ProductDescription" id="StockDto_ProductDescription"
+                                            class="form-control" />
+                                        <span asp-validation-for="StockDto.ProductDescription"
+                                            class="text-danger"></span>
+                                    </div>
 
-<div class="col">
-    <label asp-for="StockDto.ProductApplication"></label>
-    <input asp-for="StockDto.ProductApplication" id="StockDto_ProductApplication" class="form-control" />
-    <span asp-validation-for="StockDto.ProductApplication" class="text-danger"></span>
-</div>
+                                    <div class="col">
+                                        <label asp-for="StockDto.ProductApplication"></label>
+                                        <input asp-for="StockDto.ProductApplication" id="StockDto_ProductApplication"
+                                            class="form-control" />
+                                        <span asp-validation-for="StockDto.ProductApplication"
+                                            class="text-danger"></span>
+                                    </div>
 
-<div class="col">
-    <label asp-for="StockDto.ProductReference"></label>
-    <input asp-for="StockDto.ProductReference" id="StockDto_ProductReference" class="form-control" />
-    <span asp-validation-for="StockDto.ProductReference" class="text-danger"></span>
-</div>
-<div class="col">
-    <label asp-for="StockDto.ProductQuantity"></label>
-    <input asp-for="StockDto.ProductQuantity" id="StockDto_ProductQuantity" class="form-control" />
-    <span asp-validation-for="StockDto.ProductQuantity" class="text-danger"></span>
-</div>
+                                    <div class="col">
+                                        <label asp-for="StockDto.ProductReference"></label>
+                                        <input asp-for="StockDto.ProductReference" id="StockDto_ProductReference"
+                                            class="form-control" />
+                                        <span asp-validation-for="StockDto.ProductReference" class="text-danger"></span>
+                                    </div>
+                                    <div class="col">
+                                        <label asp-for="StockDto.ProductQuantity"></label>
+                                        <input asp-for="StockDto.ProductQuantity" id="StockDto_ProductQuantity"
+                                            class="form-control" />
+                                        <span asp-validation-for="StockDto.ProductQuantity" class="text-danger"></span>
+                                    </div>
 
-<!-- Adicione esta seção abaixo dos campos existentes -->
-<div class="card mt-4">
-    <div class="card-header">Movimentações deste Item</div>
-    <div class="card-body">
-        <table class="table table-striped" id="movementsTable">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Tipo</th>
-                    <th>Quantidade</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- As linhas serão preenchidas via JavaScript -->
-            </tbody>
-        </table>
-    </div>
-</div>
+                                    <!--  seção abaixo dos campos existentes -->
+                                    <div class="card mt-4">
+                                        <div class="card-header">Movimentações deste Item</div>
+                                        <div class="card-body">
+                                            <table class="table table-striped" id="movementsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Data</th>
+                                                        <th>Tipo</th>
+                                                        <th>Quantidade</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!--  serão preenchidas via JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <!--
+                                  JAVASCRIPT É COISA DE GENTE QUE NÃO TEM O Q FAZER.
+                                  cARALHO CHATO DA PORRA
 
-   
-</div>
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+                                   -->
 
-   
-   <script type="text/javascript">
-$(document).ready(function () {
-$("#Seller_DepartmentId").change(function () {
-var f = $("form");
-f.submit(function () {
-var productData = f.serialize();
-$.post(f.attr("action"), Seller_Department, function (result, status) {
-if (result !== null) {
-$("#Seller_Department").text(result.Seller_Department);
-}
-else {
-alert('Invalid ID');
-}
-});
-});
-});
-});
+                                </div>
+                                @section Scripts {
+                                    @{
+                                        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+                                    }
+                                    <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+                                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+                                    <link rel="stylesheet"
+                                        href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-</script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+                                    <script>
+                                        // Variável para armazenar o termo de busca atual
+                                        let currentSearchTerm = '';
+                                        let currentStockId = null;
 
-    <script>
-    $(document).ready(function () {
-        $("#productSearch").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '/Stocks/Search',
-                    type: 'GET',
-                    data: { term: request.term },
-                    success: function (data) {
-    response($.map(data, function (item) {
-        return {
-            label: item.productName + " - " + item.productDescription,
-            value: item.productName,
-            id: item.id,
-            desc: item.productDescription,
-            app: item.productApplication,
-            ref: item.productReference,
-            qtt: item.productQuantity,
-            movements: item.movements 
-        };
-    }));
-}
-                });
-            },
-            select: function (event, ui) {
-    // Preenche os campos do Stock
-    $("#productSearch").val(ui.item.label);
-    $("#productId").val(ui.item.id);
-    $("#StockDto_ProductDescription").val(ui.item.desc);
-    $("#StockDto_ProductApplication").val(ui.item.app);
-    $("#StockDto_ProductReference").val(ui.item.ref);
-    $("#StockDto_ProductQuantity").val(ui.item.qtt);
+                                        $(document).ready(function () {
+                                            $("#productSearch").autocomplete({
+                                                source: function (request, response) {
+                                                    currentSearchTerm = request.term;
+                                                    $.ajax({
+                                                        url: '/Stocks/Search',
+                                                        type: 'GET',
+                                                        data: { term: request.term },
+                                                        success: function (data) {
+                                                            response($.map(data, function (item) {
+                                                                return {
+                                                                    label: item.productName + " - " + item.productDescription,
+                                                                    value: item.productName,
+                                                                    id: item.id,
+                                                                    desc: item.productDescription,
+                                                                    app: item.productApplication,
+                                                                    ref: item.productReference,
+                                                                    qtt: item.productQuantity,
+                                                                    movements: item.movements
+                                                                };
+                                                            }));
+                                                        }
+                                                    });
+                                                },
+                                                select: function (event, ui) {
+                                                    currentStockId = ui.item.id;
+                                                    updateProductFields(ui.item);
+                                                    return false;
+                                                }
+                                            });
 
-    // Limpa a tabela de movimentações
-    $("#movementsTable tbody").empty();
+                                            // Novo: Atualizar campos do produto
+                                            function updateProductFields(item) {
+                                                $("#productSearch").val(item.label);
+                                                $("#productId").val(item.id);
+                                                $("#StockDto_ProductDescription").val(item.desc);
+                                                $("#StockDto_ProductApplication").val(item.app);
+                                                $("#StockDto_ProductReference").val(item.ref);
+                                                $("#StockDto_ProductQuantity").val(item.qtt);
+                                                updateMovementsTable(item.movements);
+                                            }
 
-    // Preenche as movimentações (se houver)
-    if (ui.item.movements && ui.item.movements.length > 0) {
-        $.each(ui.item.movements, function(index, movement) {
-            $("#movementsTable tbody").append(
-                `<tr>
-                    <td>${movement.formattedMovementDate}</td>
-                    <td>${movement.movementType}</td>
-                    <td>${movement.quantity}</td>
-                </tr>`
-            );
-        });
-    } else {
-        $("#movementsTable tbody").append(
-            `<tr>
-                <td colspan="3">Nenhuma movimentação registrada.</td>
-            </tr>`
-        );
-    }
-    
-    return false;
-}
-        });
-    });
-</script>
-<script>
-    function prepareMovementModal() {
-        // Pega o ID do produto selecionado
-        var stockId = $("#productId").val();
-        
-        if (!stockId) {
-            alert("Selecione um produto primeiro!");
-            $("#movementModal").modal("hide");
-            return;
-        }
+                                            // Novo: Atualizar tabela de movimentações
+                                            function updateMovementsTable(movements) {
+                                                const tbody = $("#movementsTable tbody");
+                                                tbody.empty();
 
-        // Preenche o campo oculto com o ID do produto
-        $("#StockId").val(stockId);
-    }
+                                                if (movements && movements.length > 0) {
+                                                    movements.forEach(movement => {
+                                                        tbody.append(`
+                            <tr>
+                                <td>${new Date(movement.movementDate).toLocaleDateString()}</td>
+                                <td>${movement.movementType === 1 ? 'Entrada' : 'Saída'}</td>
+                                <td>${movement.quantity}</td>
+                            </tr>
+                        `);
+                                                    });
+                                                } else {
+                                                    tbody.append(`
+                        <tr>
+                            <td colspan="3">Nenhuma movimentação registrada.</td>
+                        </tr>
+                    `);
+                                                }
+                                            }
 
-    // Submit do formulário via AJAX
-    $("#movementForm").submit(function(e) {
-        e.preventDefault();
+                                            // Submit do formulário via AJAX
+                                            $("#movementForm").submit(function (e) {
+                                                e.preventDefault();
 
-        $.ajax({
-            url: $(this).attr("action"),
-            type: "POST",
-            data: $(this).serialize(),
-            success: function(response) {
-                if (response.success) {
-                    $("#movementModal").modal("hide");
-                    // Atualiza a tabela de movimentações
-                    loadMovements($("#productId").val());
-                } else {
-                    alert("Erro: " + response.message);
-                }
-            }
-        });
-    });
+                                                const formData = {
+                                                    stockId: $("#StockId").val(),
+                                                    type: parseInt($("select[name='MovementType']").val()),
+                                                    quantity: parseInt($("input[name='Quantity']").val()),
+                                                    movementDate: $("input[name='MovementDate']").val()
+                                                };
 
-    function loadMovements(stockId) {
-        $.get("/Stocks/GetMovements/" + stockId, function(data) {
-            $("#movementsTable tbody").empty();
-            
-            if (data.length > 0) {
-                $.each(data, function(index, movement) {
-                    $("#movementsTable tbody").append(
-                        `<tr>
-                            <td>${new Date(movement.movementDate).toLocaleDateString()}</td>
-                            <td>${movement.movementType}</td>
-                            <td>${movement.quantity}</td>
-                        </tr>`
-                    );
-                });
-            } else {
-                $("#movementsTable tbody").append(
-                    `<tr>
-                        <td colspan="3">Nenhuma movimentação registrada.</td>
-                    </tr>`
-                );
-            }
-        });
-    }
-</script>
-}
+                                                $.ajax({
+                                                    url: $(this).attr("action"),
+                                                    type: "POST",
+                                                    data: formData,
+                                                    success: async function (response) {
+                                                        if (response.success) {
+                                                            $("#movementModal").modal("hide");
+
+                                                            // Atualiza os dados sem recarregar a página
+                                                            if (currentSearchTerm) {
+                                                                // Força nova busca com o termo atual
+                                                                $("#productSearch").autocomplete("search", currentSearchTerm);
+
+                                                                // Atualiza os campos específicos após 500ms (tempo para a busca completar)
+                                                                setTimeout(async () => {
+                                                                    const updatedProduct = await getUpdatedProduct(currentStockId);
+                                                                    if (updatedProduct) {
+                                                                        $("#StockDto_ProductQuantity").val(updatedProduct.productQuantity);
+                                                                        updateMovementsTable(updatedProduct.movements);
+                                                                    }
+                                                                }, 500);
+                                                            }
+                                                        } else {
+                                                            alert("Erro: " + response.message);
+                                                        }
+                                                    }
+                                                });
+                                            });
+
+                                            // Novo: Busca dados atualizados do produto
+                                            async function getUpdatedProduct(stockId) {
+                                                try {
+                                                    const response = await $.get(`/Stocks/GetProduct/${stockId}`);
+                                                    return response;
+                                                } catch (error) {
+                                                    console.error("Erro ao buscar produto:", error);
+                                                    return null;
+                                                }
+                                            }
+                                        });
+
+                                        function prepareMovementModal() {
+                                            const stockId = $("#productId").val();
+                                            if (!stockId) {
+                                                alert("Selecione um produto primeiro!");
+                                                $("#movementModal").modal("hide");
+                                                return;
+                                            }
+                                            $("#StockId").val(stockId);
+                                        }
+                                    </script>
+                                }

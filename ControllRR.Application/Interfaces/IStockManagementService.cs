@@ -7,7 +7,7 @@ public interface IStockManagementService
 {
     Task<List<StockManagementDto>> FindAllAsync();
 
-    Task AddMovementAsync(int stockId, StockMovementType type, int quantity);
+    Task AddMovementAsync(int stockId, StockMovementType type, int quantity, DateTime movementDate);
     Task<int> GetCurrentStockAsync(int stockId);
     
 }

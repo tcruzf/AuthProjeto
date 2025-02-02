@@ -25,7 +25,7 @@ namespace ControllRR.Infrastructure.Data.Context;
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public virtual DbSet<Stock> Stocks{ get; set; }
         public virtual DbSet<StockManagement> StockManagements{ get; set; }
-        
+        public virtual DbSet<Product> Products{ get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -41,13 +41,14 @@ public class StockService : IStockService
         // Adiciona movimentação inicial (Entrada)
         await _stockManagementService.AddMovementAsync(
             stock.Id,
-            StockMovementType.Entrada,
-            stockDto.ProductQuantity // Quantidade inicial do DTO (ex: 100)
+        StockMovementType.Entrada,
+        stockDto.ProductQuantity,
+        DateTime.Now
         );
 
         return _mapper.Map<StockDto>(stock);
     }
-    
+
 
     public async Task AddAsync(StockDto stock)
     {
