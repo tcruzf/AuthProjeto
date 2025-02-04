@@ -6,6 +6,8 @@ public class StockMappingProfile : Profile
     public StockMappingProfile()
     {
         CreateMap<Stock, StockDto>();
-        CreateMap<StockManagement, StockManagementDto>();
+        CreateMap<StockManagement, StockManagementDto>()
+                    .ForMember(dest => dest.MovementType, opt => opt.MapFrom(src => (int)src.MovementType));
+
     }
 }

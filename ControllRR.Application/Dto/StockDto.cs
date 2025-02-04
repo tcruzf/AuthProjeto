@@ -9,7 +9,7 @@ public class StockDto
     public int Id { get; set; }
     [Display(Name = "Nome do Produto")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
-    [StringLength(20, MinimumLength = 5, ErrorMessage = "{0} minimo {2} e no maximo {1} caracteres")]
+    [StringLength(255, MinimumLength = 5, ErrorMessage = "{0} minimo {2} e no maximo {1} caracteres")]
     public string? ProductName { get; set; }
     [Display(Name = "Descrição Simples")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]

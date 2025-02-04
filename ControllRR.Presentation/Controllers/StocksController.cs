@@ -68,39 +68,40 @@ public class StocksController : Controller
     }
 
     // Pode ser síncrono se não carregar dados
-    public IActionResult SearchProduct() 
+    public IActionResult SearchProduct()
     {
         return View();
     }
 
-    [Authorize(Roles = "Manager, Admin")]
-    [HttpGet]
-    public async Task<IActionResult> Search(string term)
+   [Authorize(Roles = "Manager, Admin")]
+[HttpGet]
+public async Task<IActionResult> Search(string term)
+{
+    if (string.IsNullOrWhiteSpace(term))
     {
-        if (string.IsNullOrWhiteSpace(term))
-        {
-            return Json(new List<object>());
-        }
-
-        var products = await _stockService.Search(term);
-        // return Json(products); // Agora serializa corretamente
-        return Json(products.Select(p => new
-        {
-            id = p.Id,
-            productName = p.ProductName,
-            productDescription = p.ProductDescription,
-            productApplication = p.ProductApplication,
-            productReference = p.ProductReference,
-            productQuantity = p.ProductQuantity,
-            movements = p.Movements.Select(m => new
-            {
-                formattedMovementDate = m.MovementDate.ToString("yyyy-MM-dd"),
-                movementType = m.MovementType == m.MovementType ? "Entrada" : "Saída",
-                quantity = m.Quantity,
-                movementDate = m.MovementDate  // para uso no reloadProductData() - Testado e funcional
-            }).ToList()
-        }));
+        return Json(new List<object>());
     }
+
+    var products = await _stockService.Search(term);
+    
+    return Json(products.Select(p => new
+    {
+        id = p.Id,
+        productName = p.ProductName,
+        productDescription = p.ProductDescription,
+        productApplication = p.ProductApplication,
+        productReference = p.ProductReference,
+        productQuantity = p.ProductQuantity,
+        movements = p.Movements.Select(m => new
+        {
+            formattedMovementDate = m.MovementDate.ToString("yyyy-MM-dd"),
+            movementType = m.MovementType == (int)StockMovementType.Entrada ? "Entrada" : "Saída", // Correção aqui
+            quantity = m.Quantity,
+            movementDate = m.MovementDate
+        }).ToList()
+    }));
+}
+
 
     [HttpGet("GetProduct/{id}")]
     public async Task<IActionResult> GetProduct(int id)

@@ -212,7 +212,7 @@
                                                         tbody.append(`
                             <tr>
                                 <td>${new Date(movement.movementDate).toLocaleDateString()}</td>
-                                <td>${movement.movementType === 1 ? 'Entrada' : 'Saída'}</td>
+                                <td>${movement.movementType}</td>
                                 <td>${movement.quantity}</td>
                             </tr>
                         `);

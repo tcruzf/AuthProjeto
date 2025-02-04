@@ -3,82 +3,91 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 @model ControllRR.Application.Dto.MaintenanceDto;
+
 @{
-    ViewData["Title"]="Detalhes Manutenção";
+    ViewData["Title"] = "Detalhes Manutenção";
     var statusNow = "Finished";
 }
+
 <div class="container">
     <h2 class="my-4">@ViewData["Title"]</h2>
  
-    <div class="card">
+    <div class="card mb-4">
         <div class="card-header">
-            Data:: -- Consulta de Manutenção de Serviço ou atendimento externo
+            Consulta de Manutenção de Serviço ou Atendimento Externo
         </div>
         <div class="card-body">
-            <div class="row">
-                    <div class="col-md-6">
-                        <h6>Identificador: @Html.DisplayFor(model => model.Id)</h6>
-                        <hr>
-                        <ul class="list-group list-group-flush">
-                            <p>
-                            <li class="list-group-item"><strong>Descrição: </strong>@Html.DisplayFor(model => model.Description)</li>
-                            </p>
-                            <li class="list-group-item">Data abertura: @Html.DisplayFor(model => model.OpenDate)</li>
-                             <li class="list-group-item">Data fechamento: @Html.DisplayFor(model => model.CloseDate)</li>
-                             @if(Model.Status != null){
-                                 <li class="list-group-item">Status: @Html.DisplayFor(model => model.Status)</li>
-                             }else{
-                                 <li class="list-group-item">Status: Não Foi possivel encontrar o Status da manutenção</li>
-                             }
-                            <li class="list-group-item">Responsavel Tecnico: @Html.DisplayFor(model => model.ApplicationUser.Name)</li>
-                            <li class="list-group-item">Identificador: @Html.DisplayFor(model => model.Device.Identifier)</li>
-                            <li class="list-group-item">Setor: @Html.DisplayFor(model => model.Device.Sector.Location)</li>
-                            <li class="list-group-item">Endereço: @Html.DisplayFor(model => model.Device.Sector.Address)</li>
-                            <li class="list-group-item">Solicitante: @Html.DisplayFor(model => model.Device.Sector.RequesterName)</li>
+            <div class="row mb-3">
+                <!-- Coluna da esquerda -->
+                <div class="col-md-6">
+                    <p><strong>Identificador:</strong> @Html.DisplayFor(model => model.Id)</p>
+                    <p><strong>Descrição:</strong> @Html.DisplayFor(model => model.Description)</p>
+                    <p><strong>Data abertura:</strong> @Html.DisplayFor(model => model.OpenDate)</p>
+                    <p><strong>Data fechamento:</strong> @Html.DisplayFor(model => model.CloseDate)</p>
+                    <p>
+                        <strong>Status:</strong>
+                        @if (Model.Status != null)
+                        {
+                            @Html.DisplayFor(model => model.Status)
+                        }
+                        else
+                        {
+                            <span class="text-muted">Não foi possível encontrar o status da manutenção</span>
+                        }
+                    </p>
+                    <p><strong>Responsável Técnico:</strong> @Html.DisplayFor(model => model.ApplicationUser.Name)</p>
+                </div>
+                <!-- Coluna da direita -->
+                <div class="col-md-6">
+                    <p><strong>Identificador do Dispositivo:</strong> @Html.DisplayFor(model => model.Device.Identifier)</p>
+                    <p><strong>Setor:</strong> @Html.DisplayFor(model => model.Device.Sector.Location)</p>
+                    <p><strong>Endereço:</strong> @Html.DisplayFor(model => model.Device.Sector.Address)</p>
+                    <p><strong>Solicitante:</strong> @Html.DisplayFor(model => model.Device.Sector.RequesterName)</p>
+                </div>
+            </div>
 
-                            <li class="list-group-item">
-                            <h6>Produtos Utilizados:</h6>
-                            @if (Model.MaintenanceProducts != null && Model.MaintenanceProducts.Any())
-                            {
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Item Usado</th>
-                                            <th>Quantidade Usada</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var item in Model.MaintenanceProducts)
-                                        {
-                                            <tr>
-                                                <td>@item.Stock?.ProductName</td>
-                                                <td>@item.QuantityUsed</td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            }
-                            else
-                            {
-                                <p class="text-muted">Nenhum produto associado a esta manutenção.</p>
-                            }
-                        </li>
-                            <!-- -->
-                        </ul>
+            <div class="mb-4">
+                <h5>Produtos Utilizados:</h5>
+                @if (Model.MaintenanceProducts != null && Model.MaintenanceProducts.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Item Usado</th>
+                                    <th>Quantidade Usada</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.MaintenanceProducts)
+                                {
+                                    <tr>
+                                        <td>@item.Stock?.ProductName</td>
+                                        <td>@item.QuantityUsed</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
+                }
+                else
+                {
+                    <p class="text-muted">Nenhum produto associado a esta manutenção.</p>
+                }
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                <form asp-action="Delete" method="post" class="d-inline">
+                    <input type="hidden" asp-for="Id" />
+                    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        <input type="submit" class="btn btn-danger" value="Delete" />
+                    }
+                </form>
+                <a asp-action="ChangeMaintenance" class="btn btn-warning" asp-route-id="@Model.Id">Editar</a>
+                <a asp-action="Print" class="btn btn-info" asp-route-id="@Model.Id">Imprimir</a>
+                <a asp-controller="Maintenances" asp-action="Finalize" class="btn btn-success" asp-route-id="@Model.Id">Fechar</a>
             </div>
         </div>
     </div>
- <div class="mt-4">
-        <form asp-action="Delete">
-        <input type="hidden" asp-for="Id"/>
-         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-         {
-        <input type="submit" class="btn btn-danger" value="Delete">
-        }
-        <a asp-action="ChangeMaintenance" class="btn btn-warning" asp-route-id="@Model.Id">Editar</a>
-        <a asp-action="Print" class="btn btn-info" asp-route-id="@Model.Id">Imprimir</a>
-        <a asp-controller="Maintenances" asp-action="Finalize" class="btn btn-success" asp-route-id="@Model.Id">Fechar</a>
-    </form>
-</div>  
 </div>

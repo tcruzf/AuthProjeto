@@ -106,7 +106,7 @@ public class MaintenanceService : IMaintenanceService
 
         return new
         {
-            draw = Guid.NewGuid().ToString(), // Pode ajustar conforme necessário
+            draw = Guid.NewGuid().ToString(), 
             recordsTotal = totalRecords,
             recordsFiltered = filteredRecords,
             data

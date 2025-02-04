@@ -251,6 +251,7 @@ public class MaintenancesController : Controller
         return View(list);
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Finalize(int id)
     {
         try
