@@ -36,7 +36,33 @@
                             <li class="list-group-item">Endereço: @Html.DisplayFor(model => model.Device.Sector.Address)</li>
                             <li class="list-group-item">Solicitante: @Html.DisplayFor(model => model.Device.Sector.RequesterName)</li>
 
-                            
+                            <li class="list-group-item">
+                            <h6>Produtos Utilizados:</h6>
+                            @if (Model.MaintenanceProducts != null && Model.MaintenanceProducts.Any())
+                            {
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Item Usado</th>
+                                            <th>Quantidade Usada</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.MaintenanceProducts)
+                                        {
+                                            <tr>
+                                                <td>@item.Stock?.ProductName</td>
+                                                <td>@item.QuantityUsed</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Nenhum produto associado a esta manutenção.</p>
+                            }
+                        </li>
                             <!-- -->
                         </ul>
                     </div>

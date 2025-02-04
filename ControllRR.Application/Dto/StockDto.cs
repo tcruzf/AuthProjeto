@@ -25,6 +25,6 @@ public class StockDto
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
     public string? ProductReference { get; set; }
 
-    public List<StockManagementDto> Movements { get; set; } = new(); // Sem Stock!
+    public List<StockManagementDto> Movements { get; set; } = new();
 }
 

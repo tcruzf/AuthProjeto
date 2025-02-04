@@ -24,7 +24,7 @@ public class DeviceRepository : IDeviceRepository
         _controllRRContext = controllRRContext;
     }
 
-    
+
     /// O metodo abaixo retorna uma lista de dispositivos, inclue os setores quais estão localizados e as manutenções abertas
     ///  e relacionadas a ele
     ///  Retorna lista de devices(dispositivos) 
@@ -94,12 +94,12 @@ public class DeviceRepository : IDeviceRepository
     }
 
     // Metodo utilizado para busca dinamica de informações através de datatables
-     public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetDevicesAsync(
-       int start,
-       int length,
-       string searchValue,
-       string sortColumn,
-       string sortDirection)
+    public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetDevicesAsync(
+      int start,
+      int length,
+      string searchValue,
+      string sortColumn,
+      string sortDirection)
     {
         var query = _controllRRContext.Devices
             .Include(x => x.Maintenances)
@@ -113,7 +113,7 @@ public class DeviceRepository : IDeviceRepository
                 (x.DeviceDescription != null && x.DeviceDescription.ToLower().Contains(searchValue)) ||
                 (x.Model != null && x.Model.ToLower().Contains(searchValue)) ||
                 (x.Type != null && x.Type.ToLower().Contains(searchValue)) ||
-                (x.Identifier != null &&  x.Identifier.ToLower().Contains(searchValue)) ||
+                (x.Identifier != null && x.Identifier.ToLower().Contains(searchValue)) ||
                 (x.SerialNumber != null && x.SerialNumber != null && x.SerialNumber.ToLower().Contains(searchValue)));
         }
 
@@ -145,7 +145,7 @@ public class DeviceRepository : IDeviceRepository
                 Sector = x.Sector.Name,
                 DeviceId = x.Id,
                 DeviceDescription = x.DeviceDescription
-                
+
             })
             .ToListAsync();
 
@@ -153,6 +153,6 @@ public class DeviceRepository : IDeviceRepository
 
         return (data, totalRecords, filteredCount);
     }
-    
+
 
 }

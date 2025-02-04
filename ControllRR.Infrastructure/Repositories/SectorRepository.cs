@@ -38,17 +38,17 @@ public class SectorRepository : ISectorRepository
         .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-     public async Task SaveChangesAsync()
+    public async Task SaveChangesAsync()
     {
         await _controllRRContext.SaveChangesAsync();
     }
 
-     public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetSectorAsync(
-       int start,
-       int length,
-       string searchValue,
-       string sortColumn,
-       string sortDirection)
+    public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetSectorAsync(
+      int start,
+      int length,
+      string searchValue,
+      string sortColumn,
+      string sortDirection)
     {
         var query = _controllRRContext.Sectors
             .Include(x => x.Devices)
@@ -63,7 +63,7 @@ public class SectorRepository : ISectorRepository
                 (x.City != null && x.City.ToLower().Contains(searchValue)) ||
                 (x.Name != null && x.Name.ToLower().Contains(searchValue)) ||
                 (x.Location != null && x.Location.ToLower().Contains(searchValue)) ||
-                (x.RequesterName != null &&  x.RequesterName.ToLower().Contains(searchValue)) ||
+                (x.RequesterName != null && x.RequesterName.ToLower().Contains(searchValue)) ||
                 (x.Neighborhood != null && x.Neighborhood != null && x.Neighborhood.ToLower().Contains(searchValue)));
         }
 
@@ -93,7 +93,7 @@ public class SectorRepository : ISectorRepository
                 Name = x.Name,
                 RequesterName = x.RequesterName,
                 Neighborhood = x.Neighborhood
-                
+
             })
             .ToListAsync();
 
@@ -107,20 +107,20 @@ public class SectorRepository : ISectorRepository
         bool hasAny = await _controllRRContext.Sectors.AnyAsync(x => x.Id == sector.Id);
         if (!hasAny)
         {
-             throw new NotFoundException("Id Não encontrado!");
+            throw new NotFoundException("Id Não encontrado!");
         }
         try
         {
-             _controllRRContext.Sectors.Update(sector);
-             await _controllRRContext.SaveChangesAsync();
+            _controllRRContext.Sectors.Update(sector);
+            await _controllRRContext.SaveChangesAsync();
 
         }
-        catch(DbConcurrencyException e)
+        catch (DbConcurrencyException e)
         {
             throw new DbConcurrencyException(e.Message);
         }
 
     }
 
-  
+
 }

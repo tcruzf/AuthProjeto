@@ -15,7 +15,7 @@ public class StockProfile : Profile
             .ForMember(dest => dest.ProductApplication, opt => opt.MapFrom(src => src.ProductApplication))
             .ForMember(dest => dest.ProductDescription, opt => opt.MapFrom(src => src.ProductDescription))
             .ForMember(dest => dest.ProductReference, opt => opt.MapFrom(src => src.ProductReference));
-        
+
         // Mapeamento inverso (opcional)
         CreateMap<Stock, StockDto>();
     }

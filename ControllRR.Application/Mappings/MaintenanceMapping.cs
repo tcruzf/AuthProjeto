@@ -8,6 +8,7 @@ public class MaintenanceMappingProfile : Profile
     {
         CreateMap<Maintenance, MaintenanceDto>()
             .ForMember(dest => dest.ApplicationUser, opt => opt.MapFrom(src => src.ApplicationUser)) 
+            .ForMember(dest => dest.MaintenanceProducts, opt => opt.MapFrom(src => src.MaintenanceProducts))
             .ReverseMap();
 
         CreateMap<ApplicationUser, ApplicationUserDto>().ReverseMap(); 

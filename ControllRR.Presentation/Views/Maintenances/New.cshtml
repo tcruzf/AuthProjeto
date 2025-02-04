@@ -55,12 +55,34 @@
      <div class="col">
      <label asp-for="MaintenanceDto.Status" class="control-label"></label>
     <select asp-for="MaintenanceDto.Status" class="form-control" asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
-    </div
+    </div>
+   
+    <div class="form-group">
+        <label for="productSearch">Buscar Produto</label>
+        <input type="text" id="productSearch" class="form-control" placeholder="Digite para buscar...">
+        <div id="productSuggestions" class="list-group"></div>
+    
+
+    <table class="table" id="productsTable">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+</div>
    <div class="form-group">
    <label asp-for="MaintenanceDto.Description"></label>
     <textarea asp-for="MaintenanceDto.Description" class="form-control" id="MaintenanceDescription" rows="14"></textarea>
     <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
   </div>
+    
     </div>
     <div class="mt-4">
     <button type="submit" class="btn btn-success">Salvar</button>
@@ -119,5 +141,69 @@ alert('Invalid ID');
                 }
             });
         });
+       document.getElementById("productSearch").addEventListener("input", function () {
+        let query = this.value;
+        if (query.length < 2) return;
+        
+        fetch(`/Stocks/Search?term=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                let suggestions = document.getElementById("productSuggestions");
+                suggestions.innerHTML = "";
+                data.forEach(produto => {
+                    // Utilize as propriedades retornadas pela API: productName, etc.
+                    let item = document.createElement("div");
+                    item.classList.add("list-group-item", "list-group-item-action");
+                    item.textContent = `${produto.productName} - Qtd: ${produto.productQuantity}`;
+                    item.addEventListener("click", function () {
+                        adicionarProduto(produto);
+                    });
+                    suggestions.appendChild(item);
+                });
+            })
+            .catch(error => console.error('Erro ao buscar produtos:', error));
+    });
+
+   function adicionarProduto(produto) {
+    let tabela = document.getElementById("productsTable").getElementsByTagName("tbody")[0];
+    
+    // Cria a nova linha antes de definir o conteúdo
+    let novaLinha = tabela.insertRow();
+    let index = tabela.rows.length - 1; // Índice baseado na posição real
+
+    // Define o conteúdo da linha
+    novaLinha.innerHTML = `
+        <td>
+            ${produto.productName}
+            <input type="hidden" name="MaintenanceDto.MaintenanceProducts[${index}].StockId" value="${produto.id}" />
+        </td>
+        <td>${produto.productQuantity}</td>
+        <td>
+            <input type="number" 
+                   name="MaintenanceDto.MaintenanceProducts[${index}].QuantityUsed" 
+                   value="1" 
+                   min="1" 
+                   max="${produto.productQuantity}" 
+                   class="form-control" />
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+        </td>
+    `;
+}
+
+function removerProduto(botao) {
+    let linha = botao.closest("tr");
+    linha.remove();
+    
+    // Atualiza os índices após remoção
+    let tabela = document.getElementById("productsTable").getElementsByTagName("tbody")[0];
+    Array.from(tabela.rows).forEach((row, index) => {
+        row.querySelector("input[name*='StockId']").name = `MaintenanceDto.MaintenanceProducts[${index}].StockId`;
+        row.querySelector("input[name*='QuantityUsed']").name = `MaintenanceDto.MaintenanceProducts[${index}].QuantityUsed`;
+    });
+}
     </script>
+
+       
 }

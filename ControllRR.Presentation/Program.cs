@@ -49,7 +49,8 @@ builder.Services.AddAutoMapper(
     typeof(DocumentMappingProfile),
     typeof(ApplicationUserMappingProfile),
     typeof(StockMappingProfile),
-    typeof(StockManagementMappingProfile)
+    typeof(StockManagementMappingProfile),
+    typeof(MaintenanceProductProfile)
 );
 
 

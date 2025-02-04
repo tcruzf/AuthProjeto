@@ -67,7 +67,8 @@ public class StocksController : Controller
         return View(stockProduct);
     }
 
-    public IActionResult SearchProduct() // Pode ser síncrono se não carregar dados
+    // Pode ser síncrono se não carregar dados
+    public IActionResult SearchProduct() 
     {
         return View();
     }
@@ -96,7 +97,7 @@ public class StocksController : Controller
                 formattedMovementDate = m.MovementDate.ToString("yyyy-MM-dd"),
                 movementType = m.MovementType == m.MovementType ? "Entrada" : "Saída",
                 quantity = m.Quantity,
-                movementDate = m.MovementDate  // para uso no reloadProductData()
+                movementDate = m.MovementDate  // para uso no reloadProductData() - Testado e funcional
             }).ToList()
         }));
     }

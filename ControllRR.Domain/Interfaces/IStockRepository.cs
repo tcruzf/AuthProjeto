@@ -7,7 +7,7 @@ public interface IStockRepository
      Task<List<Stock>> SearchAsync(string term);
      Task InsertAsync(Stock stock);
 
-     Task<Stock?> GetByIdAsync(int id); // ◀️ Novo!
-     Task UpdateAsync(Stock stock); // ◀️ Novo
+     Task<Stock?> GetByIdAsync(int id);
+     Task UpdateAsync(Stock stock);
 
 }

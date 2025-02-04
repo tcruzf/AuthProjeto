@@ -27,17 +27,23 @@ public class MaintenanceRepository : IMaintenanceRepository
         .ToListAsync();
     }
 
-    public async Task<Maintenance> FindByIdAsync(int id)
+    public async Task<Maintenance?> FindByIdAsync(int id)// Infelizmente, por obra do destino tive que marcar como Nullable essa parada
     {
         return await _controllRRContext.Maintenances
+            .Include(x => x.MaintenanceProducts)
+            .ThenInclude(xp => xp.Stock)
             .Include(x => x.ApplicationUser)
             .Include(x => x.Device)
-             .Include(x => x.Device.Sector)
+            .Include(x => x.Device.Sector)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task InsertAsync(Maintenance maintenance)
     {
+        if (maintenance.MaintenanceProducts == null || !maintenance.MaintenanceProducts.Any())
+        {
+            throw new Exception("Nenhum produto foi associdado a manutenção");
+        }
         var control = await _controllRRContext.MaintenanceNumberControls.FirstOrDefaultAsync();
         if (control == null)
         {
@@ -63,13 +69,19 @@ public class MaintenanceRepository : IMaintenanceRepository
     public async Task UpdateAsync(Maintenance maintenance)
     {
         bool hasAny = await _controllRRContext.Maintenances.AnyAsync(x => x.Id == maintenance.Id);
-        if (!hasAny)
-        {
-            throw new NotFoundException("Id Não encontrado!");
-        }
+
+        var existingMaintenance = await _controllRRContext.Maintenances
+            .Include(m => m.MaintenanceProducts)
+            .FirstOrDefaultAsync(m => m.Id == maintenance.Id);
+        if (existingMaintenance == null)
+            throw new NotFoundException("Manutenção não encontrada...");
+
         try
         {
-            _controllRRContext.Update(maintenance);
+            _controllRRContext.Entry(existingMaintenance).CurrentValues.SetValues(maintenance);
+
+            // _controllRRContext.Update(maintenance);
+            await UpdateMaintenanceProductsAsync(maintenance);
             await _controllRRContext.SaveChangesAsync();
 
         }
@@ -77,6 +89,42 @@ public class MaintenanceRepository : IMaintenanceRepository
         {
             throw new DbConcurrencyException(e.Message);
         }
+    }
+
+    public async Task UpdateMaintenanceProductsAsync(Maintenance maintenance)
+    {
+        var existingMaintenance = await _controllRRContext.Maintenances
+            .Include(m => m.MaintenanceProducts)
+            .FirstOrDefaultAsync(m => m.Id == maintenance.Id);
+
+        if (existingMaintenance == null) throw new NotFoundException("Manutenção não encontrada");
+
+        // Remove produtos excluídos
+        foreach (var existingProduct in existingMaintenance.MaintenanceProducts.ToList())
+        {
+            if (!maintenance.MaintenanceProducts.Any(p => p.StockId == existingProduct.StockId))
+            {
+                _controllRRContext.MaintenanceProduct.Remove(existingProduct);
+            }
+        }
+
+        // Atualiza/Adiciona produtos
+        foreach (var product in maintenance.MaintenanceProducts)
+        {
+            var existingProduct = existingMaintenance.MaintenanceProducts
+                .FirstOrDefault(p => p.StockId == product.StockId);
+
+            if (existingProduct != null)
+            {
+                existingProduct.QuantityUsed = product.QuantityUsed;
+            }
+            else
+            {
+                existingMaintenance.MaintenanceProducts.Add(product);
+            }
+        }
+
+        await _controllRRContext.SaveChangesAsync();
     }
 
     public async Task FinalizeAsync(int id)
@@ -154,9 +202,9 @@ public class MaintenanceRepository : IMaintenanceRepository
 
         return (data, totalRecords, filteredCount);
     }
-    
 
-    
+
+
     public async Task SaveChangesAsync()
     {
         await _controllRRContext.SaveChangesAsync();

@@ -10,5 +10,5 @@ public class ServerLogin
 
     // Propriedades adicionais (opcional)
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public string Permissions { get; set; } // Ex.: "admin", "user"
+    public string Permissions { get; set; } 
 }

@@ -35,4 +35,5 @@ public class MaintenanceDto
     public int DeviceId { get; set; }
     [Display(Name = "Dispositivo")]
     public int? MaintenanceNumber { get; set; }
+    public List<MaintenanceProductDto> MaintenanceProducts { get; set; } = new List<MaintenanceProductDto>();
 }

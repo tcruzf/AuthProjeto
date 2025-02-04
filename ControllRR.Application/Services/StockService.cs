@@ -34,7 +34,7 @@ public class StockService : IStockService
     {
         // Mapeia o DTO para Stock com quantidade 0
         var stock = _mapper.Map<Stock>(stockDto);
-        stock.ProductQuantity = 0; // ◀️ Inicializa como 0
+        stock.ProductQuantity = 0; // Tenho que inicializar com 0
 
         await _stockRepository.InsertAsync(stock);
 

@@ -29,6 +29,7 @@ public partial class ControllRRContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<Server> Servers { get; set; }
     public virtual DbSet<Login> Logins { get; set; }
     public virtual DbSet<ServerLogin> ServerLogins { get; set; }
+    public virtual DbSet<MaintenanceProduct> MaintenanceProduct { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

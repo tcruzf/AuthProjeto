@@ -9,5 +9,8 @@ public class MaintenanceViewModel
     public MaintenanceDto MaintenanceDto { get; set; } = new MaintenanceDto();
     public ICollection<ApplicationUserDto> ApplicationUserDto { get; set; } = new List<ApplicationUserDto>();
     public ICollection<DeviceDto>? DeviceDto { get; set; } = new List<DeviceDto>();
+    public List<StockDto> AvailableStocks { get; set; } = new List<StockDto>();
+    public List<MaintenanceProductDto> SelectedProducts { get; set; } = new List<MaintenanceProductDto>();
+
 
 }

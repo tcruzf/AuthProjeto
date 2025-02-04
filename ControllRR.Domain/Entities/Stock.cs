@@ -13,6 +13,7 @@ public class Stock
 
     // Relacionamento com as movimentações
     public ICollection<StockManagement> Movements { get; set; } = new List<StockManagement>();
+    public ICollection<MaintenanceProduct> MaintenanceProducts { get; set; } = new List<MaintenanceProduct>();
 
     public Stock(){
 

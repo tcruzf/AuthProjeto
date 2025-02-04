@@ -7,7 +7,7 @@ namespace ControllRR.Infrastructure.Repositories;
 
 public class StockManagementRepository : IStockManagementRepository
 {
-    
+
     private readonly ControllRRContext _controllRRContext;
     public StockManagementRepository(ControllRRContext controllRRContext)
     {
@@ -28,9 +28,9 @@ public class StockManagementRepository : IStockManagementRepository
         return stockProductInfo;
     }
 
-    
 
-      public async Task SaveChangesAsync()
+
+    public async Task SaveChangesAsync()
     {
         await _controllRRContext.SaveChangesAsync();
     }
@@ -44,6 +44,6 @@ public class StockManagementRepository : IStockManagementRepository
             .OrderByDescending(m => m.MovementDate)
             .ToListAsync();
     }
-    
+
 
 }

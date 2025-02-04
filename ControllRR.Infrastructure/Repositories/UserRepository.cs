@@ -19,18 +19,18 @@ public class UserRepository : IUserRepository
     }
     public async Task<List<ApplicationUser>> FindAllAsync()
     {
-      return await _controllRRContext.ApplicationUsers
-      .Include(x => x.Maintenances)
-      .ToListAsync();
+        return await _controllRRContext.ApplicationUsers
+        .Include(x => x.Maintenances)
+        .ToListAsync();
     }
 
     public async Task<ApplicationUser> FindByIdAsync(int id)
     {
-       
+
         return await _controllRRContext.ApplicationUsers
         .Include(x => x.Maintenances)
         .FirstOrDefaultAsync(x => x.OperatorId == id);
-       
+
     }
 
     public async Task InsertAsync(ApplicationUser user)
@@ -45,7 +45,7 @@ public class UserRepository : IUserRepository
         var obj = await _controllRRContext.ApplicationUsers
         .Include(x => x.Maintenances)
         .FirstOrDefaultAsync(u => u.OperatorId == id);
-        
+
         _controllRRContext.Remove(obj);
         await _controllRRContext.SaveChangesAsync();
 
@@ -54,7 +54,7 @@ public class UserRepository : IUserRepository
     public async Task UpdateAsync(ApplicationUser user)
     {
         bool hasAny = await _controllRRContext.ApplicationUsers.AnyAsync(x => x.Id == user.Id);
-        if(!hasAny)
+        if (!hasAny)
         {
             throw new NotFoundException("Id Não encontrado!");
         }
@@ -68,9 +68,9 @@ public class UserRepository : IUserRepository
             throw new DbConcurrencyException(e.Message);
         }
     }
-    
 
-      public async Task SaveChangesAsync()
+
+    public async Task SaveChangesAsync()
     {
         await _controllRRContext.SaveChangesAsync();
     }

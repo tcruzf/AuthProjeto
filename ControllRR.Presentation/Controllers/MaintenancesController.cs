@@ -21,12 +21,20 @@ public class MaintenancesController : Controller
     private readonly IMaintenanceService _maintenanceService;
     private readonly IUserService _userService;
     private readonly IDeviceService _deviceService;
+    private readonly IStockService _stockService;
 
-    public MaintenancesController(IMaintenanceService maintenanceService, IUserService userService, IDeviceService deviceService, ControllRRContext controllRRContext)
+    public MaintenancesController(
+     IMaintenanceService maintenanceService,
+     IUserService userService,
+     IDeviceService deviceService,
+     ControllRRContext controllRRContext,
+     IStockService stockService
+      )
     {
         _maintenanceService = maintenanceService;
         _userService = userService;
         _deviceService = deviceService;
+        _stockService = stockService;
 
     }
 
@@ -67,7 +75,7 @@ public class MaintenancesController : Controller
                 Phone = u.Phone,
                 Register = u.Register
             })
-            .ToList() ?? new List<ApplicationUserDto>(); // ✅ Lista vazia se users for null
+            .ToList() ?? new List<ApplicationUserDto>(); 
 
         // Busca dispositivos e mapeia para DTO
         var devices = await _deviceService.FindAllAsync();
@@ -82,12 +90,13 @@ public class MaintenancesController : Controller
                 DeviceDescription = d.DeviceDescription,
                 SectorId = d.SectorId
             })
-            .ToList() ?? new List<DeviceDto>(); // ✅ Lista vazia se devices for null
+            .ToList() ?? new List<DeviceDto>(); 
 
         var viewModel = new MaintenanceViewModel
         {
             ApplicationUserDto = users,
-            DeviceDto = deviceDto // ✅ Lista de DeviceDto
+            DeviceDto = deviceDto,
+            AvailableStocks = await _stockService.FindAllAsync()
         };
 
         return View(viewModel);
@@ -152,15 +161,17 @@ public class MaintenancesController : Controller
     [HttpGet]
     public async Task<IActionResult> ChangeMaintenance(int? id)
     {
-
         var maintenance = await _maintenanceService.FindByIdAsync(id.Value);
-
-
         var device = await _deviceService.FindByIdAsync(maintenance.Device.Id);
         var users = await _userService.FindAllAsync();
         
        
-        MaintenanceViewModel viewModel = new MaintenanceViewModel { ApplicationUserDto = users, MaintenanceDto = maintenance };
+        MaintenanceViewModel viewModel = new MaintenanceViewModel
+         { 
+          ApplicationUserDto = users,
+          MaintenanceDto = maintenance
+          
+           };
         return View(viewModel);
     }
 
@@ -169,6 +180,35 @@ public class MaintenancesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangeMaintenance(int? id, MaintenanceDto maintenanceDto)
     {
+        System.Console.WriteLine($"Id: {maintenanceDto.Id}");
+            System.Console.WriteLine($"MaintenanceNumber: {maintenanceDto.MaintenanceNumber}");
+            System.Console.WriteLine($"OpenDate: {maintenanceDto.OpenDate}");
+            System.Console.WriteLine($"SimpleDesc: {maintenanceDto.SimpleDesc}");
+            System.Console.WriteLine($"CloseDate: {maintenanceDto.CloseDate}");
+            System.Console.WriteLine($"ApplicationUserId: {maintenanceDto.ApplicationUserId}");
+            System.Console.WriteLine($"DeviceId: {maintenanceDto.DeviceId}");
+            System.Console.WriteLine($"Status: {maintenanceDto.Status}");
+            System.Console.WriteLine($"Description: {maintenanceDto.Description}");
+
+            // Produtos
+            if (maintenanceDto.MaintenanceProducts != null)
+            {
+                System.Console.WriteLine("MaintenanceProducts:");
+                foreach (var product in maintenanceDto.MaintenanceProducts)
+                {
+                    System.Console.WriteLine($"  StockId: {product.StockId}, QuantityUsed: {product.QuantityUsed}");
+                }
+            }
+            else
+            {
+                System.Console.WriteLine("MaintenanceProducts: null");
+            }
+
+            // Valores que aparecem no form mas não estão sendo capturados
+            System.Console.WriteLine("Hidden/Implicit Values:");
+            System.Console.WriteLine($"Device (object): {maintenanceDto.Device}");
+            System.Console.WriteLine($"ApplicationUser (object): {maintenanceDto.ApplicationUser}");
+            
         if(!ModelState.IsValid)
         {
             var users = await _userService.FindAllAsync();
@@ -255,10 +295,23 @@ public class MaintenancesController : Controller
         };
         return View(viewModel);
     }
+
+    [Authorize(Roles = "Manager, Admin")]
     public void MeuDebug(string xx)
     {
         Console.WriteLine(xx);
 
+    }
+
+    [Authorize(Roles = "Manager, Admin")]
+    private async Task<MaintenanceViewModel> CarregarViewModel()
+    {
+        return new MaintenanceViewModel
+        {
+            ApplicationUserDto = await _userService.FindAllAsync(),
+            DeviceDto = await _deviceService.FindAllAsync(),
+            AvailableStocks = await _stockService.FindAllAsync()
+        };
     }
 
 }

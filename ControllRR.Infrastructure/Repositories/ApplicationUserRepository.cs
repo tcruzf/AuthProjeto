@@ -26,19 +26,19 @@ public class ApplicationUserRepository : IApplicationUserRepository
         // Retorna uma lista de usuarios que tem autorização para se logar no sistema
         var query = @"SELECT *
                   FROM `AspNetRoles`
-                  "; 
+                  ";
         var execution = await _controllRRContext.ApplicationUsers
             .FromSqlRaw(query)
             .AsNoTracking()
             .ToListAsync();
         return execution;
-      
+
     }
 
     //Busca usuario especifico com base no id fornecido
     public async Task<ApplicationUser> FindByIdAsync(int id)
-    {   
-       
+    {
+
         return await _controllRRContext.ApplicationUsers
         .FirstOrDefaultAsync(x => x.OperatorId == id);
 

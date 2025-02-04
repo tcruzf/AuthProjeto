@@ -19,7 +19,7 @@ public class Maintenance
 
     public int? MaintenanceNumber { get; set; }
 
-
+    public ICollection<MaintenanceProduct> MaintenanceProducts { get; set; } = new List<MaintenanceProduct>();
     public Maintenance()
     {
 

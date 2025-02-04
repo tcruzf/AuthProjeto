@@ -1,79 +1,252 @@
 @model ControllRR.Presentation.ViewModels.MaintenanceViewModel;
- @using ControllRR.Domain.Enums
+@using ControllRR.Domain.Enums
 @{
-    ViewData["Title"] = "Alterar  Manutenção";
+    ViewData["Title"] = "Alterar Manutenção";
 }
-   <div class="mt-4">
-         <a asp-action="Index" class="btn btn-primary">Voltar</a>
-    </div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-primary">Voltar</a>
+</div>
+
 <div class="row">
-<div class="col-md-12">
-<br>
-<div class="container">
-<div class="row">
-<div class="col-12">
-<div class="card">
-<div class="card-header text-center bg-dark text-white">
-<div class="row align-items-center">
-<div class="col-md-12">
-<h5>Editar Manutenção:: @Html.DisplayFor(model => model.MaintenanceDto.MaintenanceNumber)</h5>
-</div>
-</div>
-</div>
-<div class="card mt-4">
-<div class="card-header">Data::
-</div>
-<div class="card-body">
-<div class="row">
-<form asp-controller="Maintenances" asp-action="ChangeMaintenance" method="post">
-    <input type="hidden" asp-for="MaintenanceDto.Id">
-    <input type="hidden" asp-for="MaintenanceDto.MaintenanceNumber">
-    <div class="row">
-     <div class="col">
-    <label asp-for="MaintenanceDto.OpenDate"></label>
-    <input asp-for="MaintenanceDto.OpenDate" class="form-control input-sm" readonly />
-    <span asp-validation-for="MaintenanceDto.OpenDate" class="text-danger"></span>
-    </div>
-    <div class="col">
-    <label asp-for="MaintenanceDto.SimpleDesc"></label>
-    <input asp-for="MaintenanceDto.SimpleDesc" class="form-control input-sm" readonly />
-    <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
-    </div>
-    <div class="col">
-    <label asp-for="MaintenanceDto.CloseDate"></label>
-    <input asp-for="MaintenanceDto.CloseDate" class="form-control input-sm" />
-    <span asp-validation-for="MaintenanceDto.CloseDate" class="text-danger"></span>
-    </div> 
-    <div class="col">
+    <div class="col-md-12">
+        <br>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header text-center bg-dark text-white">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <h5>Editar Manutenção:: @Html.DisplayFor(model => model.MaintenanceDto.MaintenanceNumber)</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-header">Data::</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <form asp-controller="Maintenances" asp-action="ChangeMaintenance" method="post">
+                                        <input type="hidden" asp-for="MaintenanceDto.MaintenanceNumber">
+                                        <input type="hidden" asp-for="MaintenanceDto.Id" />
+                                       
+                                        <div class="row">
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.OpenDate"></label>
+                                                <input asp-for="MaintenanceDto.OpenDate" class="form-control input-sm" readonly />
+                                                <span asp-validation-for="MaintenanceDto.OpenDate" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.SimpleDesc"></label>
+                                                <input asp-for="MaintenanceDto.SimpleDesc" class="form-control input-sm" readonly />
+                                                <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.CloseDate"></label>
+                                                <input asp-for="MaintenanceDto.CloseDate" class="form-control input-sm" />
+                                                <span asp-validation-for="MaintenanceDto.CloseDate" class="text-danger"></span>
+                                            </div>
+                                          <div class="col">
    <label asp-for="MaintenanceDto.ApplicationUser" class="control-label"></label>
    <select asp-for="MaintenanceDto.ApplicationUserId" asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name" ))" class="form-control"></select>
     </div>
-     <div class="col">
-    <label asp-for="MaintenanceDto.DeviceId"></label>
-    <input asp-for="MaintenanceDto.DeviceId" class="form-control input-sm"  />
-    <span asp-validation-for="MaintenanceDto.DeviceId" class="text-danger"></span>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.DeviceId"></label>
+                                                <input asp-for="MaintenanceDto.DeviceId" class="form-control input-sm" />
+                                                <span asp-validation-for="MaintenanceDto.DeviceId" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.Status" class="control-label"></label>
+                                                <select asp-for="MaintenanceDto.Status" 
+                                                        class="form-control" 
+                                                        asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <h5>Produtos Utilizados</h5>
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Produto</th>
+                                                        <th>Quantidade</th>
+                                                        <th>Ação</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.MaintenanceDto.MaintenanceProducts != null)
+                                                    {
+                                                        @for (var i = 0; i < Model.MaintenanceDto.MaintenanceProducts.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @(Model.MaintenanceDto.MaintenanceProducts[i].Stock?.ProductName ?? "N/A")
+                                                                    <input type="hidden" 
+                                                                           name="MaintenanceDto.MaintenanceProducts[@i].StockId" 
+                                                                           value="@Model.MaintenanceDto.MaintenanceProducts[i].StockId" />
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" 
+                                                                           name="MaintenanceDto.MaintenanceProducts[@i].QuantityUsed" 
+                                                                           value="@Model.MaintenanceDto.MaintenanceProducts[i].QuantityUsed" 
+                                                                           class="form-control" />
+                                                                </td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-danger" 
+                                                                            onclick="removerProdutoExistente(this)">Remover</button>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="productSearch">Buscar Produto</label>
+                                            <input type="text" id="productSearch" class="form-control" placeholder="Digite para buscar...">
+                                            <div id="productSuggestions" class="list-group"></div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <table class="table" id="productsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Produto</th>
+                                                        <th>Quantidade</th>
+                                                        <th>Ação</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                   
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label asp-for="MaintenanceDto.Description"></label>
+                                            <textarea asp-for="MaintenanceDto.Description" class="form-control" rows="14"></textarea>
+                                            <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <button type="submit" class="btn btn-success">Salvar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="col">
-     <label asp-for="MaintenanceDto.Status" class="control-label"></label>
-    <select asp-for="MaintenanceDto.Status" class="form-control" asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
-    </div>
-   <div class="form-group">
-   <label asp-for="MaintenanceDto.Description"></label>
-    <textarea asp-for="MaintenanceDto.Description" class="form-control" rows="14"></textarea>
-    <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
-  </div>
-    </div>
-    <div class="mt-4">
-    <button type="submit" class="btn btn-success">Salvar</button>
-    </div>
-</form>
 </div>
-</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-   
-   
+    <script>
+        function atualizarIndices() {
+            const tabela = document.querySelector("#productsTable tbody");
+            Array.from(tabela.rows).forEach((row, index) => {
+                const totalExistente = @(Model.MaintenanceDto.MaintenanceProducts?.Count ?? 0);
+                const novoIndex = totalExistente + index;
+                
+                row.querySelector("input[name*='StockId']").name = `MaintenanceDto.MaintenanceProducts[${novoIndex}].StockId`;
+                row.querySelector("input[name*='QuantityUsed']").name = `MaintenanceDto.MaintenanceProducts[${novoIndex}].QuantityUsed`;
+            });
+        }
+
+        function adicionarProduto(produto) {
+            const tabela = document.querySelector("#productsTable tbody");
+            const totalExistente = @(Model.MaintenanceDto.MaintenanceProducts?.Count ?? 0);
+            const index = totalExistente + tabela.rows.length;
+            
+            const novaLinha = tabela.insertRow();
+            novaLinha.innerHTML = `
+                <td>
+                    ${produto.productName}
+                    <input type="hidden" 
+                           name="MaintenanceDto.MaintenanceProducts[${index}].StockId" 
+                           value="${produto.id}" />
+                </td>
+                <td>
+                    <input type="number" 
+                           name="MaintenanceDto.MaintenanceProducts[${index}].QuantityUsed" 
+                           value="1" 
+                           min="1" 
+                           max="${produto.productQuantity}" 
+                           class="form-control" />
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+                </td>
+            `;
+        }
+
+        // Função para remover produtos novos
+        function removerProduto(botao) {
+            const linha = botao.closest("tr");
+            linha.remove();
+            atualizarIndices();
+        }
+
+        // Função para remover produtos existentes
+        function removerProdutoExistente(botao) {
+            const linha = botao.closest("tr");
+            linha.querySelector("input[name*='StockId']").name = "__DELETE__";
+            linha.style.display = "none";
+        }
+
+        // Autocomplete para dispositivos
+        $(document).ready(function () {
+            $("#deviceSearch").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Devices/Search',
+                        type: 'GET',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data.map(device => ({
+                                label: `${device.model} (${device.serialNumber}) - ${device.identifier}`,
+                                value: device.id
+                            })));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $("#deviceSearch").val(ui.item.label);
+                    $("#deviceId").val(ui.item.value);
+                    return false;
+                }
+            });
+        });
+
+        // Busca de produtos
+        document.getElementById("productSearch").addEventListener("input", function () {
+            let query = this.value;
+            if (query.length < 2) return;
+            
+            fetch(`/Stocks/Search?term=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    let suggestions = document.getElementById("productSuggestions");
+                    suggestions.innerHTML = "";
+                    data.forEach(produto => {
+                        let item = document.createElement("div");
+                        item.classList.add("list-group-item", "list-group-item-action");
+                        item.textContent = `${produto.productName} - Qtd: ${produto.productQuantity}`;
+                        item.addEventListener("click", function () {
+                            adicionarProduto(produto);
+                        });
+                        suggestions.appendChild(item);
+                    });
+                })
+                .catch(error => console.error('Erro ao buscar produtos:', error));
+        });
+    </script>
 }
