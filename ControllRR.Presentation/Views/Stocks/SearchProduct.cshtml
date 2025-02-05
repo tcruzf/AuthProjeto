@@ -50,6 +50,7 @@
         </div>
     </div>
 </div>
+
 <div class="container-fluid px-4">
     <h1 class="mt-4"></h1>
     <ol class="breadcrumb mb-4">
@@ -68,7 +69,7 @@
     <div class="col-md-12">
         <br>
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -130,9 +131,10 @@
                                                         <th>Data</th>
                                                         <th>Tipo</th>
                                                         <th>Quantidade</th>
+                                                        <th>Manutenção Relacionada</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                               <tbody id="movementsBody">
                                                     <!--  serão preenchidas via JavaScript -->
                                                 </tbody>
                                             </table>
@@ -203,28 +205,36 @@
                                             }
 
                                             // Novo: Atualizar tabela de movimentações
-                                            function updateMovementsTable(movements) {
-                                                const tbody = $("#movementsTable tbody");
-                                                tbody.empty();
+                                                // Na função updateMovementsTable
+function updateMovementsTable(movements) {
+    const tbody = $("#movementsTable tbody");
+    tbody.empty();
 
-                                                if (movements && movements.length > 0) {
-                                                    movements.forEach(movement => {
-                                                        tbody.append(`
-                            <tr>
-                                <td>${new Date(movement.movementDate).toLocaleDateString()}</td>
-                                <td>${movement.movementType}</td>
-                                <td>${movement.quantity}</td>
-                            </tr>
-                        `);
-                                                    });
-                                                } else {
-                                                    tbody.append(`
-                        <tr>
-                            <td colspan="3">Nenhuma movimentação registrada.</td>
-                        </tr>
-                    `);
-                                                }
-                                            }
+    if (movements && movements.length > 0) {
+        movements.forEach(movement => {
+            const maintenanceLink = movement.maintenanceId ? 
+                `<a href="/Maintenances/Details/${movement.maintenanceId}" class="btn btn-link">
+                    ${movement.maintenanceNumber || 'Ver Manutenção'}
+                 </a>` : 
+                'N/A';
+
+            tbody.append(`
+                <tr>
+                    <td>${new Date(movement.movementDate).toLocaleDateString()}</td>
+                    <td>${movement.movementType}</td>
+                    <td>${movement.quantity}</td>
+                    <td>${maintenanceLink}</td>
+                </tr>
+            `);
+        });
+    } else {
+        tbody.append(`
+            <tr>
+                <td colspan="4">Nenhuma movimentação registrada.</td>
+            </tr>
+        `);
+    }
+}
 
                                             // Submit do formulário via AJAX
                                             $("#movementForm").submit(function (e) {

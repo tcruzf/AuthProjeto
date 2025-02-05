@@ -6,7 +6,7 @@ namespace ControllRR.Application.Dto;
 
 public class StockManagementDto
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
     [DataType(DataType.Date)]
     [Display(Name = "Fechamento")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio!")]
@@ -22,4 +22,6 @@ public class StockManagementDto
     public int Quantity { get; set; }
     //  Não incluir StockId ou StockDto aqui porque se não da merda. BL\Z?kkk
     public string FormattedMovementDate => MovementDate.ToString("dd/MM/yyyy");
+    public int? MaintenanceId { get; set; } // Novo campo
+    public string? MaintenanceNumber { get; set; } // Para exibição
 }

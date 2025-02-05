@@ -25,12 +25,14 @@ public class StocksController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> NewProduct()
     {
 
         return View();
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     public async Task<IActionResult> NewProduct(StockViewModel model)
     {
@@ -61,6 +63,7 @@ public class StocksController : Controller
         }
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> GetProducts()
     {
         var stockProduct = await _stockService.FindAllAsync();
@@ -73,36 +76,38 @@ public class StocksController : Controller
         return View();
     }
 
-   [Authorize(Roles = "Manager, Admin")]
-[HttpGet]
-public async Task<IActionResult> Search(string term)
-{
-    if (string.IsNullOrWhiteSpace(term))
+    [Authorize(Roles = "Manager, Admin")]
+    [HttpGet]
+    public async Task<IActionResult> Search(string term)
     {
-        return Json(new List<object>());
+        if (string.IsNullOrWhiteSpace(term))
+        {
+            return Json(new List<object>());
+        }
+
+        var products = await _stockService.Search(term);
+
+        return Json(products.Select(p => new
+        {
+            id = p.Id,
+            productName = p.ProductName,
+            productDescription = p.ProductDescription,
+            productApplication = p.ProductApplication,
+            productReference = p.ProductReference,
+            productQuantity = p.ProductQuantity,
+            movements = p.Movements.Select(m => new
+            {
+                formattedMovementDate = m.MovementDate.ToString("yyyy-MM-dd"),
+                movementType = m.MovementType == (int)StockMovementType.Entrada ? "Entrada" : "Saída", // Correção aqui
+                quantity = m.Quantity,
+                movementDate = m.MovementDate,
+                maintenanceId = m.MaintenanceId,
+                maintenanceNumber = m.MaintenanceNumber
+            }).ToList()
+        }));
     }
 
-    var products = await _stockService.Search(term);
-    
-    return Json(products.Select(p => new
-    {
-        id = p.Id,
-        productName = p.ProductName,
-        productDescription = p.ProductDescription,
-        productApplication = p.ProductApplication,
-        productReference = p.ProductReference,
-        productQuantity = p.ProductQuantity,
-        movements = p.Movements.Select(m => new
-        {
-            formattedMovementDate = m.MovementDate.ToString("yyyy-MM-dd"),
-            movementType = m.MovementType == (int)StockMovementType.Entrada ? "Entrada" : "Saída", // Correção aqui
-            quantity = m.Quantity,
-            movementDate = m.MovementDate
-        }).ToList()
-    }));
-}
-
-
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet("GetProduct/{id}")]
     public async Task<IActionResult> GetProduct(int id)
     {
@@ -118,7 +123,8 @@ public async Task<IActionResult> Search(string term)
             })
         });
     }
-
+//
+    [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     public async Task<IActionResult> AddMovement(int stockId, StockMovementType type, int quantity, DateTime movementDate)
     {

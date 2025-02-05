@@ -63,6 +63,7 @@ public class DocumentsController : Controller
 
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Error(string message)
     {
         var viewModel = new ErrorViewModel

@@ -25,12 +25,13 @@ public class StockRepository : IStockRepository
     public async Task<List<Stock>> SearchAsync(string term)
     {
         return await _controllRRContext.Stocks
-             .Where(s => s.ProductName.Contains(term) ||
-                        s.ProductDescription.Contains(term) ||
-                        s.ProductReference.Contains(term) ||
-                        s.ProductApplication.Contains(term))
-             .Include(s => s.Movements) // Carrega relacionamento se necessário
-             .ToListAsync();
+         .Where(s => s.ProductName.Contains(term) ||
+                    s.ProductDescription.Contains(term) ||
+                    s.ProductReference.Contains(term) ||
+                    s.ProductApplication.Contains(term))
+         .Include(s => s.Movements)
+             .ThenInclude(m => m.Maintenance) // Carrega a manutenção relacionada
+         .ToListAsync();
     }
 
     public async Task InsertAsync(Stock stock)
@@ -49,7 +50,8 @@ public class StockRepository : IStockRepository
 
     public async Task UpdateAsync(Stock stock)
     {
-        _controllRRContext.Stocks.Update(stock);
-        await _controllRRContext.SaveChangesAsync();
+        //_controllRRContext.Stocks.Update(stock);
+        //await _controllRRContext.SaveChangesAsync();
+        _controllRRContext.Entry(stock).State = EntityState.Modified;
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using ControllRR.Infrastructure.Exceptions;
 using ControllRR.Domain.Interfaces;
 using ControllRR.Domain.Enums;
+using Microsoft.EntityFrameworkCore.Storage;
 
 public class MaintenanceRepository : IMaintenanceRepository
 {
@@ -27,17 +28,35 @@ public class MaintenanceRepository : IMaintenanceRepository
         .ToListAsync();
     }
 
-    public async Task<Maintenance?> FindByIdAsync(int id)// Infelizmente, por obra do destino tive que marcar como Nullable essa parada
+    public async Task<Maintenance?> FindByIdAsync(
+      int id,
+      bool includeProducts = true,
+      bool includeDevice = true,
+      bool includeUser = true)
     {
-        return await _controllRRContext.Maintenances
-            .Include(x => x.MaintenanceProducts)
-            .ThenInclude(xp => xp.Stock)
-            .Include(x => x.ApplicationUser)
-            .Include(x => x.Device)
-            .Include(x => x.Device.Sector)
-            .FirstOrDefaultAsync(x => x.Id == id);
-    }
+        var query = _controllRRContext.Maintenances.AsQueryable();
 
+        if (includeProducts)
+        {
+            query = query
+                .Include(x => x.MaintenanceProducts)
+                    .ThenInclude(xp => xp.Stock);
+        }
+
+        if (includeDevice)
+        {
+            query = query
+                .Include(x => x.Device)
+                    .ThenInclude(d => d.Sector);
+        }
+
+        if (includeUser)
+        {
+            query = query.Include(x => x.ApplicationUser);
+        }
+
+        return await query.FirstOrDefaultAsync(x => x.Id == id);
+    }
     public async Task InsertAsync(Maintenance maintenance)
     {
         if (maintenance.MaintenanceProducts == null || !maintenance.MaintenanceProducts.Any())
@@ -203,8 +222,15 @@ public class MaintenanceRepository : IMaintenanceRepository
         return (data, totalRecords, filteredCount);
     }
 
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        return await _controllRRContext.Database.BeginTransactionAsync();
+    }
 
-
+    public async Task<bool> ExistsAsync(int id)
+    {
+        return await _controllRRContext.Maintenances.AnyAsync(x => x.Id == id);
+    }
     public async Task SaveChangesAsync()
     {
         await _controllRRContext.SaveChangesAsync();

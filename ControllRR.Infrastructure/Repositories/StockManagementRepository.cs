@@ -24,6 +24,8 @@ public class StockManagementRepository : IStockManagementRepository
     public async Task<List<StockManagement>> FindAllAsync()
     {
         var stockProductInfo = await _controllRRContext.StockManagements
+        .Include(sm => sm.Maintenance)
+        .Include(sm => sm.Stock)
         .ToListAsync();
         return stockProductInfo;
     }

@@ -59,6 +59,11 @@ public partial class ControllRRContext : IdentityDbContext<ApplicationUser>
             .HasOne(sl => sl.Login)
             .WithMany(l => l.ServerLogins)
             .HasForeignKey(sl => sl.LoginId);
+        modelBuilder.Entity<StockManagement>()
+            .HasOne(sm => sm.Maintenance)
+            .WithMany()
+            .HasForeignKey(sm => sm.MaintenanceId)
+            .IsRequired(false); // Configura como relacionamento opcional
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

@@ -22,13 +22,8 @@
 </head>
 <body>
      <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Salvar OS</button>
-        <button type="button" class="btn btn-danger">Arquivar/Deletar</button>
-        <button type="button" class="btn btn-info">Editar OS</button>
-        <button type="button" class="btn btn-success">Nova OS</button>
-        <a class="btn btn-warning" href="#" role="button">Lista de OS</a>
         <a class="btn btn-default" href="#" role="button">Finalizar OS</a>
-        <input class="btn btn-default" type="button" onclick="printDiv('printArea')" value="Imprimir">
+        <input class="btn btn-warning" type="button" onclick="printDiv('printArea')" value="Imprimir">
     </div>
     <div class="modal-body">
         <div class="panel-heading text-center">
@@ -39,9 +34,9 @@
                 <fieldset>
                     <h4><strong>SOLICITAÇÃO DE SERVIÇO INTERNO- Nº : @Html.DisplayFor(model => model.MaintenanceNumber)</strong></h4>
                     <h4><strong>Status de Atendimento: @Html.DisplayFor(model => model.Status)</strong></h4>
-                    <h6><strong>Tec: @Html.DisplayFor(model => model.User.Name) </strong></h6>
-                    <h6><strong>Telefone: @Html.DisplayFor(model => model.User.Phone) </strong></h6>
-                    <h6><strong>Matricula: @Html.DisplayFor(model => model.User.Register) </strong></h6>
+                    <h6><strong>Tec: @Html.DisplayFor(model => model.ApplicationUser.Name) </strong></h6>
+                    <h6><strong>Telefone: @Html.DisplayFor(model => model.ApplicationUser.Phone) </strong></h6>
+                    <h6><strong>Matricula: @Html.DisplayFor(model => model.ApplicationUser.Register) </strong></h6>
                    <hr>
                     <div class="line-one"></div>
                     <strong>Informações Gerais do Solicitante:</strong>
@@ -81,6 +76,37 @@
                     <p><strong>Parecer Tecnico:</strong> </p>
                     <td style='width:20%'><textarea rows="3"  style='width:100%' name="observacao" id="observacao"></textarea></td>
                      <div class="line-one"></div>
+                     <p>
+                         <div class="mb-4">
+                <strong>Peças/Produtos utillizados :</strong>
+                @if (Model.MaintenanceProducts != null && Model.MaintenanceProducts.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Item Usado</th>
+                                    <th>Quantidade Usada</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.MaintenanceProducts)
+                                {
+                                    <tr>
+                                        <td>@item.Stock?.ProductName ----------------------> </td>
+                                        <td>@item.QuantityUsed</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Nenhum produto associado a esta manutenção.</p>
+                }
+            </div>
+                     </p>
                     <p>
                         <strong>Data de abertura:</strong>@Html.DisplayFor(model => model.OpenDate)
                         - <strong>Hora Início:</strong> [____:___]
@@ -98,6 +124,7 @@
                     </p>
                     <p><strong>Data de Registro:</strong> [Data de Registro]</p>
                     <p><strong>OBS:</strong> [Observação]</p>
+                    <hr>
                 </fieldset>
             </div>
         </div>

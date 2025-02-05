@@ -54,3 +54,24 @@ button.accept-policy {
 .updated-row {
   animation: highlightUpdate 1.5s;
 }
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Ajusta campos de formulário para usar espaço horizontal */
+.form-control {
+  width: 100%;
+}
+
+/* Tabelas ocupam 100% do espaço */
+.table {
+  width: 100%;
+  table-layout: auto;
+}
+
+/* Textarea ocupa altura máxima */
+textarea.form-control {
+  min-height: 300px;
+  resize: vertical;
+}

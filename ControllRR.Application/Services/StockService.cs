@@ -43,7 +43,9 @@ public class StockService : IStockService
             stock.Id,
         StockMovementType.Entrada,
         stockDto.ProductQuantity,
-        DateTime.Now
+        DateTime.Now,
+        null
+         // Aqui deve ser esse valor?
         );
 
         return _mapper.Map<StockDto>(stock);
