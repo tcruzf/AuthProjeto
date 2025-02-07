@@ -15,21 +15,42 @@ public class SeedingService
         using (var _context = new ControllRRContext(
             serviceProvider.GetRequiredService<DbContextOptions<ControllRRContext>>()))
         {
+           ///<summary>
+           ///      Checa se existem dados na base, usa especificamente o context para testar se alguma das
+           ///      checagens retorna TRUE. Caso sim, não será feito o seed de dados.
+           ///      Mesmo que uma tabela apenas tenha dados, as demais estão condicionadas ao teste individual daquela primeira.
+           ///      Para fins de testes com o seed, recomendo que exclua a database(USE com CAUTELA) e em seguida rode o update
+           ///      
+           ///     Deleta o banco que possue informações:  /usr/bin/dotnet ef database drop --project ControllRR.Infrastructure
+           ///     
+           ///     Caso não haja migrations, recomendo que execute: 
+           ///                  /usr/bin/dotnet ef migrations add InitialMigrations --project ControllRR.Infrastructure --output-dir Data/Migrations
+           ///      
+           ///                  
+           ///     Recria o banco de dados com as informações abaixo: /usr/bin/dotnet ef database update --project ControllRR.Infrastructure
+           /// 
+           /// 
+           ///</sumary>
+       
             if (_context.Users.Any() ||
              _context.Devices.Any() ||
              _context.Sectors.Any() ||
              _context.Maintenances.Any())
             {
+                // Caso alguma das condições acima retorne true, então nada será feito!
                 return;
             }
-            Sector s1 = new Sector(1, "Setor 1", "Loc Setor 1", "Av Santos Dumont", "S/N", "Centro", "Janauba", "34201147", "Carlos Rafael");
-            Sector s2 = new Sector(2, "Setor 2", "Loc Setor 2", "rua F ", "60", "Santana II", "Ouro Preto", "34201147", "Fernanda");
-            Sector s3 = new Sector(3, "Setor 3", "Loc Setor 3", "rua gomes e santos ", "65", "Ouro branco", "Mariana", "34201147", "Maria");
-            Sector s4 = new Sector(4, "Setor 4", "Loc Setor 4", "Rua pedro pereira", "650", "Centro", "São José", "34201147", "JOão pedro");
-            Sector s5 = new Sector(5, "Setor 5", "Loc Setor 5", "Santos dias ", "600", "Ceramica", "Janauba", "34201147", "Maria");
-            Sector s6 = new Sector(6, "Setor 6", "Loc Setor 6", "Avenida dos Anjos ", "12", "Alphaville", "Santos", "34201147", "Maria");
-            Sector s7 = new Sector(7, "Setor 7", "Loc Setor 7", "rua das acacias ", "65", " Centro", "Santos", "34201147", "Maria");
+            // Popula a tabela de setores com dados ficticios.
+            Sector s1 = new Sector(1, "Portaria", "SEDE", "Av Santos Dumont", "S/N", "Centro", "Janauba", "34201147", "Carlos Rafael");
+            Sector s2 = new Sector(2, "Administrativo", "SEDE", "rua F ", "60", "Santana II", "Ouro Preto", "34201147", "Fernanda");
+            Sector s3 = new Sector(3, "Gerencia", "SEDE", "rua gomes e santos ", "65", "Ouro branco", "Mariana", "34201147", "Maria");
+            Sector s4 = new Sector(4, "Contabil", "Filial 1", "Rua pedro pereira", "650", "Centro", "São José", "34201147", "JOão pedro");
+            Sector s5 = new Sector(5, "Marketing", "Filial 5", "Santos dias ", "600", "Ceramica", "Janauba", "34201147", "Maria");
+            Sector s6 = new Sector(6, "TI", "SEDE", "Avenida dos Anjos ", "12", "Alphaville", "Santos", "34201147", "Maria");
+            Sector s7 = new Sector(7, "Recursos", "SEDE", "rua das acacias ", "65", " Centro", "Santos", "34201147", "Maria");
 
+            // Popula a tabela de dispositivos com dados ficticios
+            // Os dados de dispositivos sempre virão após os setores
             Device dv1 = new Device(1, "PC Dell Conv.", "1574", "HP6325", s1, "301441", "Pc usado como servidor - alterar para um servidor dell depois");
             Device dv2 = new Device(2, "PC Servidor", "151321", "hs433", s2, "3012541", "Maquina de João");
             Device dv3 = new Device(3, "PC Servidor", "15151", "47Yh21", s3, "1244414", "maquina do setor de TI");
@@ -39,21 +60,29 @@ public class SeedingService
             Device dv7 = new Device(7, "PC Servidor", "15223", "191874", s7, "MY567", "Maquina emprestada ao setor de ...");
             Device dv8 = new Device(8, "PC Positivo", "15521", "ST00214", s1, "985GTR", "maquina nova que veio com defeito");
 
-            ApplicationUser usr1 = new ApplicationUser(1, "Thiago Ferc", "38998235679", 17155, "Member");
-            ApplicationUser usr2 = new ApplicationUser(2, "Gabriel Fernandes", "38999885544", 14111, "Member");
-            ApplicationUser usr3 = new ApplicationUser(3, "Fernanda Vieira", "38555544141", 15412, "Member");
+            // Popula a tabela de Usuarios do sistema com dados ficticios
+            // Para melhor clareza e menos problemas, os dados podem e devem ser limitados eliminando as linhas abaixo.
+            // As manutenções no bloco após os usuarios tem dependencias para os usuarios, então, os dados devem ser corrigidos antes de executar
+            // o programa.
+            ApplicationUser usr1 = new ApplicationUser(1, "Bruno Antonio", "99998235679", 14541, "Member");
+            ApplicationUser usr2 = new ApplicationUser(2, "Junior Fernandes", "99999885544", 14111, "Member");
+            ApplicationUser usr3 = new ApplicationUser(3, "Marcos Vieira", "99555544141", 15412, "Member");
             ApplicationUser usr4 = new ApplicationUser(4, "Maria Aparecida", "996633254", 18190, "Member");
-            ApplicationUser usr5 = new ApplicationUser(5, "Bruno Henrique", "38941253698", 19820, "Member");
-            ApplicationUser usr6 = new ApplicationUser(6, "Pedro Carlos ", "38998235779", 13145, "Member");
-            ApplicationUser usr7 = new ApplicationUser(7, "Pedro Antonio", "38998236579", 1828, "Member");
-            ApplicationUser usr8 = new ApplicationUser(8, "Joao Paulo Silva", "38998235680", 1929, "Member");
+            ApplicationUser usr5 = new ApplicationUser(5, "Bruno Henrique", "99941253698", 19820, "Member");
+            ApplicationUser usr6 = new ApplicationUser(6, "Pedro Carlos ", "9998235779", 13145, "Member");
+            ApplicationUser usr7 = new ApplicationUser(7, "Pedro Antonio", "99998236579", 1828, "Member");
+            ApplicationUser usr8 = new ApplicationUser(8, "Joao Paulo Silva", "99998235680", 1929, "Member");
 
+            // Manutenções tem dependencias dos usuarios
+            // Para popular com dados ficticios os usuarios devem ser informados
             Maintenance m1 = new Maintenance(1, "PC com problemas para ligar", "Erro bios", new DateTime(2024, 09, 25), new DateTime(2024, 09, 30), MaintenanceStatus.Pendente, usr1, dv1, 1443);
             Maintenance m2 = new Maintenance(2, "Não liga", "asdfasdf", new DateTime(2024, 09, 22), new DateTime(2024, 09, 28), Domain.Enums.MaintenanceStatus.Finalizada, usr2, dv2, 7474);
             Maintenance m3 = new Maintenance(3, "PC molhou", "PC molhou", new DateTime(2024, 09, 10), new DateTime(2024, 09, 15), MaintenanceStatus.Finalizada, usr3, dv3, 412);
             Maintenance m4 = new Maintenance(4, "PC pegou fogo após o coler parar de girar", "Pegou Fogo", new DateTime(2024, 09, 18), new DateTime(2024, 09, 28), MaintenanceStatus.Pendente, usr4, dv4, 1233);
             Maintenance m5 = new Maintenance(5, "Formatar", "Format", new DateTime(2024, 10, 18), new DateTime(2024, 10, 28), MaintenanceStatus.Aguardando, usr1, dv5, 11298);
 
+            // Cria alguns itens de testes. Todos devem ser removidos, assim como as suas movimentações logo abaixo do bloco de itens 
+            // do estoque.
             Stock st1 = new Stock(1, "Fonte Atx 500w", "Fonte para computador - Tipo: ATX", 30, "Desktop padrão ATX", "PC convencional");
             Stock st2 = new Stock(2, "Product_2", "Description for Product_2", 664, "General Application", "REF-2");
             Stock st3 = new Stock(3, "Product_3", "Description for Product_3", 743, "General Application", "REF-3");

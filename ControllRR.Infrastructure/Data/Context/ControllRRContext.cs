@@ -1,3 +1,13 @@
+///<summary>
+///
+///     Classe de configuração de banco de dados
+///     Toda configuração explicita dos dados devem ser declarados aqui.
+///     Relacionamentos,
+///     Entidades que serão mapeadas
+///     Relacionamentos personalizados
+///  
+///</sumary>
+
 using System;
 using Microsoft.EntityFrameworkCore;
 using ControllRR.Domain.Entities;

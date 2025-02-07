@@ -92,7 +92,8 @@ public class SectorsController : Controller
     public async Task<IActionResult> SectorEdit(int? id, SectorDto sectorDto)
     {
         if (!ModelState.IsValid)
-        {   TempData["ErrorMessage"] = "Setor não pode ser alterado";
+        {
+            TempData["ErrorMessage"] = "Setor não pode ser alterado";
             var sectorView = await _sectorService.FindByIdAsync(id.Value);
             return View(sectorView);
         }
@@ -101,14 +102,14 @@ public class SectorsController : Controller
             await _sectorService.UpdateAsync(sectorDto);
             TempData["SuccessMessage"] = "Setor alterado com sucesso.";
             return RedirectToAction(nameof(GetAll));
-            
+
         }
-        catch(ApplicationException e)
+        catch (ApplicationException e)
         {
             return RedirectToAction(nameof(Error), new { message = e.Message });
         }
-        
-        
+
+
 
     }
 

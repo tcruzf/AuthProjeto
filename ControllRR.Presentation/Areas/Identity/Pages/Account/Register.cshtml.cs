@@ -25,7 +25,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 {
-    [Authorize(Roles = "Admin")] // Adicione esta linha
+    [Authorize(Roles = "Admin")]
 
     public class RegisterModel : PageModel
     {

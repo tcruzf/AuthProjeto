@@ -20,7 +20,7 @@ namespace ControllRR.Presentation.Controllers;
 public class UsersController : Controller
 {
     private readonly IUserService _userService;
- 
+
 
     public UsersController(IUserService userService)
     {
@@ -61,7 +61,7 @@ public class UsersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateNewUser(ApplicationUserDto userDto)
     {
-        
+
         /*
         //_userManager.CreateAsync(userDto);
         if (!ModelState.IsValid)
