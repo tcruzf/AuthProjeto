@@ -57,6 +57,7 @@ public class MaintenanceRepository : IMaintenanceRepository
 
         return await query.FirstOrDefaultAsync(x => x.Id == id);
     }
+    
     public async Task InsertAsync(Maintenance maintenance)
     {
         if (maintenance.MaintenanceProducts == null || !maintenance.MaintenanceProducts.Any())
@@ -121,7 +122,8 @@ public class MaintenanceRepository : IMaintenanceRepository
         // Remove produtos excluídos
         foreach (var existingProduct in existingMaintenance.MaintenanceProducts.ToList())
         {
-            if (!maintenance.MaintenanceProducts.Any(p => p.StockId == existingProduct.StockId))
+            if (!maintenance.MaintenanceProducts.Any(p => p.StockId == existingProduct.StockId)
+                || existingProduct.QuantityUsed <=0 )
             {
                 _controllRRContext.MaintenanceProduct.Remove(existingProduct);
             }

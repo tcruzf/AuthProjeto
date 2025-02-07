@@ -34,10 +34,10 @@ public class StockManagementService : IStockManagementService
         {
             var stock = await _stockRepository.GetByIdAsync(stockId);
 
-            if (type == StockMovementType.Entrada)
-                stock.ProductQuantity += quantity;
+            if (type == StockMovementType.Entrada) // Caso o tipo de movimentaçaõ do produto for entrada, então
+                stock.ProductQuantity += quantity; // adiciona-se o valor de entrada ao valor atual(estoque)
             else
-                stock.ProductQuantity -= quantity;
+                stock.ProductQuantity -= quantity; // Caso seja uma movimentação de saida, decresce o valor movimentado.
 
             await _stockRepository.UpdateAsync(stock);
         }

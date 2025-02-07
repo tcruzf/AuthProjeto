@@ -146,14 +146,17 @@
     <script>
         function atualizarIndices() {
             const tabela = document.querySelector("#productsTable tbody");
-            Array.from(tabela.rows).forEach((row, index) => {
+            // Filtra apenas as linhas visíveis (não removidas)
+            const linhasVisiveis = Array.from(tabela.rows).filter(row => row.style.display !== 'none');
+            
+            linhasVisiveis.forEach((row, index) => {
                 const totalExistente = @(Model.MaintenanceDto.MaintenanceProducts?.Count ?? 0);
                 const novoIndex = totalExistente + index;
                 
                 row.querySelector("input[name*='StockId']").name = `MaintenanceDto.MaintenanceProducts[${novoIndex}].StockId`;
                 row.querySelector("input[name*='QuantityUsed']").name = `MaintenanceDto.MaintenanceProducts[${novoIndex}].QuantityUsed`;
-            });
-        }
+                });
+             }
 
         function adicionarProduto(produto) {
             const tabela = document.querySelector("#productsTable tbody");
@@ -192,7 +195,10 @@
         // Função para remover produtos existentes
         function removerProdutoExistente(botao) {
             const linha = botao.closest("tr");
-            linha.querySelector("input[name*='StockId']").name = "__DELETE__";
+            //linha.querySelector("input[name*='StockId']").name = "__DELETE__";
+            linha.querySelectorAll("input").forEach(input => {
+                input.name = "__DELETE__"; 
+           });
             linha.style.display = "none";
         }
 

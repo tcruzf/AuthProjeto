@@ -127,6 +127,9 @@ public class MaintenanceService : IMaintenanceService
 
     private async Task UpdateStockQuantity(MaintenanceProduct original, MaintenanceProduct updated, int maintenanceId)
     {
+        if(updated.QuantityUsed < 0 )
+            throw new Exception("Quantidade não pode ser negativa!");
+            
         var quantityDifference = updated.QuantityUsed - original.QuantityUsed;
 
         if (quantityDifference != 0)

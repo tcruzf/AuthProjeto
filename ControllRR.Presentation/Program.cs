@@ -12,19 +12,46 @@ using MySql.EntityFrameworkCore.Extensions;
 using Microsoft.AspNetCore.Identity;
 using ControllRR.Domain.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.HttpOverrides;
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                              ForwardedHeaders.XForwardedProto |
+                              ForwardedHeaders.XForwardedHost;
+
+    // Limpar redes/proxies conhecidos para aceitar de qualquer origem
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.HttpsPort = 449;
+});
+
 builder.Services.AddControllers()
-    .AddJsonOptions(options => 
+    .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
+/*   
 // Adicionar o DbContext com MySQL
 builder.Services.AddEntityFrameworkMySQL()
-    .AddDbContext<ControllRRContext>(options =>
-    {
-        options.UseMySQL(builder.Configuration.GetConnectionString("ControlContext"));
-    });
+   .AddDbContext<ControllRRContext>(options =>
+   {
+       options.UseMySQL(builder.Configuration.GetConnectionString("ControlContext"));
+   });
+*/
+builder.Services.AddDbContext<ControllRRContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("ControlContext");
+    var serverVersion = ServerVersion.AutoDetect(connectionString);
 
+    options.UseMySql(connectionString, serverVersion)
+        .EnableSensitiveDataLogging() // Opcional para desenvolvimento
+        .EnableDetailedErrors();      // Opcional para desenvolvimento
+});
 // Configurar o Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ControllRRContext>()
@@ -83,12 +110,21 @@ builder.Services.AddScoped<IStockManagementRepository, StockManagementRepository
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
+app.UseForwardedHeaders();// alteração
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    SeedingService.Initialize(services);
-    SeedUser.InitializeAsync(services);
+    try
+    {
+        SeedingService.Initialize(services);
+        await AdminSeed.InitializeAsync(services);
+        SeedUser.InitializeAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Erro ao executar seeds");
+    }
 
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var roles = new[] { "Admin", "Manager", "Member" };
@@ -103,7 +139,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-var configuration = new MapperConfiguration(cfg => 
+var configuration = new MapperConfiguration(cfg =>
     cfg.AddProfile<StockMappingProfile>());
 configuration.AssertConfigurationIsValid(); // Vai lançar exceção se houver erros
 

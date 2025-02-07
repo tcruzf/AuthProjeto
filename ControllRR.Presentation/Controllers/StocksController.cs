@@ -98,8 +98,8 @@ public class StocksController : Controller
             movements = p.Movements.Select(m => new
             {
                 formattedMovementDate = m.MovementDate.ToString("yyyy-MM-dd"),
-                movementType = m.MovementType == (int)StockMovementType.Entrada ? "Entrada" : "Saída", // Correção aqui
-                quantity = m.Quantity,
+                movementType = m.MovementType == (int)StockMovementType.Entrada ? "Entrada" : "Saída", // Retorna tipo de movimentaçaão a ser exibida na pagina de 
+                quantity = m.Quantity,                                                                 // de produtos 
                 movementDate = m.MovementDate,
                 maintenanceId = m.MaintenanceId,
                 maintenanceNumber = m.MaintenanceNumber

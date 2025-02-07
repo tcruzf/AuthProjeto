@@ -75,7 +75,7 @@ public class MaintenancesController : Controller
                 Phone = u.Phone,
                 Register = u.Register
             })
-            .ToList() ?? new List<ApplicationUserDto>(); 
+            .ToList() ?? new List<ApplicationUserDto>();
 
         // Busca dispositivos e mapeia para DTO
         var devices = await _deviceService.FindAllAsync();
@@ -90,7 +90,7 @@ public class MaintenancesController : Controller
                 DeviceDescription = d.DeviceDescription,
                 SectorId = d.SectorId
             })
-            .ToList() ?? new List<DeviceDto>(); 
+            .ToList() ?? new List<DeviceDto>();
 
         var viewModel = new MaintenanceViewModel
         {
@@ -164,14 +164,14 @@ public class MaintenancesController : Controller
         var maintenance = await _maintenanceService.FindByIdAsync(id.Value);
         var device = await _deviceService.FindByIdAsync(maintenance.Device.Id);
         var users = await _userService.FindAllAsync();
-        
-       
+
+
         MaintenanceViewModel viewModel = new MaintenanceViewModel
-         { 
-          ApplicationUserDto = users,
-          MaintenanceDto = maintenance
-          
-           };
+        {
+            ApplicationUserDto = users,
+            MaintenanceDto = maintenance
+
+        };
         return View(viewModel);
     }
 
@@ -180,48 +180,21 @@ public class MaintenancesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangeMaintenance(int? id, MaintenanceDto maintenanceDto)
     {
-        System.Console.WriteLine($"Id: {maintenanceDto.Id}");
-            System.Console.WriteLine($"MaintenanceNumber: {maintenanceDto.MaintenanceNumber}");
-            System.Console.WriteLine($"OpenDate: {maintenanceDto.OpenDate}");
-            System.Console.WriteLine($"SimpleDesc: {maintenanceDto.SimpleDesc}");
-            System.Console.WriteLine($"CloseDate: {maintenanceDto.CloseDate}");
-            System.Console.WriteLine($"ApplicationUserId: {maintenanceDto.ApplicationUserId}");
-            System.Console.WriteLine($"DeviceId: {maintenanceDto.DeviceId}");
-            System.Console.WriteLine($"Status: {maintenanceDto.Status}");
-            System.Console.WriteLine($"Description: {maintenanceDto.Description}");
 
-            // Produtos
-            if (maintenanceDto.MaintenanceProducts != null)
-            {
-                System.Console.WriteLine("MaintenanceProducts:");
-                foreach (var product in maintenanceDto.MaintenanceProducts)
-                {
-                    System.Console.WriteLine($"  StockId: {product.StockId}, QuantityUsed: {product.QuantityUsed}");
-                }
-            }
-            else
-            {
-                System.Console.WriteLine("MaintenanceProducts: null");
-            }
-
-            // Valores que aparecem no form mas não estão sendo capturados
-            System.Console.WriteLine("Hidden/Implicit Values:");
-            System.Console.WriteLine($"Device (object): {maintenanceDto.Device}");
-            System.Console.WriteLine($"ApplicationUser (object): {maintenanceDto.ApplicationUser}");
-            
-        if(!ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
             var users = await _userService.FindAllAsync();
             var applicationUserDtos = _userService.FindAllAsync();
             var devices = _deviceService.FindAllAsync();
 
-            MaintenanceViewModel viewModel = new MaintenanceViewModel {
+            MaintenanceViewModel viewModel = new MaintenanceViewModel
+            {
                 ApplicationUserDto = users,
                 MaintenanceDto = maintenanceDto
-                
+
             };
         }
-                
+
         try
         {
             await _maintenanceService.UpdateAsync(maintenanceDto);
@@ -261,8 +234,9 @@ public class MaintenancesController : Controller
             {
                 return RedirectToAction(nameof(Error), new { message = "Manuteção não encontrada! Impossivel Finalizar uma manutenção inexistente!" });
             }
+            TempData["SuccessMessage"] = "Manutenção finalizada com sucesso!";
             await _maintenanceService.FinalizeAsync(id);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MaintenanceList));
 
         }
         catch (ApplicationException e)

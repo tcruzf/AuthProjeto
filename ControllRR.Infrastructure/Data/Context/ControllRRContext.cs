@@ -40,7 +40,7 @@ public partial class ControllRRContext : IdentityDbContext<ApplicationUser>
             optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=mypass;database=NEWGEN",
                  new MySqlServerVersion(new Version(8, 0, 32)));
 
-        }
+        } 
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
