@@ -254,20 +254,19 @@ function updateMovementsTable(movements) {
                                                     success: async function (response) {
                                                         if (response.success) {
                                                             $("#movementModal").modal("hide");
-
                                                             // Atualiza os dados sem recarregar a página
                                                             if (currentSearchTerm) {
                                                                 // Força nova busca com o termo atual
                                                                 $("#productSearch").autocomplete("search", currentSearchTerm);
-
-                                                                // Atualiza os campos específicos após 500ms (tempo para a busca completar)
+                                                                
+                                                                // Atualiza os campos específicos após 3000ms (tempo para a busca completar)
                                                                 setTimeout(async () => {
                                                                     const updatedProduct = await getUpdatedProduct(currentStockId);
                                                                     if (updatedProduct) {
                                                                         $("#StockDto_ProductQuantity").val(updatedProduct.productQuantity);
                                                                         updateMovementsTable(updatedProduct.movements);
                                                                     }
-                                                                }, 500);
+                                                                }, 3000);
                                                             }
                                                         } else {
                                                             alert("Erro: " + response.message);
@@ -291,11 +290,22 @@ function updateMovementsTable(movements) {
                                         function prepareMovementModal() {
                                             const stockId = $("#productId").val();
                                             if (!stockId) {
-                                                alert("Selecione um produto primeiro!");
-                                                $("#movementModal").modal("hide");
+                                                    Product_Error();
+                                                     $("#movementModal").modal("hide");
                                                 return;
                                             }
                                             $("#StockId").val(stockId);
-                                        }
+                                         }
+                                       
+                                           function Product_Error(){
+                                                  Swal.fire({
+                                                    icon: "error",
+                                                    title: "Oi! Você está se apressando...",
+                                                    text: "Você não selecionou Nenhum produto para movimentar!",
+                                                    footer: '<a href="../Help/Documentation/Movements">Como realizar uma movimentação?</a>'
+                                                    });
+                                                   
+                                            }
+                                       
                                     </script>
                                 }

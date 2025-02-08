@@ -123,11 +123,24 @@ public class StocksController : Controller
             })
         });
     }
+
+    [Authorize(Roles = "Admin, Manager")]
+    [HttpGet("Help/Documentation/Movements")]
+    public async Task<IActionResult> Documentation()
+    {
+        var temp = "Temp temp";
+        return Json(temp
+            
+        );
+    }
+
 //
     [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     public async Task<IActionResult> AddMovement(int stockId, StockMovementType type, int quantity, DateTime movementDate)
     {
+        if(stockId == null)
+            return Content("<script type='text/javascript'>alert('Erro ao Cadastrar Plano: Rx005');</script>");
         System.Console.WriteLine(type.ToString());
         try
         {
