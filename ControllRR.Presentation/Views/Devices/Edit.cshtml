@@ -1,0 +1,106 @@
+@model ControllRR.Presentation.ViewModels.DeviceViewModel;
+
+ @using ControllRR.Domain.Enums
+@{
+    ViewData["Title"] = "Editar dispositivo";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/Devices">Dispositivos</a></li>
+          <li class="breadcrumb-item active">Alterar</li>
+    </ol>
+</div>
+<div class="row">
+<div class="col-md-12">
+<br>
+<div class="container">
+<div class="row">
+<div class="col-12">
+<div class="card">
+<div class="card-header text-center bg-dark text-white">
+<div class="row align-items-center">
+<div class="col-md-12">
+<h5>:: Alterar  Dispositivo ::</h5>
+    using ControllRR.Application.Dto;
+    using ControllRR.Application.Dto;
+</div>
+</div>
+</div>
+<div class="card mt-4">
+<div class="card-header">Data::
+</div>
+<div class="card-body">
+<div class="row">
+<form asp-controller="Devices" asp-action="Edit" method="post">
+    <input type="hidden" asp-for="DeviceDto.Id">
+    <div class="row">
+    
+     <div class="col">
+    <label asp-for="DeviceDto.Type"></label>
+    <input asp-for="DeviceDto.Type" class="form-control input-sm" />
+    <span asp-validation-for="DeviceDto.Type" class="text-danger"></span>
+    </div>
+    <div class="col">
+    <label asp-for="DeviceDto.Identifier"></label>
+    <input asp-for="DeviceDto.Identifier" class="form-control input-sm" />
+    <span asp-validation-for="DeviceDto.Identifier" class="text-danger"></span>
+    </div> 
+     <div class="col">
+    <label asp-for="DeviceDto.Model"></label>
+    <input asp-for="DeviceDto.Model" class="form-control input-sm" />
+    <span asp-validation-for="DeviceDto.Model" class="text-danger"></span>
+    </div> 
+     <div class="col">
+    <label asp-for="DeviceDto.SerialNumber"></label>
+    <input asp-for="DeviceDto.SerialNumber" class="form-control input-sm" />
+    <span asp-validation-for="DeviceDto.SerialNumber" class="text-danger"></span>
+    </div> 
+    
+    <div class="col">
+   <label asp-for="DeviceDto.Sector" class="control-label"></label>
+   <select asp-for="DeviceDto.SectorId" asp-items="@(new SelectList(Model.Sector, "Id", "Name" ))" class="form-control"></select>
+    </div>
+     
+   <div class="form-group">
+   <label asp-for="DeviceDto.DeviceDescription"></label>
+    <textarea asp-for="DeviceDto.DeviceDescription" class="form-control" id="MaintenanceDescription" rows="7"></textarea>
+    <span asp-validation-for="DeviceDto.DeviceDescription" class="text-danger"></span>
+  </div>
+    </div>
+    <div class="mt-4">
+    <button type="submit" class="btn btn-success">Salvar</button>
+    </div>
+</form>
+</div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+
+   
+   <script type="text/javascript">
+$(document).ready(function () {
+$("#Seller_DepartmentId").change(function () {
+var f = $("form");
+f.submit(function () {
+var productData = f.serialize();
+$.post(f.attr("action"), Seller_Department, function (result, status) {
+if (result !== null) {
+$("#Seller_Department").text(result.Seller_Department);
+}
+else {
+alert('Invalid ID');
+}
+});
+});
+});
+});
+
+
+</script>
+
+   
+}
