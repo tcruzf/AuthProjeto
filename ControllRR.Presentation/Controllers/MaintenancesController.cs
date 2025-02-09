@@ -198,6 +198,7 @@ public class MaintenancesController : Controller
         try
         {
             await _maintenanceService.UpdateAsync(maintenanceDto);
+            await _maintenanceService.SaveAsync();
             TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
             return RedirectToAction(nameof(MaintenanceList));
         }

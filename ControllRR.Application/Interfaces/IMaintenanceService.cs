@@ -15,4 +15,6 @@ public interface IMaintenanceService
     string searchValue,
     string sortColumn,
     string sortDirection);
+
+   Task SaveAsync();
 }

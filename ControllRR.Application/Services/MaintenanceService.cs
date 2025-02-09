@@ -210,4 +210,9 @@ public class MaintenanceService : IMaintenanceService
             data
         };
     }
+
+    public async Task SaveAsync()
+    {
+        await _maintenanceRepository.SaveChangesAsync();
+    }
 }
