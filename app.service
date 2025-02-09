@@ -1,0 +1,23 @@
+# touch /etc/systemd/system/controllrr.service
+# Paste next lines in controllrr.service
+# systemctl daemon-reload
+# systemctl enable controllrr
+# systemctl start controllrr
+# systemctl reload nginx.service
+[Unit]
+Description=ControllRR Application
+After=network.target mysql.service
+
+[Service]
+WorkingDirectory=/var/www/public_html/app
+ExecStart=/usr/bin/dotnet /var/www/public_html/app/ControllRR.Presentation.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=controllrr
+User=root
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target
