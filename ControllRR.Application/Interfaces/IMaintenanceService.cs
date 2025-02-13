@@ -6,7 +6,7 @@ public interface IMaintenanceService
 {
     Task<List<MaintenanceDto>> FindAllAsync();
     Task<MaintenanceDto> FindByIdAsync(int id);
-    Task InsertAsync (MaintenanceDto maintenanceDto);
+    Task<OperationResultDto> InsertAsync (MaintenanceDto maintenanceDto);
     Task RemoveAsync(int id);
     Task UpdateAsync(MaintenanceDto maintenance);
     Task FinalizeAsync(int id);

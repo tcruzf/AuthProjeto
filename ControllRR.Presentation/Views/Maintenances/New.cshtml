@@ -42,22 +42,30 @@
     <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
     </div> 
     <div class="col">
-   <label asp-for="MaintenanceDto.ApplicationUser" class="control-label"></label>
-   <select asp-for="MaintenanceDto.ApplicationUserId" asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name" ))" class="form-control"></select>
+         <label asp-for="MaintenanceDto.ApplicationUser"></label>
+   <select asp-for="MaintenanceDto.ApplicationUserId" 
+        asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name"))" 
+        class="form-control">
+    <option value="">Selecione um usuário</option> <!-- Opção vazia -->
+</select>
+<span asp-validation-for="MaintenanceDto.ApplicationUserId" class="text-danger"></span>
     </div>
     <div class="col">
     <label asp-for="MaintenanceDto.Device" class="control-label"></label>
-    <input id="deviceSearch" class="form-control" placeholder="Procure por modelo, serial ou tipo" />
+    <input id="deviceSearch" class="form-control" placeholder="Procure por modelo, serial ou tipo" required />
     <input type="hidden" id="deviceId" name="MaintenanceDto.DeviceId" />
+    <span asp-validation-for="MaintenanceDto.Device" class="text-danger"></span>
+   
     </div>
      <div class="col">
      <label asp-for="MaintenanceDto.Status" class="control-label"></label>
     <select asp-for="MaintenanceDto.Status" class="form-control" asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
+    
     </div>
    
     <div class="form-group">
         <label for="productSearch">Buscar Produto</label>
-        <input type="text" id="productSearch" class="form-control" placeholder="Digite para buscar...">
+        <input type="text" id="productSearch" class="form-control" placeholder="Digite para buscar..." required>
         <div id="productSuggestions" class="list-group"></div>
     
 
@@ -90,8 +98,6 @@
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
-
    
    <script type="text/javascript">
 $(document).ready(function () {
@@ -199,7 +205,20 @@ function removerProduto(botao) {
     Array.from(tabela.rows).forEach((row, index) => {
         row.querySelector("input[name*='StockId']").name = `MaintenanceDto.MaintenanceProducts[${index}].StockId`;
         row.querySelector("input[name*='QuantityUsed']").name = `MaintenanceDto.MaintenanceProducts[${index}].QuantityUsed`;
+        console.log(tabela);
     });
+}
+function atualizarIndices() {
+    const linhas = document.querySelectorAll("#productsTable tbody tr");
+    linhas.forEach((linha, index) => {
+        linha.querySelector("input[name*='StockId']").name = `MaintenanceDto.MaintenanceProducts[${index}].StockId`;
+        linha.querySelector("input[name*='QuantityUsed']").name = `MaintenanceDto.MaintenanceProducts[${index}].QuantityUsed`;
+    });
+}
+
+function removerProduto(botao) {
+    botao.closest("tr").remove();
+    atualizarIndices(); // Atualize os índices após remoção
 }
     </script>
 

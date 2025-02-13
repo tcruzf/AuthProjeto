@@ -39,10 +39,10 @@ public class MaintenanceService : IMaintenanceService
 
     }
 
-    public async Task InsertAsync(MaintenanceDto maintenanceDto)
+    public async Task<OperationResultDto> InsertAsync(MaintenanceDto maintenanceDto)
     {
         await using var transaction = await _maintenanceRepository.BeginTransactionAsync();
-
+        var result = new OperationResultDto { Success = true };
         try
         {
             var maintenance = _mapper.Map<Maintenance>(maintenanceDto);
@@ -56,8 +56,14 @@ public class MaintenanceService : IMaintenanceService
                 var stock = await _stockRepository.GetByIdAsync(product.StockId);
 
                 if (stock.ProductQuantity < product.QuantityUsed)
-                    throw new Exception($"Estoque insuficiente: {stock.ProductName}");
+                {
+                    result.Success = false;
+                    result.AlertScript = GenerateStockErrorScript(stock.ProductName, product.QuantityUsed);
+                    await transaction.RollbackAsync();
+                    return result;
 
+                    //throw new Exception($"Estoque insuficiente: {stock.ProductName}");
+                }
                 stock.ProductQuantity -= product.QuantityUsed; // Única alteração do estoque
                 await _stockRepository.UpdateAsync(stock);
 
@@ -70,25 +76,45 @@ public class MaintenanceService : IMaintenanceService
                 );
             }
             await _maintenanceRepository.SaveChangesAsync();
-            await transaction.CommitAsync();
+            //await transaction.CommitAsync();
+            return new OperationResultDto{ Success = true};
         }
-        catch
+        catch(Exception ex)
         {
-            await transaction.RollbackAsync();
-            throw;
+            //await transaction.RollbackAsync();
+            return new OperationResultDto
+            {
+                Success = false,
+                Message = ex.Message
+            };
+            
         }
         // Se ao menos uma coisa não der errado, então talvez dê pra persistir os dados
         //await _maintenanceRepository.InsertAsync(maintenance);
 
     }
 
+    private string GenerateStockErrorScript(string productName, int quantity)
+{
+    return $@"
+        Swal.fire({{
+            icon: 'error',
+            title: 'Erro no Estoque!',
+            html: `O estoque do produto <b>{productName}</b> é insuficiente. <br> 
+                   Quantidade solicitada: ${quantity}`,
+            footer: '<a href='/Stocks/SearchProduct'>Verifique o estoque</a>'
+        }});";
+}
     public async Task UpdateAsync(MaintenanceDto maintenanceDto)
     {
-        await using var transaction = await _maintenanceRepository.BeginTransactionAsync();
+        //await using var context = _contextFactory.CreateDbContext();
+        //await using var transaction = await _maintenanceRepository.BeginTransactionAsync();
 
         try
         {
             var existingMaintenance = await _maintenanceRepository.FindByIdAsync(maintenanceDto.Id, includeProducts: true);
+            System.Console.WriteLine("######################");
+            System.Console.WriteLine(existingMaintenance.MaintenanceProducts.Count());
             var maintenance = _mapper.Map<Maintenance>(maintenanceDto);
 
             foreach (var existingProduct in existingMaintenance.MaintenanceProducts)
@@ -116,11 +142,11 @@ public class MaintenanceService : IMaintenanceService
 
             await _maintenanceRepository.UpdateAsync(maintenance);
             await _maintenanceRepository.SaveChangesAsync();
-            await transaction.CommitAsync();
+            //await transaction.CommitAsync();
         }
         catch
         {
-            await transaction.RollbackAsync();
+            //await transaction.RollbackAsync();
             throw;
         }
     }

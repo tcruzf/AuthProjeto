@@ -13,17 +13,18 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 public class MaintenanceRepository : IMaintenanceRepository
 {
-    private readonly ControllRRContext _controllRRContext;
+   private readonly IDbContextFactory<ControllRRContext> _contextFactory;
 
-    public MaintenanceRepository(ControllRRContext controllRRContext)
+    public MaintenanceRepository(IDbContextFactory<ControllRRContext> contextFactory)
     {
-        _controllRRContext = controllRRContext;
+        _contextFactory = contextFactory;
     }
 
     public async Task<List<Maintenance>> FindAllAsync()
     {
+        using var context = _contextFactory.CreateDbContext();
 
-        return await _controllRRContext.Maintenances
+        return await context.Maintenances
         .Include(x => x.ApplicationUser)
         .ToListAsync();
     }
@@ -34,7 +35,8 @@ public class MaintenanceRepository : IMaintenanceRepository
       bool includeDevice = true,
       bool includeUser = true)
     {
-        var query = _controllRRContext.Maintenances.AsQueryable();
+        using var context = _contextFactory.CreateDbContext();
+        var query = context.Maintenances.AsQueryable();
 
         if (includeProducts)
         {
@@ -60,37 +62,40 @@ public class MaintenanceRepository : IMaintenanceRepository
     
     public async Task InsertAsync(Maintenance maintenance)
     {
+        using var context = _contextFactory.CreateDbContext();
         if (maintenance.MaintenanceProducts == null || !maintenance.MaintenanceProducts.Any())
         {
             throw new Exception("Nenhum produto foi associdado a manutenção");
         }
-        var control = await _controllRRContext.MaintenanceNumberControls.FirstOrDefaultAsync();
+        var control = await context.MaintenanceNumberControls.FirstOrDefaultAsync();
         if (control == null)
         {
             control = new MaintenanceNumberControl { CurrentNumber = 99 };
-            _controllRRContext.MaintenanceNumberControls.Add(control);
-            await _controllRRContext.SaveChangesAsync();
+           await context.MaintenanceNumberControls.AddAsync(control);
+            await context.SaveChangesAsync();
         }
         control.CurrentNumber += 1;
         maintenance.MaintenanceNumber = control.CurrentNumber;
-        _controllRRContext.Update(control);
-        _controllRRContext.Add(maintenance);
-        await _controllRRContext.SaveChangesAsync();
+         context.Update(control);
+       await context.AddAsync(maintenance);
+        await context.SaveChangesAsync();
     }
 
     public async Task RemoveAsync(int id)
     {
-        var obj = await _controllRRContext.Maintenances.FindAsync(id);
-        _controllRRContext.Remove(obj);
-        await _controllRRContext.SaveChangesAsync();
+        using var context = _contextFactory.CreateDbContext();
+        var obj = await context.Maintenances.FindAsync(id);
+        context.Remove(obj);
+        await context.SaveChangesAsync();
 
     }
 
     public async Task UpdateAsync(Maintenance maintenance)
     {
-        bool hasAny = await _controllRRContext.Maintenances.AnyAsync(x => x.Id == maintenance.Id);
+        using var context = _contextFactory.CreateDbContext();
+        bool hasAny = await context.Maintenances.AnyAsync(x => x.Id == maintenance.Id);
 
-        var existingMaintenance = await _controllRRContext.Maintenances
+        var existingMaintenance = await context.Maintenances
             .Include(m => m.MaintenanceProducts)
             .FirstOrDefaultAsync(m => m.Id == maintenance.Id);
         if (existingMaintenance == null)
@@ -98,11 +103,11 @@ public class MaintenanceRepository : IMaintenanceRepository
 
         try
         {
-            _controllRRContext.Entry(existingMaintenance).CurrentValues.SetValues(maintenance);
+            context.Entry(existingMaintenance).CurrentValues.SetValues(maintenance);
 
             // _controllRRContext.Update(maintenance);
             await UpdateMaintenanceProductsAsync(maintenance);
-            await _controllRRContext.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
         }
         catch (DbConcurrencyException e)
@@ -113,7 +118,8 @@ public class MaintenanceRepository : IMaintenanceRepository
 
     public async Task UpdateMaintenanceProductsAsync(Maintenance maintenance)
     {
-        var existingMaintenance = await _controllRRContext.Maintenances
+        using var context = _contextFactory.CreateDbContext();
+        var existingMaintenance = await context.Maintenances
             .Include(m => m.MaintenanceProducts)
             .FirstOrDefaultAsync(m => m.Id == maintenance.Id);
 
@@ -122,10 +128,12 @@ public class MaintenanceRepository : IMaintenanceRepository
         // Remove produtos excluídos
         foreach (var existingProduct in existingMaintenance.MaintenanceProducts.ToList())
         {
+            System.Console.WriteLine("$$$#########################################");
+            System.Console.WriteLine(existingProduct);
             if (!maintenance.MaintenanceProducts.Any(p => p.StockId == existingProduct.StockId)
                 || existingProduct.QuantityUsed <=0 )
             {
-                _controllRRContext.MaintenanceProduct.Remove(existingProduct);
+                context.MaintenanceProduct.Remove(existingProduct);
             }
         }
 
@@ -145,12 +153,13 @@ public class MaintenanceRepository : IMaintenanceRepository
             }
         }
 
-        await _controllRRContext.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task FinalizeAsync(int id)
     {
-        var maintenance = await _controllRRContext.Maintenances.FindAsync(id);
+        using var context = _contextFactory.CreateDbContext();
+        var maintenance = await context.Maintenances.FindAsync(id);
         if (maintenance == null)
         {
             throw new NotFoundException("Id não encontrado1");
@@ -159,8 +168,8 @@ public class MaintenanceRepository : IMaintenanceRepository
         maintenance.Status = final;
         maintenance.CloseDate = DateTime.Now;
 
-        _controllRRContext.Maintenances.Update(maintenance);
-        await _controllRRContext.SaveChangesAsync();
+        context.Maintenances.Update(maintenance);
+        await context.SaveChangesAsync();
     }
 
     public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetMaintenancesAsync(
@@ -170,7 +179,8 @@ public class MaintenanceRepository : IMaintenanceRepository
        string sortColumn,
        string sortDirection)
     {
-        var query = _controllRRContext.Maintenances
+        using var context = _contextFactory.CreateDbContext();
+        var query = context.Maintenances
             .Include(x => x.Device)
             .Include(x => x.ApplicationUser)
             .AsQueryable();
@@ -219,23 +229,27 @@ public class MaintenanceRepository : IMaintenanceRepository
             })
             .ToListAsync();
 
-        var totalRecords = await _controllRRContext.Maintenances.CountAsync();
+        var totalRecords = await context.Maintenances.CountAsync();
 
         return (data, totalRecords, filteredCount);
     }
 
     public async Task<IDbContextTransaction> BeginTransactionAsync()
     {
-        return await _controllRRContext.Database.BeginTransactionAsync();
+        using var context = _contextFactory.CreateDbContext();
+        return await context.Database.BeginTransactionAsync();
+        
     }
 
     public async Task<bool> ExistsAsync(int id)
     {
-        return await _controllRRContext.Maintenances.AnyAsync(x => x.Id == id);
+        using var context = _contextFactory.CreateDbContext();
+        return await context.Maintenances.AnyAsync(x => x.Id == id);
     }
     public async Task SaveChangesAsync()
     {
-        await _controllRRContext.SaveChangesAsync();
+        using var context = _contextFactory.CreateDbContext();
+        await context.SaveChangesAsync();
     }
 
 

@@ -43,15 +43,14 @@ builder.Services.AddEntityFrameworkMySQL()
        options.UseMySQL(builder.Configuration.GetConnectionString("ControlContext"));
    });
 */
-builder.Services.AddDbContext<ControllRRContext>(options =>
+
+builder.Services.AddDbContextFactory<ControllRRContext>(options => 
 {
     var connectionString = builder.Configuration.GetConnectionString("ControlContext");
     var serverVersion = ServerVersion.AutoDetect(connectionString);
-
-    options.UseMySql(connectionString, serverVersion)
-        .EnableSensitiveDataLogging() // Opcional para desenvolvimento
-        .EnableDetailedErrors();      // Opcional para desenvolvimento
+    options.UseMySql(connectionString, serverVersion);
 });
+
 // Configurar o Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ControllRRContext>()

@@ -25,12 +25,19 @@ public class MaintenanceDto
     [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
     public DateTime? CloseDate { get; set; }
     public MaintenanceStatus? Status { get; set; }
+    [Display(Name = "Usuario")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio!")]
     public string? ApplicationUserId { get; set; } 
+    [Display(Name = "Usuario")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio!")]
     public ApplicationUserDto? ApplicationUser { get; set; } // Usar DTO correto
 
     [Display(Name = "Usuario")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio!")]
     public UserDto? User { get; set; }
     [Display(Name = "Dispositivo")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio!")]
+
     public DeviceDto? Device { get; set; }
     public int DeviceId { get; set; }
     [Display(Name = "Dispositivo")]

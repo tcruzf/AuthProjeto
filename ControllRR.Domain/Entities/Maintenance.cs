@@ -14,6 +14,8 @@ public class Maintenance
     // Entidade Maintenance
     public string? ApplicationUserId { get; set; }
     public ApplicationUser? ApplicationUser { get; set; } 
+    [Display(Name = "Dispositivo")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio!")]
     public Device? Device { get; set; }
     public int? DeviceId { get; set; }
 

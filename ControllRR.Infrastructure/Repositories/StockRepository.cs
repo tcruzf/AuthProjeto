@@ -50,8 +50,8 @@ public class StockRepository : IStockRepository
 
     public async Task UpdateAsync(Stock stock)
     {
-        //_controllRRContext.Stocks.Update(stock);
-        //await _controllRRContext.SaveChangesAsync();
-        _controllRRContext.Entry(stock).State = EntityState.Modified;
+        _controllRRContext.Stocks.Update(stock);
+        await _controllRRContext.SaveChangesAsync();
+       // _controllRRContext.Entry(stock).State = EntityState.Modified;
     }
 }
