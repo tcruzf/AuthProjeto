@@ -7,8 +7,8 @@ public class ApplicationUser : IdentityUser
 
 {
     public int? OperatorId { get; set; }
-    public string Name { get; set; }
-    public int Register { get; set; }
+    public string? Name { get; set; }
+    public int? Register { get; set; }
     public string? Role { get; set; }
 
     public string? Phone { get; set; }
@@ -19,12 +19,13 @@ public class ApplicationUser : IdentityUser
 
     }
 
-    public ApplicationUser(int operatorId, string name, string? phone, int register, string? role)
+    public ApplicationUser(int? operatorId, string? name, string? phone, int? register, string? role)
     {
         OperatorId = operatorId;
         Name = name;
         Role = role;
         Phone = phone;
+        Register = register;
     }
 
 }

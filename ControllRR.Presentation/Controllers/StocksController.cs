@@ -1,3 +1,5 @@
+//Toda honra e gloria ao meu Deus
+// O senhor me acompanhou até aqui, te amo meu Pai
 using AutoMapper;
 using ControllRR.Application.Interfaces;
 using ControllRR.Domain.Entities;

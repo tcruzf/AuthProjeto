@@ -45,7 +45,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("NormalizedEmail")
@@ -71,7 +70,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("Register")
+                    b.Property<int?>("Register")
                         .HasColumnType("int");
 
                     b.Property<string>("Role")

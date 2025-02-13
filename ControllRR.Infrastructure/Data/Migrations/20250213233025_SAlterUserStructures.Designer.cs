@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    [Migration("20250205193726_ProductsChange")]
-    partial class ProductsChange
+    [Migration("20250213233025_SAlterUserStructures")]
+    partial class SAlterUserStructures
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("NormalizedEmail")
@@ -59,7 +58,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
-                    b.Property<int>("OperatorId")
+                    b.Property<int?>("OperatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("PasswordHash")
@@ -74,7 +73,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("Register")
+                    b.Property<int?>("Register")
                         .HasColumnType("int");
 
                     b.Property<string>("Role")
@@ -195,6 +194,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<int?>("DeviceId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("MaintenanceNumber")
@@ -570,7 +570,9 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.HasOne("ControllRR.Domain.Entities.Device", "Device")
                         .WithMany("Maintenances")
-                        .HasForeignKey("DeviceId");
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUser");
 

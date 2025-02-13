@@ -69,7 +69,11 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            public int Register { get; set; }
+            [Required(ErrorMessage = "Número de registro é obrigatório")]
+            public int? Register { get; set; }
+
+            [Required(ErrorMessage = "Nome é obrigatório")]
+            [StringLength(100, MinimumLength = 3)]
             public string? Name { get; set; }
             public string? Phone { get; set; }
 
@@ -77,7 +81,7 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 
             [Required]
             [Display(Name = "Permissões")]
-            public string Role { get; set; }
+            public string? Role { get; set; }
             public List<SelectListItem> Roles { get; set; } = new List<SelectListItem>();
 
 
@@ -111,25 +115,29 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
             UserRoles = _roleManager.Roles
                  .Select(role => new SelectListItem { Value = role.Name, Text = role.Name })
                  .ToList();
-                    return Page();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
 
             returnUrl ??= Url.Content("~/");
-            // Verifica se o usuário atual tem permissão
+           //  Verifica se o usuário atual tem permissão
             if (!User.IsInRole("Admin"))
             {
-                return RedirectToPage("/Account/AccessDenied");
+               return RedirectToPage("/Account/AccessDenied");
             }
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                System.Console.WriteLine(user);
                 user.Register = Input.Register;
+                System.Console.WriteLine(user.Register);
                 user.Name = Input.Name;
+                System.Console.WriteLine(user.Name);
                 user.Role = Input.Role.ToString();
+                System.Console.WriteLine(user.Role);
 
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
@@ -140,7 +148,7 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("Usuario criado com sucesso.");
                     var role = Input.Role.ToString(); // Obter o nome da role
                     if (await _roleManager.RoleExistsAsync(role))
                     {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class ApplicationUsers : Migration
+    public partial class SAlterUserStructures : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,10 +40,10 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    OperatorId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
+                    OperatorId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Register = table.Column<int>(type: "int", nullable: false),
+                    Register = table.Column<int>(type: "int", nullable: true),
                     Role = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Phone = table.Column<string>(type: "longtext", nullable: true)
@@ -96,6 +96,23 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Logins",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Username = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Password = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logins", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "MaintenanceNumberControls",
                 columns: table => new
                 {
@@ -106,6 +123,27 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MaintenanceNumberControls", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ProductFullName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProductManufacturer = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CodeBar = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProductDescription = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -135,6 +173,25 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sectors", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Servers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ServerName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ServerIP = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ServerPassword = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Servers", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -318,23 +375,28 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "StockManagements",
+                name: "ServerLogins",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    MovementDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    MovementType = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    StockId = table.Column<int>(type: "int", nullable: false)
+                    ServerId = table.Column<int>(type: "int", nullable: false),
+                    LoginId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Permissions = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockManagements", x => x.Id);
+                    table.PrimaryKey("PK_ServerLogins", x => new { x.ServerId, x.LoginId });
                     table.ForeignKey(
-                        name: "FK_StockManagements_Stocks_StockId",
-                        column: x => x.StockId,
-                        principalTable: "Stocks",
+                        name: "FK_ServerLogins_Logins_LoginId",
+                        column: x => x.LoginId,
+                        principalTable: "Logins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ServerLogins_Servers_ServerId",
+                        column: x => x.ServerId,
+                        principalTable: "Servers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -346,17 +408,17 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    SimpleDesc = table.Column<string>(type: "longtext", nullable: false)
+                    SimpleDesc = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
+                    Description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    OpenDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    CloseDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    OpenDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    CloseDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
-                    MaintenanceNumber = table.Column<int>(type: "int", nullable: false)
+                    MaintenanceNumber = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -370,6 +432,63 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         name: "FK_Maintenances_Devices_DeviceId",
                         column: x => x.DeviceId,
                         principalTable: "Devices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "MaintenanceProduct",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MaintenanceId = table.Column<int>(type: "int", nullable: false),
+                    StockId = table.Column<int>(type: "int", nullable: false),
+                    QuantityUsed = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaintenanceProduct", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaintenanceProduct_Maintenances_MaintenanceId",
+                        column: x => x.MaintenanceId,
+                        principalTable: "Maintenances",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaintenanceProduct_Stocks_StockId",
+                        column: x => x.StockId,
+                        principalTable: "Stocks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StockManagements",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MovementDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    MovementType = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    StockId = table.Column<int>(type: "int", nullable: false),
+                    MaintenanceId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockManagements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockManagements_Maintenances_MaintenanceId",
+                        column: x => x.MaintenanceId,
+                        principalTable: "Maintenances",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_StockManagements_Stocks_StockId",
+                        column: x => x.StockId,
+                        principalTable: "Stocks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -418,6 +537,16 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 column: "SectorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceProduct_MaintenanceId",
+                table: "MaintenanceProduct",
+                column: "MaintenanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceProduct_StockId",
+                table: "MaintenanceProduct",
+                column: "StockId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Maintenances_ApplicationUserId",
                 table: "Maintenances",
                 column: "ApplicationUserId");
@@ -426,6 +555,16 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 name: "IX_Maintenances_DeviceId",
                 table: "Maintenances",
                 column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServerLogins_LoginId",
+                table: "ServerLogins",
+                column: "LoginId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockManagements_MaintenanceId",
+                table: "StockManagements",
+                column: "MaintenanceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockManagements_StockId",
@@ -458,7 +597,13 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 name: "MaintenanceNumberControls");
 
             migrationBuilder.DropTable(
-                name: "Maintenances");
+                name: "MaintenanceProduct");
+
+            migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "ServerLogins");
 
             migrationBuilder.DropTable(
                 name: "StockManagements");
@@ -467,13 +612,22 @@ namespace ControllRR.Infrastructure.Data.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Logins");
+
+            migrationBuilder.DropTable(
+                name: "Servers");
+
+            migrationBuilder.DropTable(
+                name: "Maintenances");
+
+            migrationBuilder.DropTable(
+                name: "Stocks");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Devices");
-
-            migrationBuilder.DropTable(
-                name: "Stocks");
 
             migrationBuilder.DropTable(
                 name: "Sectors");
