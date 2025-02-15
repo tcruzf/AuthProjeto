@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
@@ -20,12 +21,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
-using Microsoft.AspNetCore.Authorization;
-
-
 namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN,Manager")]
 
     public class RegisterModel : PageModel
     {
@@ -36,7 +34,7 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IUserService _userService;
+        //private readonly IUserService _userService;
 
 
         public RegisterModel(
@@ -57,7 +55,7 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
-            _userService = userService;
+            //_userService = userService;
         }
 
         [BindProperty]
@@ -106,10 +104,11 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
-            if (!User.IsInRole("Admin")) // Substitua "Admin" pela role desejada
+            /*if (!User.IsInRole("ADMIN")) // Substitua "Admin" pela role desejada
             {
+                _logger.LogWarning($"Acesso negado para: {User.Identity.Name}");
                 return RedirectToPage("/Account/AccessDenied"); // Ou redirecione para outra página
-            }
+            }*/
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             UserRoles = _roleManager.Roles
@@ -120,13 +119,24 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-
+            
+            
             returnUrl ??= Url.Content("~/");
-           //  Verifica se o usuário atual tem permissão
-            if (!User.IsInRole("Admin"))
+            //  Verifica se o usuário atual tem permissão
+           /* if (!User.IsInRole("ADMIN"))
             {
-               return RedirectToPage("/Account/AccessDenied");
+               // _logger.LogInformation($"Usuário atual: {User.Identity.Name}");
+               // _logger.LogInformation($"Roles do usuário: {string.Join(",", User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value))}");
+
+                return RedirectToPage("/Account/AccessDenied");
             }
+            else
+            {
+                _logger.LogInformation($"Teste fora do if");
+                _logger.LogInformation($"Usuário atual: {User.Identity.Name}");
+                _logger.LogInformation($"Roles do usuário: {string.Join(",", User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value))}");
+
+            }*/
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -136,9 +146,7 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
                 System.Console.WriteLine(user.Register);
                 user.Name = Input.Name;
                 System.Console.WriteLine(user.Name);
-                user.Role = Input.Role.ToString();
-                System.Console.WriteLine(user.Role);
-
+                user.Role = Input.Role;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

@@ -14,17 +14,19 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    [Authorize]
+    [Authorize(Roles = "Manager, Admin")]
     public IActionResult Index()
     {
         return View();
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     public IActionResult Privacy()
     {
         return View();
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     public IActionResult DashBoard()
     {
         return View();

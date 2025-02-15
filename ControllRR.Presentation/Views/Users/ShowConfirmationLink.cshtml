@@ -1,0 +1,53 @@
+@model string
+
+@{
+    ViewData["Title"] = "Link de Confirmação";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    @TempData["SuccessMessage"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    @TempData["ErrorMessage"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+</div>
+}
+ <hr>
+@if (TempData["ConfirmationLink"] != null)
+{
+    <div class="alert alert-info">
+        <h4>Link de Confirmação Gerado</h4>
+        <p>Use este link para confirmar o e-mail:</p>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" value="@TempData["ConfirmationLink"]" id="confirmationLink" readonly>
+            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()">
+                <i class="fas fa-copy"></i>
+            </button>
+        </div>
+        <a href="@TempData["ConfirmationLink"]" class="btn btn-primary" target="_blank">Confirmar Agora</a>
+    </div>
+     <hr>
+}
+else
+{
+    <div class="alert alert-danger">
+       
+        Nenhum link de confirmação foi gerado
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function copyToClipboard() {
+            const copyText = document.getElementById("confirmationLink");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Link copiado para a área de transferência!");
+        }
+    </script>
+}

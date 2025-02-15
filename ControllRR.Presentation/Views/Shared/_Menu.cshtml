@@ -90,10 +90,7 @@
         </a>
         <div class="dropdown-menu">
           <a class="dropdown-item" href="~/Identity/Account/Manage">Minha Conta</a>
-              @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-    {
           <a class="dropdown-item" href="~/Identity/Account/Register">Cadastrar Operador</a>
-          }
           <a class="dropdown-item" href="#">Status Servidor</a>
           <a class="dropdown-item" href="#">Chat online</a>
           <div class="dropdown-divider"></div>

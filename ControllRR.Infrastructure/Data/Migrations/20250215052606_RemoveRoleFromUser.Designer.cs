@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    [Migration("20250213233025_SAlterUserStructures")]
-    partial class SAlterUserStructures
+    [Migration("20250215052606_RemoveRoleFromUser")]
+    partial class RemoveRoleFromUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

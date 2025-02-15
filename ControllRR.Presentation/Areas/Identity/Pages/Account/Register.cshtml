@@ -9,7 +9,13 @@
 }
 
 <h3>@ViewData["Title"]</h3>
-
+  @if (SignInManager.IsSignedIn(User) && User.IsInRole("ADMIN"))
+                    {
+                        
+                        <p>
+                            <h6>Hello User</h6>
+                        </p>
+                    }
 
 <div class="row">
     <div class="col-md-4">

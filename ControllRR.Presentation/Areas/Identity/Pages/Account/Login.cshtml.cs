@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ControllRR.Domain.Entities;
+using System.Security.Claims;
 
 namespace ControllRR.Presentation.Areas.Identity.Pages.Account
 {
@@ -116,6 +117,21 @@ namespace ControllRR.Presentation.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                    var roles = await _signInManager.UserManager.GetRolesAsync(user);
+                    var normalizedRoles = roles.Select(r => r.ToUpper()); // Normaliza as roles
+                                                                          // Atualiza as claims
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.UserName),
+                        new Claim(ClaimTypes.Email, user.Email)
+                    };
+                    foreach (var role in normalizedRoles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, role));
+                    }
+
+                    await _signInManager.SignInWithClaimsAsync(user, Input.RememberMe, claims); // Força atualização
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

@@ -4,6 +4,8 @@
     
 */
 using System.Diagnostics;
+using System.Text;
+using System.Text.Encodings.Web;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
 using ControllRR.Domain.Entities;
@@ -11,20 +13,30 @@ using ControllRR.Infrastructure.Exceptions;
 using ControllRR.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx;
+
 
 namespace ControllRR.Presentation.Controllers;
 
 public class UsersController : Controller
 {
     private readonly IUserService _userService;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IEmailSender _emailSender;
 
 
-    public UsersController(IUserService userService)
+    public UsersController(IUserService userService, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
     {
         _userService = userService;
+        _roleManager = roleManager;
+        _userManager = userManager;
+        _emailSender = emailSender;
     }
 
     [Authorize(Roles = "Manager, Admin")]
@@ -48,38 +60,146 @@ public class UsersController : Controller
         return View(user);
     }
 
-    [Authorize(Roles = "Manager, Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> CreateNewUser()
     {
-        //_roleManager.ToString();
-        return View();
+        var roles = await _roleManager.Roles.Select(r => new SelectListItem
+        {
+            Value = r.Name,
+            Text = r.Name
+        }).ToListAsync();
+
+        var applicationViewModel = new RoleViewModel
+        {
+            Roles = roles,
+
+        };
+
+        return View(applicationViewModel);
     }
 
-    [Authorize(Roles = "Manager, Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateNewUser(ApplicationUserDto userDto)
+    public async Task<IActionResult> CreateNewUser(RoleViewModel userDto)
     {
-
-        /*
-        //_userManager.CreateAsync(userDto);
-        if (!ModelState.IsValid)
-        {
-            TempData["SuccessMessage"] = "Usuário Não foi inserio!";
-            return View(userDto);
-        } */
+        string returnUrl = "";
+        returnUrl ??= Url.Content("~/");
+        var adminEmail = userDto.applicationUserDto.Email;
+        //var tempRole = userDto.applicationUserDto.Role;
         try
         {
-            await _userService.InsertAsync(userDto);
-            //TempData["SuccessMessage"] = "Usuário Inserido com sucesso.";
+            var user = new ApplicationUser
+            {
+                OperatorId = null,
+                Name = userDto.applicationUserDto.Name,
+                Register = userDto.applicationUserDto.Register,
+                Phone = null,
+                UserName = adminEmail,
+                Email = userDto.applicationUserDto.Email,
+                EmailConfirmed = true,
+                Role = userDto.applicationUserDto.Role
+            };
+
+            var result = await _userManager.CreateAsync(user, "Thiago123##");
+
+            if (result.Succeeded)
+            {
+                // Geração do token e link
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var encodedCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                var callbackUrl = Url.Action(
+                "ConfirmEmail",
+                "Users",
+                new { userId = user.Id, code = encodedCode },
+                protocol: Request.Scheme);
+
+                TempData["ConfirmationLink"] = callbackUrl;
+                return RedirectToAction("ShowConfirmationLink");
+            }
+
+            AddErrorsToModelState(result.Errors);
         }
         catch (Exception ex)
         {
             TempData["ErrorMessage"] = ex.Message;
         }
-        return RedirectToAction(nameof(GetAll));
 
+        userDto.Roles = await GetRolesList();
+        return View(userDto);
+    }
+
+    [HttpGet]
+    public IActionResult CheckEmail(string email)
+    {
+        ViewData["Email"] = email;
+        return View();
+    }
+    private async Task<List<SelectListItem>> GetRolesList()
+    {
+        return await _roleManager.Roles
+            .Select(r => new SelectListItem { Value = r.Name, Text = r.Name })
+            .ToListAsync();
+    }
+    [HttpGet]
+    public IActionResult ShowConfirmationLink()
+    {
+        //TempData["ErrorMessage"] = "Parâmetros inválidos para confirmação de e-mail.";
+        //TempData["SuccessMessage"] = "Usuario cadastrado! Ative o usuario clicando no link abaixo:";
+        var link = TempData["ConfirmationLink"]?.ToString();
+
+       
+        return View();
+    }
+
+    private void AddErrorsToModelState(IEnumerable<IdentityError> errors)
+    {
+        foreach (var error in errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+    }
+
+    [HttpGet("ConfirmEmail")]
+    public async Task<IActionResult> ConfirmEmail(string userId, string code)
+    {
+        if (userId == null || code == null)
+        {
+            TempData["ErrorMessage"] = "Parâmetros inválidos para confirmação de e-mail.";
+            return RedirectToAction(nameof(GetAll));
+        }
+
+        try
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Usuário não encontrado.";
+                return RedirectToAction(nameof(GetAll));
+            }
+
+            var decodedCodeBytes = WebEncoders.Base64UrlDecode(code);
+            var decodedCode = Encoding.UTF8.GetString(decodedCodeBytes);
+
+            var result = await _userManager.ConfirmEmailAsync(user, decodedCode);
+
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "E-mail confirmado com sucesso!";
+            }
+            else
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                TempData["ErrorMessage"] = $"Erro na confirmação: {errors}";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Erro crítico: {ex.Message}";
+        }
+
+        return RedirectToAction(nameof(GetAll));
     }
 
     [Authorize(Roles = "Admin")]

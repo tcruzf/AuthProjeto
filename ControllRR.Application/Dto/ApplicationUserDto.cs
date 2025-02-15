@@ -6,6 +6,7 @@ namespace ControllRR.Application.Dto;
 
 public class ApplicationUserDto
 {
+
     public string Id { get; set; }
     //public int OperatorId { get; set; }
     [Display(Name = "Nome")]
@@ -40,5 +41,14 @@ public class ApplicationUserDto
     [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
     public string ConfirmPassword { get; set; }
 
+/*
+[Required] public string Name { get; set; }
+    [Required][EmailAddress] public string Email { get; set; }
+    [Required] public string Password { get; set; }
+    [Required][Compare("Password")] public string ConfirmPassword { get; set; }
+    [Required] public int Register { get; set; }
+    [Required] public string Role { get; set; }
+    public string? Roles { get; set; } // Para o dropdown
 
+    */
 }

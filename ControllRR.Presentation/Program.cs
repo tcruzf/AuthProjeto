@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using ControllRR.Domain.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.HttpOverrides;
+using System.Security.Claims;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -52,10 +53,20 @@ builder.Services.AddDbContextFactory<ControllRRContext>(options =>
 });
 
 // Configurar o Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+/*builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ControllRRContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
+*/
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
+    options.Stores.MaxLengthForKeys = 128;
+})
+.AddEntityFrameworkStores<ControllRRContext>()
+.AddDefaultTokenProviders()
+.AddDefaultUI();
 
 // Configurar cookies de autenticação
 builder.Services.ConfigureApplicationCookie(options =>
@@ -125,17 +136,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Erro ao executar seeds");
     }
 
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var roles = new[] { "Admin", "Manager", "Member" };
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            System.Console.WriteLine(roleManager.ToString());
-            await roleManager.CreateAsync(new IdentityRole(role));
-        }
-    }
 }
 
 var configuration = new MapperConfiguration(cfg =>
