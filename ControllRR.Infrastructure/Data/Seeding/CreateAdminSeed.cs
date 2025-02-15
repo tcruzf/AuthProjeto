@@ -17,7 +17,7 @@ public static class AdminSeed
                 await roleManager.CreateAsync(new IdentityRole(role));
             }
         }
-
+ 
         // Criar usuário admin
         var adminEmail = "t@t.com";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
@@ -28,7 +28,7 @@ public static class AdminSeed
             {
                 OperatorId = 0,
                 Name = "ControllRR Systems",
-                Register = 1121,
+                Register = 1221,
                 Phone = null,
                 UserName = adminEmail,
                 Email = adminEmail,

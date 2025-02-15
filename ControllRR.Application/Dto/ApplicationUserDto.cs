@@ -15,7 +15,7 @@ public class ApplicationUserDto
     public string Name { get; set; }
     [Display(Name = "Matricula")]
     public int Register { get; set; }
-
+    [Display(Name = "Permissões")]
     public string? Role { get; set; }
 
     [Display(Name = "Telefone")]

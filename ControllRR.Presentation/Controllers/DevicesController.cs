@@ -173,7 +173,7 @@ public class DevicesController : Controller
         try
         {
            await _deviceService.UpdateAsync(deviceDto);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(List));
         }
         catch (ApplicationException e)
         {

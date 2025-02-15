@@ -106,7 +106,8 @@ public class UsersController : Controller
 
             if (result.Succeeded)
             {
-                // Geração do token e link
+                // Baseaddo no identity, algumas alterações para que o usuario possa
+                // confirmar a conta sem ter que receber o link. Claro, isso é uma gambiarra temporaria.
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var encodedCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Action(
@@ -149,7 +150,7 @@ public class UsersController : Controller
         //TempData["SuccessMessage"] = "Usuario cadastrado! Ative o usuario clicando no link abaixo:";
         var link = TempData["ConfirmationLink"]?.ToString();
 
-       
+
         return View();
     }
 
