@@ -3,12 +3,6 @@
 @{
     ViewData["Title"] = "Alterar Manutenção";
 }
-
-<!--
-<div class="mt-4">
-    <a asp-action="Index" class="btn btn-primary">Voltar</a>
-</div>
--->
                 <div class="container-fluid px-4">
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
@@ -119,7 +113,7 @@
 
                                         <div class="form-group">
                                             <label asp-for="MaintenanceDto.Description"></label>
-                                            <textarea asp-for="MaintenanceDto.Description" class="form-control" rows="14"></textarea>
+                                            <textarea asp-for="MaintenanceDto.Description" class="form-control" rows="9"></textarea>
                                             <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
                                         </div>
 

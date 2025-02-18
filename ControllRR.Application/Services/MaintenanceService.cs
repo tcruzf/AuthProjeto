@@ -85,11 +85,11 @@ public class MaintenanceService : IMaintenanceService
                 );
             }
             await _uow.SaveChangesAsync();
-            
+
             await _uow.CommitAsync();
-            return new OperationResultDto{ Success = true};
+            return new OperationResultDto { Success = true };
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await _uow.RollbackAsync();
             return new OperationResultDto
@@ -97,7 +97,7 @@ public class MaintenanceService : IMaintenanceService
                 Success = false,
                 Message = ex.Message
             };
-            
+
         }
         // Se ao menos uma coisa não der errado, então talvez dê pra persistir os dados
         //await _maintenanceRepository.InsertAsync(maintenance);
@@ -107,8 +107,8 @@ public class MaintenanceService : IMaintenanceService
     }
 
     private string GenerateStockErrorScript(string productName, int quantity)
-{
-    return $@"
+    {
+        return $@"
         Swal.fire({{
             icon: 'error',
             title: 'Erro no Estoque!',
@@ -116,11 +116,11 @@ public class MaintenanceService : IMaintenanceService
                    Quantidade solicitada: ${quantity}`,
             footer: '<a href='/Stocks/SearchProduct'>Verifique o estoque</a>'
         }});";
-}
+    }
     public async Task<OperationResultDto> UpdateAsync(MaintenanceDto maintenanceDto)
     {
         //await using var context = _contextFactory.CreateDbContext();
-       // await using var transaction = await _maintenanceRepository.BeginTransactionAsync();
+        // await using var transaction = await _maintenanceRepository.BeginTransactionAsync();
 
         try
         {
@@ -159,8 +159,8 @@ public class MaintenanceService : IMaintenanceService
             await _maintenanceRepository.UpdateAsync(maintenance);
             await _uow.SaveChangesAsync();
             await _uow.CommitAsync();
-            return new OperationResultDto{ Success = true};
-            
+            return new OperationResultDto { Success = true };
+
         }
         catch
         {
@@ -172,9 +172,9 @@ public class MaintenanceService : IMaintenanceService
     private async Task UpdateStockQuantity(MaintenanceProduct original, MaintenanceProduct updated, int maintenanceId)
     {
         //await _uow.BeginTransactionAsync();
-        if(updated.QuantityUsed < 0 )
+        if (updated.QuantityUsed < 0)
             throw new Exception("Quantidade não pode ser negativa!");
-            
+
         var quantityDifference = updated.QuantityUsed - original.QuantityUsed;
 
         if (quantityDifference != 0)
@@ -257,5 +257,10 @@ public class MaintenanceService : IMaintenanceService
         };
     }
 
-   
+    // Retorna o numero de manutenção registradas no bano de dados
+    public async Task<int> CountMaintenance()
+    {
+        return await _maintenanceRepository.CountMaintenance();
+    }
+
 }

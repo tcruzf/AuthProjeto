@@ -22,4 +22,5 @@ public interface IMaintenanceRepository
                 string sortDirection);
   
   Task<bool> ExistsAsync(int id);
+  Task<int> CountMaintenance();
 }

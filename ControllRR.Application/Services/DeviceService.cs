@@ -70,4 +70,9 @@ public class DeviceService : IDeviceService
             data
         };
     }
+
+    public async Task<int> CountDevices()
+    {
+        return await _deviceRepository.CountDevices();
+    }
 }

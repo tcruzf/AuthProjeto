@@ -2,22 +2,40 @@
 using Microsoft.AspNetCore.Mvc;
 using ControllRR.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using ControllRR.Application.Interfaces;
+using System.Threading.Tasks;
 
 namespace ControllRR.Presentation.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ISystemRoutines _systemRoutines;
+    
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(
+        ILogger<HomeController> logger,
+        ISystemRoutines systemRoutines
+        )
     {
         _logger = logger;
+        _systemRoutines = systemRoutines;
+        
+
     }
 
     [Authorize(Roles = "Manager, Admin")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var device = await _systemRoutines.CountDevices();
+        var maintenance = await _systemRoutines.CountMaintenance();
+        var model = new DashboardViewModel
+        {
+            DeviceCount = device,
+            MaintenanceCount = maintenance
+        };
+
+        return View(model);
     }
 
     [Authorize(Roles = "Manager, Admin")]

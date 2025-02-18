@@ -5,11 +5,14 @@
   
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark"> <!--principal->
           <div class="container-fluid">  <!--largura total-->
-  <button type="button" class="navbar-toggler collapsed" data-toggle="collapse"> <!--menu toggle -->
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"> <!--para agrupar e ocultar-->
-    <ul class="navbar-nav">
+   <button class="navbar-toggler" type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto">
       <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link">Home</a>
 
       </li>

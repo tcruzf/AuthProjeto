@@ -16,4 +16,6 @@ public interface IMaintenanceService
     string sortColumn,
     string sortDirection);
 
+   Task<int> CountMaintenance();
+
 }

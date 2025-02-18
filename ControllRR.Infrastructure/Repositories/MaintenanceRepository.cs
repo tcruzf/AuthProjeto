@@ -33,7 +33,7 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
       bool includeDevice = true,
       bool includeUser = true)
     {
-       
+
         var query = _context.Maintenances.AsQueryable();
         System.Console.WriteLine("Proxima linha busca por manutenções e carrega o stock");
         if (includeProducts)
@@ -41,7 +41,7 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
             query = query
                 .Include(x => x.MaintenanceProducts)
                     .ThenInclude(xp => xp.Stock);
-                    System.Console.WriteLine("Fim da consulta de produtos e estoque");
+            System.Console.WriteLine("Fim da consulta de produtos e estoque");
         }
         System.Console.WriteLine("Proxima consulta é por dispositivos!");
         if (includeDevice)
@@ -60,14 +60,14 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
         System.Console.WriteLine(query);
         System.Console.WriteLine("Iniciando retorno da query");
         return await query.FirstOrDefaultAsync(x => x.Id == id);
-        
 
-        
+
+
     }
-    
+
     public async Task InsertAsync(Maintenance maintenance)
     {
-        
+
         if (maintenance.MaintenanceProducts == null || !maintenance.MaintenanceProducts.Any())
         {
             throw new Exception("Nenhum produto foi associdado a manutenção");
@@ -76,20 +76,20 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
         if (control == null)
         {
             control = new MaintenanceNumberControl { CurrentNumber = 99 };
-           await _context.MaintenanceNumberControls.AddAsync(control);
-           
+            await _context.MaintenanceNumberControls.AddAsync(control);
+
         }
         control.CurrentNumber += 1;
         maintenance.MaintenanceNumber = control.CurrentNumber;
-       await _context.AddAsync(maintenance);
+        await _context.AddAsync(maintenance);
     }
 
     public async Task RemoveAsync(int id)
     {
-        
+
         var obj = await _context.Maintenances.FindAsync(id);
         _context.Remove(obj);
-        
+
 
     }
 
@@ -116,7 +116,7 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
 
     public async Task UpdateMaintenanceProductsAsync(Maintenance maintenance)
     {
-        
+
         var existingMaintenance = await _context.Maintenances
             .Include(m => m.MaintenanceProducts)
             .FirstOrDefaultAsync(m => m.Id == maintenance.Id);
@@ -129,7 +129,7 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
             System.Console.WriteLine("$$$#########################################");
             System.Console.WriteLine(existingProduct);
             if (!maintenance.MaintenanceProducts.Any(p => p.StockId == existingProduct.StockId)
-                || existingProduct.QuantityUsed <=0 )
+                || existingProduct.QuantityUsed <= 0)
             {
                 _context.MaintenanceProduct.Remove(existingProduct);
             }
@@ -151,12 +151,12 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
             }
         }
 
-       
+
     }
 
     public async Task FinalizeAsync(int id)
     {
-      
+
         var maintenance = await _context.Maintenances.FindAsync(id);
         if (maintenance == null)
         {
@@ -167,7 +167,7 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
         maintenance.CloseDate = DateTime.Now;
 
         _context.Maintenances.Update(maintenance);
-       
+
     }
 
     public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetMaintenancesAsync(
@@ -177,7 +177,7 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
        string sortColumn,
        string sortDirection)
     {
-      
+
         var query = _context.Maintenances
             .Include(x => x.Device)
             .Include(x => x.ApplicationUser)
@@ -232,13 +232,17 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
         return (data, totalRecords, filteredCount);
     }
 
-    
+
     public async Task<bool> ExistsAsync(int id)
     {
-       
+
         return await _context.Maintenances.AnyAsync(x => x.Id == id);
     }
-    
 
+    // Return quantity of maintenances in dabase
+    public async Task<int> CountMaintenance()
+    {
+        return await _context.Maintenances.CountAsync();
+    }
 
 }

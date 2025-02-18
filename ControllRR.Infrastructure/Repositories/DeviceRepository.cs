@@ -16,11 +16,11 @@ using ControllRR.Domain.Interfaces;
 namespace ControllRR.Infrastructure.Repositories;
 public class DeviceRepository : BaseRepository<Device>, IDeviceRepository
 {
-    
+
 
     public DeviceRepository(ControllRRContext context) : base(context)
     {
-        
+
     }
 
 
@@ -57,7 +57,7 @@ public class DeviceRepository : BaseRepository<Device>, IDeviceRepository
     public async Task InsertAsync(Device device)
     {
         await _context.Devices.AddAsync(device);
-        
+
     }
 
     // Realiza a persistencia de informações alteradas de um determinado dispositivo
@@ -76,10 +76,10 @@ public class DeviceRepository : BaseRepository<Device>, IDeviceRepository
         // invalida, então realiza a persistencia dos novos dados no banco de dados.
         try
         {
-          
+
             _context.Entry(device).CurrentValues.SetValues(device);
-            
-          
+
+
         }
         catch (DbConcurrencyException e)
         {
@@ -150,6 +150,16 @@ public class DeviceRepository : BaseRepository<Device>, IDeviceRepository
 
         return (data, totalRecords, filteredCount);
     }
+    /// <summary>
+    /// Total de dispositivos presentes no banco de dados.
+    /// </summary>
+    /// <returns>int of devices</returns>
+
+    public async Task<int> CountDevices()
+    {
+        return await _context.Devices.CountAsync();
+    }
+
 
 
 }

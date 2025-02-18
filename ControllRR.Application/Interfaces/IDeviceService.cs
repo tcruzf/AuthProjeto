@@ -17,4 +17,6 @@ public interface IDeviceService
     string sortColumn,
     string sortDirection);
 
+    Task<int> CountDevices();
+
 }
