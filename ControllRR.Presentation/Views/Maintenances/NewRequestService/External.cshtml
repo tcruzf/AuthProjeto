@@ -1,0 +1,277 @@
+@model ControllRR.Presentation.ViewModels.MaintenanceViewModel;
+ @using ControllRR.Domain.Enums
+@{
+    ViewData["Title"] = "Criar novo atendimento externo";
+}
+<div class="container-fluid px-4">
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Atendimentos</li>
+                    </ol>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-edit me-1"></i>
+                            Criar solicitação externa
+                        </div>
+                        <div class="card-body">
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <button class="nav-link active" id="maintenance-tab" data-bs-toggle="tab" data-bs-target="#maintenance" type="button" role="tab">Dados da Manutenção</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="external-service-tab" data-bs-toggle="tab" data-bs-target="#external-service" type="button" role="tab">Dados do Solicitante</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="other-tab" data-bs-toggle="tab" data-bs-target="#other" type="button" role="tab">Outros</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+    <!-- Aba de Manutenção -->
+    <div class="tab-pane fade show active" id="maintenance" role="tabpanel">
+        <form asp-controller="Maintenances" asp-action="New" method="post">
+           <div class="row">
+    
+     <div class="col">
+    <label asp-for="MaintenanceDto.OpenDate"></label>
+    <input asp-for="MaintenanceDto.OpenDate" class="form-control input-sm" />
+    <span asp-validation-for="MaintenanceDto.OpenDate" class="text-danger"></span>
+    </div>
+    <div class="col">
+    <label asp-for="MaintenanceDto.SimpleDesc"></label>
+    <input asp-for="MaintenanceDto.SimpleDesc" class="form-control input-sm" />
+    <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
+    </div> 
+    <div class="col">
+         <label asp-for="MaintenanceDto.ApplicationUser"></label>
+   <select asp-for="MaintenanceDto.ApplicationUserId" 
+        asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name"))" 
+        class="form-control">
+    <option value="">Selecione um usuário</option> <!-- Opção vazia -->
+</select>
+<span asp-validation-for="MaintenanceDto.ApplicationUserId" class="text-danger"></span>
+    </div>
+    <div class="col">
+    <label asp-for="MaintenanceDto.Device" class="control-label"></label>
+    <input id="deviceSearch" class="form-control" placeholder="Procure por modelo, serial ou tipo" required />
+    <input type="hidden" id="deviceId" name="MaintenanceDto.DeviceId" />
+    <span asp-validation-for="MaintenanceDto.Device" class="text-danger"></span>
+   
+    </div>
+     <div class="col">
+     <label asp-for="MaintenanceDto.Status" class="control-label"></label>
+    <select asp-for="MaintenanceDto.Status" class="form-control" asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
+    
+    </div>
+   
+    <div class="form-group">
+        <label for="productSearch">Buscar Produto/Inserir Padrão de Serviço</label>
+        <input type="text" id="productSearch" class="form-control" placeholder="Digite para buscar..." required>
+        <div id="productSuggestions" class="list-group"></div>
+    
+
+    <table class="table" id="productsTable">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Disponiveis</th>
+                <th>Quantidade</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+</div>
+   <div class="form-group">
+   <label asp-for="MaintenanceDto.Description"></label>
+    <textarea asp-for="MaintenanceDto.Description" class="form-control" id="MaintenanceDescription" rows="9"></textarea>
+    <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
+  </div>
+    
+    </div>
+    <div class="mt-4">
+    <button type="submit" class="btn btn-success">Salvar</button>
+    </div>
+        </form>
+    </div>
+
+    <!-- Aba de Atendimento Externo -->
+    <div class="tab-pane fade" id="external-service" role="tabpanel">
+        <form asp-controller="ExternalServices" asp-action="Create" method="post">
+            <div class="row">
+                <div class="col">
+                    <label for="externalSector">Setor</label>
+                    <input type="text" id="externalSector" name="ExternalServiceSector" class="form-control" />
+                </div>
+                <div class="col">
+                    <label for="clientName">Nome do Responsavel</label>
+                    <input type="text" id="clientName" name="ClientName" class="form-control" />
+                </div>
+                <div class="col">
+                    <label for="serviceType">Tipo de Serviço</label>
+                    <select id="serviceType" name="ServiceType" class="form-control">
+                        <option value="Instalação">Instalação de Micro</option>
+                        <option value="Manutenção">Manutenção de Micro</option>
+                        <option value="Manutenção">Configuração de Redes</option>
+                        <option value="Manutenção">Manutenção de Redes</option>
+                          <option value="Manutenção">Compartilhamento de Impressora</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="details">Detalhes</label>
+                    <textarea id="details" name="Details" class="form-control"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Salvar Atendimento</button>
+        </form>
+    </div>
+
+    <!-- Aba Outros -->
+    <div class="tab-pane fade" id="other" role="tabpanel">
+        <form asp-controller="OtherServices" asp-action="Save" method="post">
+            <div class="row">
+                <div class="col">
+                    <label for="requestType">Tipo de Solicitação</label>
+                    <input type="text" id="requestType" name="RequestType" class="form-control" />
+                </div>
+                <div class="col">
+                    <label for="observation">Observações</label>
+                    <textarea id="observation" name="Observation" class="form-control"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-warning mt-3">Salvar</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+   
+   <script type="text/javascript">
+$(document).ready(function () {
+$("#Seller_DepartmentId").change(function () {
+var f = $("form");
+f.submit(function () {
+var productData = f.serialize();
+$.post(f.attr("action"), Seller_Department, function (result, status) {
+if (result !== null) {
+$("#Seller_Department").text(result.Seller_Department);
+}
+else {
+alert('Invalid ID');
+}
+});
+});
+});
+});
+
+</script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <script>
+        $(document).ready(function () {
+            $("#deviceSearch").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Devices/Search',
+                        type: 'GET',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data.map(device => ({
+                                label: `${device.model} (${device.serialNumber}) - ${device.identifier}`,
+                                value: device.id
+                            })));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $("#deviceSearch").val(ui.item.label);
+                    $("#deviceId").val(ui.item.value);
+                    return false;
+                }
+            });
+        });
+       document.getElementById("productSearch").addEventListener("input", function () {
+        let query = this.value;
+        if (query.length < 2) return;
+        
+        fetch(`/Stocks/Search?term=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                let suggestions = document.getElementById("productSuggestions");
+                suggestions.innerHTML = "";
+                data.forEach(produto => {
+                    // Utilize as propriedades retornadas pela API: productName, etc.
+                    let item = document.createElement("div");
+                    item.classList.add("list-group-item", "list-group-item-action");
+                    item.textContent = `${produto.productName} - Qtd: ${produto.productQuantity}`;
+                    item.addEventListener("click", function () {
+                        adicionarProduto(produto);
+                    });
+                    suggestions.appendChild(item);
+                });
+            })
+            .catch(error => console.error('Erro ao buscar produtos:', error));
+    });
+
+   function adicionarProduto(produto) {
+    let tabela = document.getElementById("productsTable").getElementsByTagName("tbody")[0];
+    
+    // Cria a nova linha antes de definir o conteúdo
+    let novaLinha = tabela.insertRow();
+    let index = tabela.rows.length - 1; // Índice baseado na posição real
+
+    // Define o conteúdo da linha
+    novaLinha.innerHTML = `
+        <td>
+            ${produto.productName}
+            <input type="hidden" name="MaintenanceDto.MaintenanceProducts[${index}].StockId" value="${produto.id}" />
+        </td>
+        <td>${produto.productQuantity}</td>
+        <td>
+            <input type="number" 
+                   name="MaintenanceDto.MaintenanceProducts[${index}].QuantityUsed" 
+                   value="1" 
+                   min="1" 
+                   max="${produto.productQuantity}" 
+                   class="form-control" />
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+        </td>
+    `;
+}
+
+function removerProduto(botao) {
+    let linha = botao.closest("tr");
+    linha.remove();
+    
+    // Atualiza os índices após remoção
+    let tabela = document.getElementById("productsTable").getElementsByTagName("tbody")[0];
+    Array.from(tabela.rows).forEach((row, index) => {
+        row.querySelector("input[name*='StockId']").name = `MaintenanceDto.MaintenanceProducts[${index}].StockId`;
+        row.querySelector("input[name*='QuantityUsed']").name = `MaintenanceDto.MaintenanceProducts[${index}].QuantityUsed`;
+        console.log(tabela);
+    });
+}
+function atualizarIndices() {
+    const linhas = document.querySelectorAll("#productsTable tbody tr");
+    linhas.forEach((linha, index) => {
+        linha.querySelector("input[name*='StockId']").name = `MaintenanceDto.MaintenanceProducts[${index}].StockId`;
+        linha.querySelector("input[name*='QuantityUsed']").name = `MaintenanceDto.MaintenanceProducts[${index}].QuantityUsed`;
+    });
+}
+
+function removerProduto(botao) {
+    botao.closest("tr").remove();
+    atualizarIndices(); // Atualize os índices após remoção
+}
+    </script>
+
+       
+}

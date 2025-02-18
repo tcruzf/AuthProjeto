@@ -38,6 +38,48 @@ public class MaintenancesController : Controller
 
     }
 
+    [HttpGet("Maintenances/External/Create/NewRequestService/InputDetails")]
+    [Authorize(Roles = "Manager, Admin")]
+    public async Task<IActionResult> External()
+    {
+          // Busca usuários
+        var users = await _userService.FindAllAsync();
+        //System.Console.WriteLine(users.);
+        var applicationUserDto = users?
+            .Select(u => new ApplicationUserDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Phone = u.Phone,
+                Register = u.Register
+            })
+            .ToList() ?? new List<ApplicationUserDto>();
+
+        // Busca dispositivos e mapeia para DTO
+        var devices = await _deviceService.FindAllAsync();
+        var deviceDto = devices?
+            .Select(d => new DeviceDto
+            {
+                Id = d.Id,
+                Type = d.Type,
+                Identifier = d.Identifier,
+                Model = d.Model,
+                SerialNumber = d.SerialNumber,
+                DeviceDescription = d.DeviceDescription,
+                SectorId = d.SectorId
+            })
+            .ToList() ?? new List<DeviceDto>();
+        System.Console.WriteLine("Get NEW COntroller ##########################################################");
+        var viewModel = new MaintenanceViewModel
+        {
+            ApplicationUserDto = users,
+            DeviceDto = deviceDto,
+            AvailableStocks = await _stockService.FindAllAsync()
+        };
+
+        return View("/Views/Maintenances/NewRequestService/External.cshtml", viewModel);
+    }
+
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Index()
     {

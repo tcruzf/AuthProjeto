@@ -54,7 +54,7 @@ public class SystemRoutines : ISystemRoutines
         {
             // Primeira leitura da CPU
             var (prevTotal, prevIdle) = await ReadCpuStats();
-            await Task.Delay(1000); // Espera 1 segundo
+            await Task.Delay(3000); // Espera 3 segundos
             // Segunda leitura da CPU
             var (currTotal, currIdle) = await ReadCpuStats();
 

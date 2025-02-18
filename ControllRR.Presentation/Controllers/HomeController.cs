@@ -59,7 +59,8 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
-   [HttpGet("server/status/resources")]
+    [Authorize(Roles = "Manager, Admin")]
+    [HttpGet("server/status/resources")]
     public async Task<IActionResult> Get()
     {
         var status = await _systemRoutines.GetServerStatus();
