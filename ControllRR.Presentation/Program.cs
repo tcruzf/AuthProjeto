@@ -2,10 +2,8 @@ using ControllRR.Application.Interfaces;
 using ControllRR.Application.Services;
 using ControllRR.Domain.Interfaces;
 using ControllRR.Infrastructure.Data.Context;
-using ControllRR.Infrastructure.Data.Seeding;
 using ControllRR.Infrastructure.Repositories;
 using ControllRR.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ControllRR.Domain.Entities;
@@ -42,25 +40,14 @@ builder.Services.AddEntityFrameworkMySQL()
        options.UseMySQL(builder.Configuration.GetConnectionString("ControlContext"));
    });
 */
-/*
-builder.Services.AddDbContextFactory<ControllRRContext>(options => 
-{
-    var connectionString = builder.Configuration.GetConnectionString("ControlContext");
-    var serverVersion = ServerVersion.AutoDetect(connectionString);
-    options.UseMySql(connectionString, serverVersion);
-});*/
+
 builder.Services.AddDbContext<ControllRRContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("ControlContext");
     var serverVersion = ServerVersion.AutoDetect(connectionString);
     options.UseMySql(connectionString, serverVersion);
 }, ServiceLifetime.Scoped);
-// Configurar o Identity
-/*builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ControllRRContext>()
-    .AddDefaultTokenProviders()
-    .AddDefaultUI();
-*/
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
@@ -117,8 +104,6 @@ builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 builder.Services.AddScoped<IStockManagementService, StockManagementService>();
 builder.Services.AddScoped<IStockManagementRepository, StockManagementRepository>();
 
-
-
 // Adicionar suporte ao MVC e Razor Pages
 builder.Services.AddControllersWithViews();
 
@@ -167,6 +152,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
-    endpoints.MapRazorPages();//ADD THIS LINE
+    endpoints.MapRazorPages();
 });
 app.Run();
