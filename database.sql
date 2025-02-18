@@ -18,9 +18,9 @@ CREATE TABLE `AspNetRoles` (
 
 CREATE TABLE `AspNetUsers` (
     `Id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    `OperatorId` int NOT NULL,
-    `Name` longtext CHARACTER SET utf8mb4 NOT NULL,
-    `Register` int NOT NULL,
+    `OperatorId` int NULL,
+    `Name` longtext CHARACTER SET utf8mb4 NULL,
+    `Register` int NULL,
     `Role` longtext CHARACTER SET utf8mb4 NULL,
     `Phone` longtext CHARACTER SET utf8mb4 NULL,
     `UserName` varchar(256) CHARACTER SET utf8mb4 NULL,
@@ -48,10 +48,26 @@ CREATE TABLE `Documents` (
     CONSTRAINT `PK_Documents` PRIMARY KEY (`Id`)
 ) CHARACTER SET=utf8mb4;
 
+CREATE TABLE `Logins` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Username` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `Password` longtext CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK_Logins` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+
 CREATE TABLE `MaintenanceNumberControls` (
     `Id` int NOT NULL AUTO_INCREMENT,
     `CurrentNumber` int NOT NULL,
     CONSTRAINT `PK_MaintenanceNumberControls` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `Products` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `ProductFullName` longtext CHARACTER SET utf8mb4 NULL,
+    `ProductManufacturer` longtext CHARACTER SET utf8mb4 NULL,
+    `CodeBar` longtext CHARACTER SET utf8mb4 NULL,
+    `ProductDescription` longtext CHARACTER SET utf8mb4 NULL,
+    CONSTRAINT `PK_Products` PRIMARY KEY (`Id`)
 ) CHARACTER SET=utf8mb4;
 
 CREATE TABLE `Sectors` (
@@ -65,6 +81,14 @@ CREATE TABLE `Sectors` (
     `City` longtext CHARACTER SET utf8mb4 NOT NULL,
     `Cep` longtext CHARACTER SET utf8mb4 NOT NULL,
     CONSTRAINT `PK_Sectors` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `Servers` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `ServerName` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `ServerIP` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `ServerPassword` longtext CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK_Servers` PRIMARY KEY (`Id`)
 ) CHARACTER SET=utf8mb4;
 
 CREATE TABLE `Stocks` (
@@ -133,29 +157,51 @@ CREATE TABLE `Devices` (
     CONSTRAINT `FK_Devices_Sectors_SectorId` FOREIGN KEY (`SectorId`) REFERENCES `Sectors` (`Id`) ON DELETE CASCADE
 ) CHARACTER SET=utf8mb4;
 
+CREATE TABLE `ServerLogins` (
+    `ServerId` int NOT NULL,
+    `LoginId` int NOT NULL,
+    `CreatedAt` datetime(6) NOT NULL,
+    `Permissions` longtext CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK_ServerLogins` PRIMARY KEY (`ServerId`, `LoginId`),
+    CONSTRAINT `FK_ServerLogins_Logins_LoginId` FOREIGN KEY (`LoginId`) REFERENCES `Logins` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_ServerLogins_Servers_ServerId` FOREIGN KEY (`ServerId`) REFERENCES `Servers` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `Maintenances` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `SimpleDesc` longtext CHARACTER SET utf8mb4 NULL,
+    `Description` longtext CHARACTER SET utf8mb4 NULL,
+    `OpenDate` datetime(6) NULL,
+    `CloseDate` datetime(6) NULL,
+    `Status` int NOT NULL,
+    `ApplicationUserId` varchar(255) CHARACTER SET utf8mb4 NULL,
+    `DeviceId` int NOT NULL,
+    `MaintenanceNumber` int NULL,
+    CONSTRAINT `PK_Maintenances` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Maintenances_AspNetUsers_ApplicationUserId` FOREIGN KEY (`ApplicationUserId`) REFERENCES `AspNetUsers` (`Id`),
+    CONSTRAINT `FK_Maintenances_Devices_DeviceId` FOREIGN KEY (`DeviceId`) REFERENCES `Devices` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `MaintenanceProduct` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `MaintenanceId` int NOT NULL,
+    `StockId` int NOT NULL,
+    `QuantityUsed` int NOT NULL,
+    CONSTRAINT `PK_MaintenanceProduct` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_MaintenanceProduct_Maintenances_MaintenanceId` FOREIGN KEY (`MaintenanceId`) REFERENCES `Maintenances` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_MaintenanceProduct_Stocks_StockId` FOREIGN KEY (`StockId`) REFERENCES `Stocks` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+
 CREATE TABLE `StockManagements` (
     `Id` int NOT NULL AUTO_INCREMENT,
     `MovementDate` datetime(6) NOT NULL,
     `MovementType` int NOT NULL,
     `Quantity` int NOT NULL,
     `StockId` int NOT NULL,
+    `MaintenanceId` int NULL,
     CONSTRAINT `PK_StockManagements` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_StockManagements_Maintenances_MaintenanceId` FOREIGN KEY (`MaintenanceId`) REFERENCES `Maintenances` (`Id`),
     CONSTRAINT `FK_StockManagements_Stocks_StockId` FOREIGN KEY (`StockId`) REFERENCES `Stocks` (`Id`) ON DELETE CASCADE
-) CHARACTER SET=utf8mb4;
-
-CREATE TABLE `Maintenances` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `SimpleDesc` longtext CHARACTER SET utf8mb4 NOT NULL,
-    `Description` longtext CHARACTER SET utf8mb4 NOT NULL,
-    `OpenDate` datetime(6) NOT NULL,
-    `CloseDate` datetime(6) NOT NULL,
-    `Status` int NOT NULL,
-    `ApplicationUserId` varchar(255) CHARACTER SET utf8mb4 NULL,
-    `DeviceId` int NOT NULL,
-    `MaintenanceNumber` int NOT NULL,
-    CONSTRAINT `PK_Maintenances` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Maintenances_AspNetUsers_ApplicationUserId` FOREIGN KEY (`ApplicationUserId`) REFERENCES `AspNetUsers` (`Id`),
-    CONSTRAINT `FK_Maintenances_Devices_DeviceId` FOREIGN KEY (`DeviceId`) REFERENCES `Devices` (`Id`) ON DELETE CASCADE
 ) CHARACTER SET=utf8mb4;
 
 CREATE INDEX `IX_AspNetRoleClaims_RoleId` ON `AspNetRoleClaims` (`RoleId`);
@@ -174,179 +220,22 @@ CREATE UNIQUE INDEX `UserNameIndex` ON `AspNetUsers` (`NormalizedUserName`);
 
 CREATE INDEX `IX_Devices_SectorId` ON `Devices` (`SectorId`);
 
-CREATE INDEX `IX_Maintenances_ApplicationUserId` ON `Maintenances` (`ApplicationUserId`);
-
-CREATE INDEX `IX_Maintenances_DeviceId` ON `Maintenances` (`DeviceId`);
-
-CREATE INDEX `IX_StockManagements_StockId` ON `StockManagements` (`StockId`);
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250130011215_ApplicationUsers', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-ALTER TABLE `Maintenances` DROP FOREIGN KEY `FK_Maintenances_Devices_DeviceId`;
-
-ALTER TABLE `Maintenances` MODIFY COLUMN `SimpleDesc` longtext CHARACTER SET utf8mb4 NULL;
-
-ALTER TABLE `Maintenances` MODIFY COLUMN `OpenDate` datetime(6) NULL;
-
-ALTER TABLE `Maintenances` MODIFY COLUMN `MaintenanceNumber` int NULL;
-
-ALTER TABLE `Maintenances` MODIFY COLUMN `DeviceId` int NULL;
-
-ALTER TABLE `Maintenances` MODIFY COLUMN `Description` longtext CHARACTER SET utf8mb4 NULL;
-
-ALTER TABLE `Maintenances` MODIFY COLUMN `CloseDate` datetime(6) NULL;
-
-ALTER TABLE `Maintenances` ADD CONSTRAINT `FK_Maintenances_Devices_DeviceId` FOREIGN KEY (`DeviceId`) REFERENCES `Devices` (`Id`);
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250130173057_ApplicationUsersChanges', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250131000328_ApplicationUsersChangess', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-CREATE TABLE `Logins` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `Username` longtext CHARACTER SET utf8mb4 NOT NULL,
-    `Password` longtext CHARACTER SET utf8mb4 NOT NULL,
-    CONSTRAINT `PK_Logins` PRIMARY KEY (`Id`)
-) CHARACTER SET=utf8mb4;
-
-CREATE TABLE `Products` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `ProductFullName` longtext CHARACTER SET utf8mb4 NULL,
-    `ProductManufacturer` longtext CHARACTER SET utf8mb4 NULL,
-    `CodeBar` longtext CHARACTER SET utf8mb4 NULL,
-    `ProductDescription` longtext CHARACTER SET utf8mb4 NULL,
-    CONSTRAINT `PK_Products` PRIMARY KEY (`Id`)
-) CHARACTER SET=utf8mb4;
-
-CREATE TABLE `Servers` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `ServerName` longtext CHARACTER SET utf8mb4 NOT NULL,
-    `ServerIP` longtext CHARACTER SET utf8mb4 NOT NULL,
-    `ServerPassword` longtext CHARACTER SET utf8mb4 NOT NULL,
-    CONSTRAINT `PK_Servers` PRIMARY KEY (`Id`)
-) CHARACTER SET=utf8mb4;
-
-CREATE TABLE `ServerLogins` (
-    `ServerId` int NOT NULL,
-    `LoginId` int NOT NULL,
-    `CreatedAt` datetime(6) NOT NULL,
-    `Permissions` longtext CHARACTER SET utf8mb4 NOT NULL,
-    CONSTRAINT `PK_ServerLogins` PRIMARY KEY (`ServerId`, `LoginId`),
-    CONSTRAINT `FK_ServerLogins_Logins_LoginId` FOREIGN KEY (`LoginId`) REFERENCES `Logins` (`Id`) ON DELETE CASCADE,
-    CONSTRAINT `FK_ServerLogins_Servers_ServerId` FOREIGN KEY (`ServerId`) REFERENCES `Servers` (`Id`) ON DELETE CASCADE
-) CHARACTER SET=utf8mb4;
-
-CREATE INDEX `IX_ServerLogins_LoginId` ON `ServerLogins` (`LoginId`);
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250202182015_ServerLoginEntities', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-CREATE TABLE `MaintenanceProduct` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `MaintenanceId` int NOT NULL,
-    `StockId` int NOT NULL,
-    `QuantityUsed` int NOT NULL,
-    CONSTRAINT `PK_MaintenanceProduct` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_MaintenanceProduct_Maintenances_MaintenanceId` FOREIGN KEY (`MaintenanceId`) REFERENCES `Maintenances` (`Id`) ON DELETE CASCADE,
-    CONSTRAINT `FK_MaintenanceProduct_Stocks_StockId` FOREIGN KEY (`StockId`) REFERENCES `Stocks` (`Id`) ON DELETE CASCADE
-) CHARACTER SET=utf8mb4;
-
 CREATE INDEX `IX_MaintenanceProduct_MaintenanceId` ON `MaintenanceProduct` (`MaintenanceId`);
 
 CREATE INDEX `IX_MaintenanceProduct_StockId` ON `MaintenanceProduct` (`StockId`);
 
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250204175303_RevertConfigs', '7.0.13');
+CREATE INDEX `IX_Maintenances_ApplicationUserId` ON `Maintenances` (`ApplicationUserId`);
 
-COMMIT;
+CREATE INDEX `IX_Maintenances_DeviceId` ON `Maintenances` (`DeviceId`);
 
-START TRANSACTION;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250204204405_MaintenanceStock', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250204213123_MaintenanceStocksUpdate', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250204222340_FixStockAfter', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-ALTER TABLE `StockManagements` ADD `MaintenanceId` int NULL;
+CREATE INDEX `IX_ServerLogins_LoginId` ON `ServerLogins` (`LoginId`);
 
 CREATE INDEX `IX_StockManagements_MaintenanceId` ON `StockManagements` (`MaintenanceId`);
 
-ALTER TABLE `StockManagements` ADD CONSTRAINT `FK_StockManagements_Maintenances_MaintenanceId` FOREIGN KEY (`MaintenanceId`) REFERENCES `Maintenances` (`Id`);
+CREATE INDEX `IX_StockManagements_StockId` ON `StockManagements` (`StockId`);
 
 INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250205181548_LogsProducts', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250205193726_ProductsChange', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250205194402_FixMaintenanceRelationship', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250205235714_PublishTestConfig', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250206164238_PublishTestConfigSetMysql', '7.0.13');
-
-COMMIT;
-
-START TRANSACTION;
-
-ALTER TABLE `AspNetUsers` MODIFY COLUMN `OperatorId` int NULL;
-
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20250207184910_AlterUserStructure', '7.0.13');
+VALUES ('20250218005628_UnitOfWork', '7.0.13');
 
 COMMIT;
 
