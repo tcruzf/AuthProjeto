@@ -8,7 +8,7 @@ public interface IUserRepository
       Task<ApplicationUser> FindByIdAsync(int id);
       Task InsertAsync(ApplicationUser user);
 
-      Task SaveChangesAsync();
+    //  Task SaveChangesAsync();
       Task RemoveAsync(int id);
       Task UpdateAsync(ApplicationUser user);
 }

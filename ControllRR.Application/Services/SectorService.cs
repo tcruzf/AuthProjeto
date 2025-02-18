@@ -10,10 +10,16 @@ public class SectorService : ISectorService
 {
     private readonly ISectorRepository _sectorRepository;
     private readonly IMapper _mapper;
-    public SectorService(ISectorRepository sectorRepository, IMapper mapper)
+    private readonly IUnitOfWork _uow;
+    public SectorService(
+        ISectorRepository sectorRepository,
+        IMapper mapper,
+        IUnitOfWork uow
+        )
     {
         _sectorRepository = sectorRepository;
         _mapper = mapper;
+        _uow = uow;
     }
 
     public async Task<List<SectorDto>> FindAllAsync()
@@ -25,8 +31,13 @@ public class SectorService : ISectorService
 
     public async Task InsertAsync(SectorDto sectorDto)
     {
+        await _uow.BeginTransactionAsync();
         var sector = _mapper.Map<Sector>(sectorDto);
         await _sectorRepository.InsertAsync(sector);
+        await _uow.SaveChangesAsync();
+        await _uow.CommitAsync();
+
+
     }
 
     public async Task<SectorDto> FindByIdAsync(int id)
@@ -52,8 +63,11 @@ public class SectorService : ISectorService
 
     public async Task UpdateAsync(SectorDto sectorDto)
     {
+        await _uow.BeginTransactionAsync();
         var sector = _mapper.Map<Sector>(sectorDto);
         await _sectorRepository.UpdateAsync(sector);
+        await _uow.SaveChangesAsync();
+        await _uow.CommitAsync();
 
     }
 

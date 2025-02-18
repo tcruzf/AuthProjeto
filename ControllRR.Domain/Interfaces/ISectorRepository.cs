@@ -7,7 +7,7 @@ public interface ISectorRepository
     Task<Sector> FindByIdAsync(int id);
 
     Task InsertAsync(Sector sector);
-    Task SaveChangesAsync();
+
 
     Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetSectorAsync(
            int start,

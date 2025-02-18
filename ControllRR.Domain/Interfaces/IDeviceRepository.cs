@@ -10,7 +10,7 @@ public interface IDeviceRepository
       Task UpdateAsync(Device device);
 
       Task<Device> GetMaintenancesAsync(int id);
-      Task SaveChangesAsync();
+    //  Task SaveChangesAsync();
       Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetDevicesAsync(
             int start,
             int length,

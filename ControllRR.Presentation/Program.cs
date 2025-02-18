@@ -6,9 +6,7 @@ using ControllRR.Infrastructure.Data.Seeding;
 using ControllRR.Infrastructure.Repositories;
 using ControllRR.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.EntityFrameworkCore;
-using MySql.EntityFrameworkCore.Extensions;
 using Microsoft.AspNetCore.Identity;
 using ControllRR.Domain.Entities;
 using AutoMapper;
@@ -44,21 +42,26 @@ builder.Services.AddEntityFrameworkMySQL()
        options.UseMySQL(builder.Configuration.GetConnectionString("ControlContext"));
    });
 */
-
+/*
 builder.Services.AddDbContextFactory<ControllRRContext>(options => 
 {
     var connectionString = builder.Configuration.GetConnectionString("ControlContext");
     var serverVersion = ServerVersion.AutoDetect(connectionString);
     options.UseMySql(connectionString, serverVersion);
-});
-
+});*/
+builder.Services.AddDbContext<ControllRRContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("ControlContext");
+    var serverVersion = ServerVersion.AutoDetect(connectionString);
+    options.UseMySql(connectionString, serverVersion);
+}, ServiceLifetime.Scoped);
 // Configurar o Identity
 /*builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ControllRRContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 */
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
     options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
@@ -96,7 +99,7 @@ builder.Services.AddAutoMapper(
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 // Registrar serviços
 builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -126,9 +129,10 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        SeedingService.Initialize(services);
+        //await SeedingService.Initialize(services);
         await AdminSeed.InitializeAsync(services);
-        SeedUser.InitializeAsync(services);
+        //await SeedUser.InitializeAsync(services);
+        System.Console.WriteLine("Try bloco");
     }
     catch (Exception ex)
     {

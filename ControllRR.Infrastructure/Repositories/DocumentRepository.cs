@@ -7,20 +7,19 @@ using ControllRR.Infrastructure.Data.Context;
 using ControllRR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using ControllRR.Domain.Interfaces;
+using ControllRR.Infrastructure.Repositories;
 
-public class DocumentRepository : IDocumentRepository
+public class DocumentRepository : BaseRepository<Document> ,IDocumentRepository
 {
-  private readonly ControllRRContext _controllRRContext;
 
-  public DocumentRepository(ControllRRContext controllRRContext)
-  {
-    _controllRRContext = controllRRContext;
+  public DocumentRepository(ControllRRContext context) : base(context)
+  { 
   }
 
   //Retorna uma lista de documentos contidos na base de dados
   public async Task<IEnumerable<Document>> GetAllAsync()
   {
-    var obj = await _controllRRContext.Documents.ToListAsync();
+    var obj = await _context.Documents.ToListAsync();
     return obj;
   }
 
@@ -28,16 +27,12 @@ public class DocumentRepository : IDocumentRepository
   public async Task AddAsync(Document document)
   {
 
-    _controllRRContext.Documents.Add(document);
-    await _controllRRContext.SaveChangesAsync();
+    _context.Documents.Add(document);
+  
 
   }
 
   // Persiste as informações de documentos no banco de dados
-  public async Task SaveChangesAsync()
-  {
-    await _controllRRContext.SaveChangesAsync();
-  }
-
+  
 
 }

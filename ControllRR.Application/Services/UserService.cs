@@ -49,7 +49,7 @@ public class UserService : IUserService
         var user = _mapper.Map<ApplicationUser>(userDto);
 
         await _userRepository.InsertAsync(user);
-        await _userRepository.SaveChangesAsync();
+        //await _userRepository.SaveChangesAsync();
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class UserService : IUserService
             throw new InvalidOperationException("Não é possivel remover usuario que tenha manutenções registradas!");
         }
 
-        // await _userRepository.SaveChangesAsync();
+        //  await _userRepository.SaveChangesAsync();
 
     }
 

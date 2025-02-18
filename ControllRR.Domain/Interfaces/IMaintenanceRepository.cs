@@ -14,15 +14,12 @@ public interface IMaintenanceRepository
   Task RemoveAsync(int id);
   Task UpdateAsync(Maintenance maintenance);
   Task FinalizeAsync(int id);
-  Task SaveChangesAsync();
-
   Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetMaintenancesAsync(
                 int start,
                 int length,
                 string searchValue,
                 string sortColumn,
                 string sortDirection);
-
-  Task<IDbContextTransaction> BeginTransactionAsync();
+  
   Task<bool> ExistsAsync(int id);
 }

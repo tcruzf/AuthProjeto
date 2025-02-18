@@ -5,25 +5,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ControllRR.Infrastructure.Repositories;
 
-public class StockManagementRepository : IStockManagementRepository
+public class StockManagementRepository : BaseRepository<StockManagement>, IStockManagementRepository
 {
 
-    private readonly ControllRRContext _controllRRContext;
-    public StockManagementRepository(ControllRRContext controllRRContext)
+   
+    public StockManagementRepository(ControllRRContext context) : base(context)
     {
-        _controllRRContext = controllRRContext;
+        
     }
 
     public async Task AddAsync(StockManagement stock)
     {
-        await _controllRRContext.AddAsync(stock);
-        await SaveChangesAsync();
+        await _context.StockManagements.AddAsync(stock);
+        
     }
 
     //Return all Stock Itens
     public async Task<List<StockManagement>> FindAllAsync()
     {
-        var stockProductInfo = await _controllRRContext.StockManagements
+        var stockProductInfo = await _context.StockManagements
         .Include(sm => sm.Maintenance)
         .Include(sm => sm.Stock)
         .ToListAsync();
@@ -31,17 +31,9 @@ public class StockManagementRepository : IStockManagementRepository
     }
 
 
-
-    public async Task SaveChangesAsync()
-    {
-        await _controllRRContext.SaveChangesAsync();
-    }
-
-
-
     public async Task<List<StockManagement>> GetByStockIdAsync(int stockId)
     {
-        return await _controllRRContext.StockManagements
+        return await _context.StockManagements
             .Where(m => m.StockId == stockId)
             .OrderByDescending(m => m.MovementDate)
             .ToListAsync();

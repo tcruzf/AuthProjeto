@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class RemoveRoleFromUser : Migration
+    public partial class UnitOfWork : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

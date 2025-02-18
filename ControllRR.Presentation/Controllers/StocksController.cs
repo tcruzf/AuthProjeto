@@ -38,21 +38,16 @@ public class StocksController : Controller
     [HttpPost]
     public async Task<IActionResult> NewProduct(StockViewModel model)
     {
-        System.Console.WriteLine(model.StockDto.ProductName);
-        System.Console.WriteLine(model.StockDto.ProductQuantity);
-        System.Console.WriteLine(model.StockDto.ProductApplication);
-        System.Console.WriteLine(model.StockDto.ProductDescription);
-        System.Console.WriteLine(model.StockDto.ProductReference);
-
-        if (!ModelState.IsValid)
-            return View(model);
-
-
+        if(!ModelState.IsValid)
+            throw new Exception();
+       
         try
         {
             TempData["SuccessMessage"] = "Produto inserido com sucesso!";
             // Usa o serviço para toda a lógica
-            var createdStock = await _stockService.CreateProductWithInitialMovementAsync(model.StockDto);
+            System.Console.WriteLine("Salvando produto");
+             await _stockService.CreateProductWithInitialMovementAsync(model.StockDto);
+            System.Console.WriteLine("Agora redirecionando");
             return RedirectToAction("SearchProduct");
         }
         catch (Exception ex)

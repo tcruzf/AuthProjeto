@@ -8,7 +8,7 @@ public interface IMaintenanceService
     Task<MaintenanceDto> FindByIdAsync(int id);
     Task<OperationResultDto> InsertAsync (MaintenanceDto maintenanceDto);
     Task RemoveAsync(int id);
-    Task UpdateAsync(MaintenanceDto maintenance);
+    Task<OperationResultDto> UpdateAsync(MaintenanceDto maintenance);
     Task FinalizeAsync(int id);
       Task<object> GetMaintenanceDataTableAsync( int start,
     int length,
@@ -16,5 +16,4 @@ public interface IMaintenanceService
     string sortColumn,
     string sortDirection);
 
-   Task SaveAsync();
 }

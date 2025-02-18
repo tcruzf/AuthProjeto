@@ -21,7 +21,7 @@ public static class AdminSeed
         // Criar usuário admin
         var adminEmail = "t@t.com";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
-
+        var tempRole = "Admin";
         if (adminUser == null)
         {
             var user = new ApplicationUser
@@ -39,7 +39,8 @@ public static class AdminSeed
 
             if (createResult.Succeeded)
             {
-                await userManager.AddToRoleAsync(user, "Admin");
+                await userManager.AddToRoleAsync(user, tempRole); 
+                
             }
         }
     }

@@ -9,39 +9,36 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControllRR.Infrastructure.Exceptions;
 using ControllRR.Domain.Interfaces;
+using ControllRR.Infrastructure.Repositories;
 
-public class SectorRepository : ISectorRepository
+public class SectorRepository : BaseRepository<Sector>, ISectorRepository
 {
-    private readonly ControllRRContext _controllRRContext;
-    public SectorRepository(ControllRRContext controllRRContext)
+    //private readonly ControllRRContext _controllRRContext;
+    public SectorRepository(ControllRRContext context) : base(context)
     {
-        _controllRRContext = controllRRContext;
+        
     }
 
     public async Task<List<Sector>> FindAllAsync()
     {
-        return await _controllRRContext.Sectors
+        return await _context.Sectors
         .Include(x => x.Devices)
         .ToListAsync();
     }
 
     public async Task InsertAsync(Sector sector)
     {
-        _controllRRContext.Add(sector);
-        await _controllRRContext.SaveChangesAsync();
+        await _context.Sectors.AddAsync(sector);
     }
 
-    public async Task<Sector> FindByIdAsync(int id)
+    public async Task<Sector?> FindByIdAsync(int id)
     {
-        return await _controllRRContext.Sectors
+        return await _context.Sectors
         .Include(x => x.Devices)
         .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task SaveChangesAsync()
-    {
-        await _controllRRContext.SaveChangesAsync();
-    }
+  
 
     public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetSectorAsync(
       int start,
@@ -50,7 +47,7 @@ public class SectorRepository : ISectorRepository
       string sortColumn,
       string sortDirection)
     {
-        var query = _controllRRContext.Sectors
+        var query = _context.Sectors
             .Include(x => x.Devices)
             .AsQueryable();
 
@@ -97,22 +94,22 @@ public class SectorRepository : ISectorRepository
             })
             .ToListAsync();
 
-        var totalRecords = await _controllRRContext.Devices.CountAsync();
+        var totalRecords = await _context.Devices.CountAsync();
 
         return (data, totalRecords, filteredCount);
     }
 
     public async Task UpdateAsync(Sector sector)
     {
-        bool hasAny = await _controllRRContext.Sectors.AnyAsync(x => x.Id == sector.Id);
+        bool hasAny = await _context.Sectors.AnyAsync(x => x.Id == sector.Id);
         if (!hasAny)
         {
             throw new NotFoundException("Id Não encontrado!");
         }
         try
         {
-            _controllRRContext.Sectors.Update(sector);
-            await _controllRRContext.SaveChangesAsync();
+            _context.Entry(sector).CurrentValues.SetValues(sector);
+          
 
         }
         catch (DbConcurrencyException e)

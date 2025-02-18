@@ -11,11 +11,13 @@ public class StockService : IStockService
     private readonly IStockRepository _stockRepository;
     private readonly IMapper _mapper;
     private readonly IStockManagementService _stockManagementService;
-    public StockService(IStockRepository stockRepository, IMapper mapper, IStockManagementService stockManagementService)
+    private readonly IUnitOfWork _uow;
+    public StockService(IStockRepository stockRepository, IMapper mapper, IStockManagementService stockManagementService, IUnitOfWork uow)
     {
         _stockRepository = stockRepository;
         _mapper = mapper;
         _stockManagementService = stockManagementService;
+        _uow = uow;
     }
 
     public async Task<List<StockDto>> FindAllAsync()
@@ -32,31 +34,41 @@ public class StockService : IStockService
 
     public async Task<StockDto> CreateProductWithInitialMovementAsync(StockDto stockDto)
     {
-        // Mapeia o DTO para Stock com quantidade 0
-        var stock = _mapper.Map<Stock>(stockDto);
-        stock.ProductQuantity = 0; // Tenho que inicializar com 0
+        if(stockDto == null)
+            throw new Exception();
+       
+        try
+        {
 
-        await _stockRepository.InsertAsync(stock);
+            await _uow.BeginTransactionAsync();
+            // Cria e persiste o Stock
+            var stock = _mapper.Map<Stock>(stockDto);
+            stock.ProductQuantity = 0;
+            await _stockRepository.AddAsync(stock);
+            await _uow.SaveChangesAsync(); 
+            // Adiciona a movimentação inicial
+            await _stockManagementService.AddMovementAsync(
+                stock.Id,
+                StockMovementType.Entrada,
+                stockDto.ProductQuantity,
+                DateTime.Now,
+                null
+            );
 
-        // Adiciona movimentação inicial (Entrada)
-        await _stockManagementService.AddMovementAsync(
-            stock.Id,
-        StockMovementType.Entrada,
-        stockDto.ProductQuantity,
-        DateTime.Now,
-        null // Aqui deve ser esse valor?
-        );
+            await _uow.SaveChangesAsync(); // Persiste a movimentação
+            await _uow.CommitAsync();
 
-        return _mapper.Map<StockDto>(stock);
+            return _mapper.Map<StockDto>(stock);
+        }
+        catch(Exception ex)
+        {
+            throw new Exception("Stock Service Exception", ex);
+            throw;
+        }
     }
 
 
-    public async Task AddAsync(StockDto stock)
-    {
-        var stockNew = _mapper.Map<Stock>(stock);
-        await _stockRepository.InsertAsync(stockNew);
-
-    }
+    
 
 
 }

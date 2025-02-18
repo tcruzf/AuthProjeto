@@ -10,14 +10,21 @@ public class DocumentService : IDocumentService
 {
     private readonly IDocumentRepository _documentRepository;
     private readonly IMapper _mapper;
+    private readonly IUnitOfWork _uow;
 
     private readonly IFileStorageService _fileStorageService;
 
-    public DocumentService(IDocumentRepository documentRepository, IMapper mapper, IFileStorageService fileStorageService)
+    public DocumentService(
+        IDocumentRepository documentRepository,
+        IMapper mapper,
+        IFileStorageService fileStorageService,
+        IUnitOfWork uow
+        )
     {
         _documentRepository = documentRepository;
         _mapper = mapper;
         _fileStorageService = fileStorageService;
+        _uow = uow;
     }
 
     public async Task<IEnumerable<DocumentDto>> GetAllAsync()
@@ -43,6 +50,7 @@ public class DocumentService : IDocumentService
         }
         try
         {
+            await _uow.BeginTransactionAsync();
             string uniqueFileName = await _fileStorageService.SaveFileAsync(documentDto.FormFile, "uploads");
 
             documentDto.DocumentName = uniqueFileName;
@@ -50,7 +58,8 @@ public class DocumentService : IDocumentService
 
             var document = _mapper.Map<Document>(documentDto);
             await _documentRepository.AddAsync(document);
-            await _documentRepository.SaveChangesAsync();
+            await _uow.SaveChangesAsync();
+            await _uow.CommitAsync();
             return documentDto;
         }
         catch (Exception ex)

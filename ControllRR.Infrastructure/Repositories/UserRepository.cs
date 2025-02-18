@@ -35,8 +35,7 @@ public class UserRepository : IUserRepository
 
     public async Task InsertAsync(ApplicationUser user)
     {
-        _controllRRContext.AddAsync(user);
-        await _controllRRContext.SaveChangesAsync();
+       await _controllRRContext.AddAsync(user);
 
     }
 
@@ -47,7 +46,7 @@ public class UserRepository : IUserRepository
         .FirstOrDefaultAsync(u => u.OperatorId == id);
 
         _controllRRContext.Remove(obj);
-        await _controllRRContext.SaveChangesAsync();
+       
 
     }
 
@@ -61,7 +60,7 @@ public class UserRepository : IUserRepository
         try
         {
             _controllRRContext.Update(user);
-            await _controllRRContext.SaveChangesAsync();
+         
         }
         catch (DbConcurrencyException e)
         {
@@ -69,10 +68,5 @@ public class UserRepository : IUserRepository
         }
     }
 
-
-    public async Task SaveChangesAsync()
-    {
-        await _controllRRContext.SaveChangesAsync();
-    }
 
 }

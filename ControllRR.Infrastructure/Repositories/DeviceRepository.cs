@@ -12,16 +12,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControllRR.Infrastructure.Exceptions;
 using ControllRR.Domain.Interfaces;
-using Mysqlx.Expr;
 
 namespace ControllRR.Infrastructure.Repositories;
-public class DeviceRepository : IDeviceRepository
+public class DeviceRepository : BaseRepository<Device>, IDeviceRepository
 {
-    private readonly ControllRRContext _controllRRContext;
+    
 
-    public DeviceRepository(ControllRRContext controllRRContext)
+    public DeviceRepository(ControllRRContext context) : base(context)
     {
-        _controllRRContext = controllRRContext;
+        
     }
 
 
@@ -30,7 +29,7 @@ public class DeviceRepository : IDeviceRepository
     ///  Retorna lista de devices(dispositivos) 
     public async Task<List<Device>> FindAllAsync()
     {
-        return await _controllRRContext.Devices
+        return await _context.Devices
         .Include(x => x.Sector)
         .Include(x => x.Maintenances)
         .ToListAsync();
@@ -39,7 +38,7 @@ public class DeviceRepository : IDeviceRepository
     // Busca um dispositivo com base em um inteiro(Id)   
     public async Task<Device?> FindByIdAsync(int id)
     {
-        return await _controllRRContext.Devices
+        return await _context.Devices
         .Include(x => x.Sector)
         .FirstOrDefaultAsync(x => x.Id == id);
     }
@@ -48,7 +47,7 @@ public class DeviceRepository : IDeviceRepository
     // Inclue na busca todas as manutenções relacionadas a ele e também seu setor
     public async Task<Device?> GetMaintenancesAsync(int id)
     {
-        return await _controllRRContext.Devices
+        return await _context.Devices
         .Include(x => x.Maintenances)
         .Include(x => x.Sector)
         .FirstOrDefaultAsync(x => x.Id == id);
@@ -57,16 +56,15 @@ public class DeviceRepository : IDeviceRepository
     // Cria um novo dispositivo
     public async Task InsertAsync(Device device)
     {
-        await _controllRRContext.AddAsync(device);
-        await _controllRRContext.SaveChangesAsync();
-
+        await _context.Devices.AddAsync(device);
+        
     }
 
     // Realiza a persistencia de informações alteradas de um determinado dispositivo
     public async Task UpdateAsync(Device device)
     {
         // Verica se o dispositivo existe (com base no Id) no banco de dados
-        bool existDevice = await _controllRRContext.Devices.AnyAsync(x => x.Id == device.Id);
+        bool existDevice = await _context.Devices.AnyAsync(x => x.Id == device.Id);
 
         // Caso não exista, lança a exception
         if (!existDevice)
@@ -78,8 +76,10 @@ public class DeviceRepository : IDeviceRepository
         // invalida, então realiza a persistencia dos novos dados no banco de dados.
         try
         {
-            _controllRRContext.Devices.Update(device);
-            await _controllRRContext.SaveChangesAsync();
+          
+            _context.Entry(device).CurrentValues.SetValues(device);
+            
+          
         }
         catch (DbConcurrencyException e)
         {
@@ -88,10 +88,7 @@ public class DeviceRepository : IDeviceRepository
     }
 
     // Realiza a persistencia dos dados.
-    public async Task SaveChangesAsync()
-    {
-        await _controllRRContext.SaveChangesAsync();
-    }
+
 
     // Metodo utilizado para busca dinamica de informações através de datatables
     public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetDevicesAsync(
@@ -101,7 +98,7 @@ public class DeviceRepository : IDeviceRepository
       string sortColumn,
       string sortDirection)
     {
-        var query = _controllRRContext.Devices
+        var query = _context.Devices
             .Include(x => x.Maintenances)
             .Include(x => x.Sector)
             .AsQueryable();
@@ -149,7 +146,7 @@ public class DeviceRepository : IDeviceRepository
             })
             .ToListAsync();
 
-        var totalRecords = await _controllRRContext.Devices.CountAsync();
+        var totalRecords = await _context.Devices.CountAsync();
 
         return (data, totalRecords, filteredCount);
     }

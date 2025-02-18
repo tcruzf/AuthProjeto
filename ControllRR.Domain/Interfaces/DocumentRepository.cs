@@ -6,5 +6,5 @@ public interface IDocumentRepository
 {
     Task<IEnumerable<Document>> GetAllAsync();
     Task AddAsync(Document document);
-    Task SaveChangesAsync();
+   // Task SaveChangesAsync();
 }

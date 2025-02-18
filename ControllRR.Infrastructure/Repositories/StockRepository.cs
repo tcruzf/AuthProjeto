@@ -6,25 +6,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ControllRR.Infrastructure.Repositories;
 
-public class StockRepository : IStockRepository
+public class StockRepository : BaseRepository<Stock>, IStockRepository
 {
 
-    private readonly ControllRRContext _controllRRContext;
-    public StockRepository(ControllRRContext controllRRContext)
+    
+    public StockRepository(ControllRRContext context) : base(context)
     {
-        _controllRRContext = controllRRContext;
+      
     }
 
     public async Task<List<Stock>> FindAllAsync()
     {
-        var stock = await _controllRRContext.Stocks
+        var stock = await _context.Stocks
         .ToListAsync();
         return stock;
     }
 
     public async Task<List<Stock>> SearchAsync(string term)
     {
-        return await _controllRRContext.Stocks
+        return await _context.Stocks
          .Where(s => s.ProductName.Contains(term) ||
                     s.ProductDescription.Contains(term) ||
                     s.ProductReference.Contains(term) ||
@@ -34,24 +34,13 @@ public class StockRepository : IStockRepository
          .ToListAsync();
     }
 
-    public async Task InsertAsync(Stock stock)
-    {
-
-        await _controllRRContext.Stocks.AddAsync(stock);
-        await _controllRRContext.SaveChangesAsync();
-    }
-
+  
     public async Task<Stock?> GetByIdAsync(int id)
     {
-        return await _controllRRContext.Stocks
+        return await _context.Stocks
             .Include(s => s.Movements)
             .FirstOrDefaultAsync(s => s.Id == id);
     }
 
-    public async Task UpdateAsync(Stock stock)
-    {
-        _controllRRContext.Stocks.Update(stock);
-        await _controllRRContext.SaveChangesAsync();
-       // _controllRRContext.Entry(stock).State = EntityState.Modified;
-    }
+  
 }

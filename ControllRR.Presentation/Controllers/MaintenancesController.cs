@@ -91,7 +91,7 @@ public class MaintenancesController : Controller
                 SectorId = d.SectorId
             })
             .ToList() ?? new List<DeviceDto>();
-
+        System.Console.WriteLine("Get NEW COntroller ##########################################################");
         var viewModel = new MaintenanceViewModel
         {
             ApplicationUserDto = users,
@@ -107,18 +107,23 @@ public class MaintenancesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> New(MaintenanceDto maintenanceDto)
     {
+        Console.WriteLine("Iniciando inserção de manutenção...");
         if (maintenanceDto.ApplicationUserId != null)
         {
             System.Console.WriteLine("Id não é nulo:");
+            System.Console.WriteLine("Id do usuario:");
             System.Console.WriteLine(maintenanceDto.ApplicationUserId);
-        }
 
+        }
+        System.Console.WriteLine("Id da manutenção:");
         System.Console.WriteLine(maintenanceDto.Id);
+        System.Console.WriteLine("Status da manutenção:");
         System.Console.WriteLine(maintenanceDto.Status);
-        System.Console.WriteLine(maintenanceDto.ApplicationUserId);
+        System.Console.WriteLine("Nome do usuario:");
+        System.Console.WriteLine(maintenanceDto.ApplicationUser);
         //System.Console.WriteLine(maintenanceDto.ApplicationUser.Name);
 
-
+        Console.WriteLine("Iniciando Verificação de usuario");
         var user = await _userService.FindAllAsync();
         var applicationUserDto = user.Select(u => new ApplicationUserDto
         {
@@ -162,7 +167,7 @@ public class MaintenancesController : Controller
     public async Task<IActionResult> ChangeMaintenance(int? id)
     {
         var maintenance = await _maintenanceService.FindByIdAsync(id.Value);
-        var device = await _deviceService.FindByIdAsync(maintenance.Device.Id);
+        //var device = await _deviceService.FindByIdAsync(maintenance.Device.Id);
         var users = await _userService.FindAllAsync();
 
 
@@ -175,7 +180,7 @@ public class MaintenancesController : Controller
         return View(viewModel);
     }
 
-    [Authorize(Roles = "Manager, Admin")]
+    //[Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangeMaintenance(int? id, MaintenanceDto maintenanceDto)
@@ -184,8 +189,8 @@ public class MaintenancesController : Controller
         if (!ModelState.IsValid)
         {
             var users = await _userService.FindAllAsync();
-            var applicationUserDtos = _userService.FindAllAsync();
-            var devices = _deviceService.FindAllAsync();
+            var applicationUserDtos = await _userService.FindAllAsync();//Sem await
+            var devices = await _deviceService.FindAllAsync(); // Mais um sem await
 
             MaintenanceViewModel viewModel = new MaintenanceViewModel
             {
@@ -198,7 +203,6 @@ public class MaintenancesController : Controller
         try
         {
             await _maintenanceService.UpdateAsync(maintenanceDto);
-            await _maintenanceService.SaveAsync();
             TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
             return RedirectToAction(nameof(MaintenanceList));
         }

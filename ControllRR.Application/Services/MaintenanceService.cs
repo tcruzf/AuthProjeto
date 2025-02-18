@@ -15,13 +15,21 @@ public class MaintenanceService : IMaintenanceService
     private readonly IMapper _mapper;
     private readonly IStockRepository _stockRepository;
     private readonly IStockManagementService _stockManagementService;
+    private readonly IUnitOfWork _uow;
 
-    public MaintenanceService(IMaintenanceRepository maintenanceRepository, IMapper mapper, IStockRepository stockRepository, IStockManagementService stockManagementService)
+    public MaintenanceService(
+     IMaintenanceRepository maintenanceRepository,
+     IMapper mapper,
+     IStockRepository stockRepository,
+     IStockManagementService stockManagementService,
+     IUnitOfWork uow
+     )
     {
         _maintenanceRepository = maintenanceRepository;
         _mapper = mapper;
         _stockRepository = stockRepository;
         _stockManagementService = stockManagementService;
+        _uow = uow;
     }
 
     public async Task<List<MaintenanceDto>> FindAllAsync()
@@ -41,15 +49,14 @@ public class MaintenanceService : IMaintenanceService
 
     public async Task<OperationResultDto> InsertAsync(MaintenanceDto maintenanceDto)
     {
-        await using var transaction = await _maintenanceRepository.BeginTransactionAsync();
+        //await using var transaction = await _uow.BeginTransactionAsync();
         var result = new OperationResultDto { Success = true };
         try
         {
+            await _uow.BeginTransactionAsync();
             var maintenance = _mapper.Map<Maintenance>(maintenanceDto);
             await _maintenanceRepository.InsertAsync(maintenance);
-            //await _maintenanceRepository.SaveChangesAsync();
-
-            //var maintenance = _mapper.Map<Maintenance>(maintenanceDto);
+            await _uow.SaveChangesAsync();
 
             foreach (var product in maintenance.MaintenanceProducts)
             {
@@ -57,9 +64,11 @@ public class MaintenanceService : IMaintenanceService
 
                 if (stock.ProductQuantity < product.QuantityUsed)
                 {
+
+                    await _uow.RollbackAsync();
                     result.Success = false;
                     result.AlertScript = GenerateStockErrorScript(stock.ProductName, product.QuantityUsed);
-                    await transaction.RollbackAsync();
+                    //await transaction.RollbackAsync();
                     return result;
 
                     //throw new Exception($"Estoque insuficiente: {stock.ProductName}");
@@ -75,13 +84,14 @@ public class MaintenanceService : IMaintenanceService
                     maintenance.Id
                 );
             }
-            await _maintenanceRepository.SaveChangesAsync();
-            //await transaction.CommitAsync();
+            await _uow.SaveChangesAsync();
+            
+            await _uow.CommitAsync();
             return new OperationResultDto{ Success = true};
         }
         catch(Exception ex)
         {
-            //await transaction.RollbackAsync();
+            await _uow.RollbackAsync();
             return new OperationResultDto
             {
                 Success = false,
@@ -91,6 +101,8 @@ public class MaintenanceService : IMaintenanceService
         }
         // Se ao menos uma coisa não der errado, então talvez dê pra persistir os dados
         //await _maintenanceRepository.InsertAsync(maintenance);
+        // Só para me atualizar, não é necessario salvar mais nada aqui, tudo que preciso está dentro do bloco try/catch.
+        // Foi bom ter sofrido por uma semana. Serviu de aprendizado.
 
     }
 
@@ -105,13 +117,14 @@ public class MaintenanceService : IMaintenanceService
             footer: '<a href='/Stocks/SearchProduct'>Verifique o estoque</a>'
         }});";
 }
-    public async Task UpdateAsync(MaintenanceDto maintenanceDto)
+    public async Task<OperationResultDto> UpdateAsync(MaintenanceDto maintenanceDto)
     {
         //await using var context = _contextFactory.CreateDbContext();
-        //await using var transaction = await _maintenanceRepository.BeginTransactionAsync();
+       // await using var transaction = await _maintenanceRepository.BeginTransactionAsync();
 
         try
         {
+            await _uow.BeginTransactionAsync();
             var existingMaintenance = await _maintenanceRepository.FindByIdAsync(maintenanceDto.Id, includeProducts: true);
             System.Console.WriteLine("######################");
             System.Console.WriteLine(existingMaintenance.MaintenanceProducts.Count());
@@ -125,10 +138,12 @@ public class MaintenanceService : IMaintenanceService
                 if (updatedProduct == null)
                 {
                     await RestockProduct(existingProduct, maintenanceDto.Id);
+                    await _uow.SaveChangesAsync();
                 }
                 else
                 {
                     await UpdateStockQuantity(existingProduct, updatedProduct, maintenanceDto.Id);
+                    await _uow.SaveChangesAsync();
                 }
             }
 
@@ -138,21 +153,25 @@ public class MaintenanceService : IMaintenanceService
             foreach (var newProduct in newProducts)
             {
                 await DeductStock(newProduct, maintenanceDto.Id);
+                await _uow.SaveChangesAsync();
             }
 
             await _maintenanceRepository.UpdateAsync(maintenance);
-            await _maintenanceRepository.SaveChangesAsync();
-            //await transaction.CommitAsync();
+            await _uow.SaveChangesAsync();
+            await _uow.CommitAsync();
+            return new OperationResultDto{ Success = true};
+            
         }
         catch
         {
-            //await transaction.RollbackAsync();
+            await _uow.RollbackAsync();
             throw;
         }
     }
 
     private async Task UpdateStockQuantity(MaintenanceProduct original, MaintenanceProduct updated, int maintenanceId)
     {
+        //await _uow.BeginTransactionAsync();
         if(updated.QuantityUsed < 0 )
             throw new Exception("Quantidade não pode ser negativa!");
             
@@ -173,6 +192,7 @@ public class MaintenanceService : IMaintenanceService
                 maintenanceId
             );
         }
+        await _uow.SaveChangesAsync();
     }
 
     private async Task DeductStock(MaintenanceProduct product, int maintenanceId)
@@ -237,8 +257,5 @@ public class MaintenanceService : IMaintenanceService
         };
     }
 
-    public async Task SaveAsync()
-    {
-        await _maintenanceRepository.SaveChangesAsync();
-    }
+   
 }

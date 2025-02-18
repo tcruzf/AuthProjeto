@@ -46,8 +46,8 @@ public class ApplicationUserRepository : IApplicationUserRepository
     // Adiciona novo usuario ao sistema
     public async Task InsertAsync(ApplicationUser applicationUser)
     {
-        _controllRRContext.AddAsync(applicationUser);
-        await _controllRRContext.SaveChangesAsync();
+       await _controllRRContext.AddAsync(applicationUser);
+      
 
     }
 
@@ -58,13 +58,10 @@ public class ApplicationUserRepository : IApplicationUserRepository
         .FirstOrDefaultAsync(u => u.OperatorId == id);
 
         _controllRRContext.Remove(obj);
-        await _controllRRContext.SaveChangesAsync();
+      
 
     }
     // Persiste as informações no banco de dados
-    public async Task SaveChangesAsync()
-    {
-        await _controllRRContext.SaveChangesAsync();
-    }
+   
 
 }

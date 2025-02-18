@@ -41,17 +41,17 @@ public partial class ControllRRContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<ServerLogin> ServerLogins { get; set; }
     public virtual DbSet<MaintenanceProduct> MaintenanceProduct { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    if (!optionsBuilder.IsConfigured)
     {
-        if (!optionsBuilder.IsConfigured)
-        {
-            // Altere a string de conexão de acordo com seu projeto
-            // Substitua pela sua string de conexão para MySQL
-            optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=mypass;database=NEWGEN",
-                 new MySqlServerVersion(new Version(8, 0, 32)));
-
-        } 
+        // String de conexão de fallback (para testes locais)
+        optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=mypass;database=NEWGEN",
+            new MySqlServerVersion(new Version(8, 0, 32)));
     }
+
+    optionsBuilder.UseLazyLoadingProxies(false); // Desative o Lazy Loading
+}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -75,6 +75,6 @@ public partial class ControllRRContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(sm => sm.MaintenanceId)
             .IsRequired(false); // Configura como relacionamento opcional
     }
-
+       
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

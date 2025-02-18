@@ -10,11 +10,13 @@ public class DeviceService : IDeviceService
 {
     private readonly IDeviceRepository _deviceRepository;
     private readonly IMapper _mapper;
+    private readonly IUnitOfWork _uow;
 
-    public DeviceService(IDeviceRepository deviceRepository, IMapper mapper)
+    public DeviceService(IDeviceRepository deviceRepository, IMapper mapper, IUnitOfWork uow)
     {
         _deviceRepository = deviceRepository;
         _mapper = mapper;
+        _uow = uow;
     }
     public async Task<List<DeviceDto>> FindAllAsync()
     {
@@ -36,15 +38,21 @@ public class DeviceService : IDeviceService
 
     public async Task InsertAsync(DeviceDto deviceDto)
     {
+        await _uow.BeginTransactionAsync();
         var device = _mapper.Map<Device>(deviceDto);
         await _deviceRepository.InsertAsync(device);
+        await _uow.SaveChangesAsync();
+        await _uow.CommitAsync();
 
     }
 
     public async Task UpdateAsync(DeviceDto deviceDto)
     {
+        await _uow.BeginTransactionAsync();
         var device = _mapper.Map<Device>(deviceDto);
         await _deviceRepository.UpdateAsync(device);
+        await _uow.SaveChangesAsync();
+        await _uow.CommitAsync();
     }
 
 

@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
-using Mysqlx;
+
 
 
 namespace ControllRR.Presentation.Controllers;
@@ -87,7 +87,7 @@ public class UsersController : Controller
         string returnUrl = "";
         returnUrl ??= Url.Content("~/");
         var adminEmail = userDto.applicationUserDto.Email;
-        //var tempRole = userDto.applicationUserDto.Role;
+        var tempRole = userDto.applicationUserDto.Role;
         try
         {
             var user = new ApplicationUser
@@ -102,10 +102,29 @@ public class UsersController : Controller
                 Role = userDto.applicationUserDto.Role
             };
 
-            var result = await _userManager.CreateAsync(user, "Thiago123##");
+            var result = await _userManager.CreateAsync(user, "SenhaTeste123##");
 
-            if (result.Succeeded)
+            if (result.Succeeded) // Verifica se a criação do usuario foi realizada com sucesso
             {
+                if (await _roleManager.RoleExistsAsync(tempRole)) // Verifica se a permissão atribuida existe no banco de dados
+                    {
+                        var roleAssignResult = await _userManager.AddToRoleAsync(user, tempRole); // Atribui uma permissão ao usuario recem-criado
+
+                        if (!roleAssignResult.Succeeded) // Caso a inserção das permissões ocorra  problemas, então retorna erro
+                        {
+                            foreach (var error in roleAssignResult.Errors)
+                            {
+                                TempData["ErrorMessage"] = "Permissão não pode ser adicionada.";
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                           
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Permissão selecionada não existe.");
+                      
+                    }
                 // Baseaddo no identity, algumas alterações para que o usuario possa
                 // confirmar a conta sem ter que receber o link. Claro, isso é uma gambiarra temporaria.
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -130,7 +149,7 @@ public class UsersController : Controller
         userDto.Roles = await GetRolesList();
         return View(userDto);
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public IActionResult CheckEmail(string email)
     {
@@ -143,6 +162,8 @@ public class UsersController : Controller
             .Select(r => new SelectListItem { Value = r.Name, Text = r.Name })
             .ToListAsync();
     }
+
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public IActionResult ShowConfirmationLink()
     {
@@ -162,6 +183,7 @@ public class UsersController : Controller
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("ConfirmEmail")]
     public async Task<IActionResult> ConfirmEmail(string userId, string code)
     {

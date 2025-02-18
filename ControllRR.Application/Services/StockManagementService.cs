@@ -14,12 +14,17 @@ public class StockManagementService : IStockManagementService
     private readonly IStockRepository _stockRepository;
     private readonly IMapper _mapper;
     private readonly IMaintenanceRepository _maintenanceRepository;
-    public StockManagementService(IStockManagementRepository stockManagementRepository, IMapper mapper, IStockRepository stockRepository, IMaintenanceRepository maintenanceRepository)
+    private readonly IUnitOfWork _uow;
+    public StockManagementService(IStockManagementRepository stockManagementRepository,
+     IMapper mapper, IStockRepository stockRepository, IMaintenanceRepository maintenanceRepository,
+     IUnitOfWork uow
+     )
     {
         _stockManagementRepository = stockManagementRepository;
         _mapper = mapper;
         _stockRepository = stockRepository;
         _maintenanceRepository = maintenanceRepository;
+        _uow = uow;
     }
 
     public async Task<List<StockManagementDto>> FindAllAsync()
@@ -30,18 +35,22 @@ public class StockManagementService : IStockManagementService
 
     public async Task AddMovementAsync(int stockId, StockMovementType type, int quantity, DateTime movementDate, int? maintenanceId = null)
     {
+        //await _uow.BeginTransactionAsync();
+        var stock = await _stockRepository.GetByIdAsync(stockId);
+        if (stock == null)
+            throw new Exception($"Estoque ID {stockId} não encontrado.");
+
         if (!maintenanceId.HasValue)
         {
-            var stock = await _stockRepository.GetByIdAsync(stockId);
-
-            if (type == StockMovementType.Entrada) // Caso o tipo de movimentaçaõ do produto for entrada, então
-                stock.ProductQuantity += quantity; // adiciona-se o valor de entrada ao valor atual(estoque)
+            if (type == StockMovementType.Entrada)
+                stock.ProductQuantity += quantity;
             else
-                stock.ProductQuantity -= quantity; // Caso seja uma movimentação de saida, decresce o valor movimentado.
+                stock.ProductQuantity -= quantity;
 
             await _stockRepository.UpdateAsync(stock);
+            //await _uow.SaveChangesAsync();
         }
-        // Remove as linhas que alteram o estoque
+
         var movement = new StockManagement
         {
             StockId = stockId,
@@ -52,7 +61,9 @@ public class StockManagementService : IStockManagementService
         };
 
         await _stockManagementRepository.AddAsync(movement);
-        await _stockManagementRepository.SaveChangesAsync();
+        await _uow.SaveChangesAsync();
+        //await _uow.CommitAsync();
+       
     }
 
 
