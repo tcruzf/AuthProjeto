@@ -9,6 +9,9 @@ public class DashboardViewModel
 {
     public int DeviceCount { get; set; }
     public int MaintenanceCount { get; set; }
-
+    public double CpuUsage { get; set; }
+    public double MemoryUsage { get; set; }
+    public double TotalMemory { get; set; }
+     public Dictionary<string, int> MaintenancesByMonth { get; set; }
 
 }

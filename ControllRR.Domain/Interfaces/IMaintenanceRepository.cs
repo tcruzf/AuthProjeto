@@ -23,4 +23,6 @@ public interface IMaintenanceRepository
   
   Task<bool> ExistsAsync(int id);
   Task<int> CountMaintenance();
+
+  Task<Dictionary<string, int>> MaintenanceMonth();
 }

@@ -75,3 +75,7 @@ textarea.form-control {
   min-height: 300px;
   resize: vertical;
 }
+.chart canvas {
+  max-height: 400px;
+  min-height: 250px;
+}

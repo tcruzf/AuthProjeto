@@ -17,5 +17,6 @@ public interface IMaintenanceService
     string sortDirection);
 
    Task<int> CountMaintenance();
+   Task<Dictionary<string, int>> MaintenanceMonth();
 
 }

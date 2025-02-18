@@ -263,4 +263,9 @@ public class MaintenanceService : IMaintenanceService
         return await _maintenanceRepository.CountMaintenance();
     }
 
+    public async Task<Dictionary<string, int>> MaintenanceMonth()
+   {
+        return await _maintenanceRepository.MaintenanceMonth();
+   }
+
 }

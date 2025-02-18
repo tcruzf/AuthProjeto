@@ -151,28 +151,29 @@
     <!-- Cabeçalho -->
 
     <!-- Cards de Estatísticas -->
-    <div class="dashboard">
-      <div class="card">
+  <div class="dashboard">
+    <div class="card">
         <h3>@Model.DeviceCount</h3>
         <p>Dispositivos</p>
-        <a href="/Devices">Ver detalhes</a>
-      </div>
-      <div class="card">
-        <h3>53%</h3>
-        <p>Memória Livre</p>
-        <a href="#">Ver carga do servidor</a>
-      </div>
-      <div class="card">
-        <h3>44</h3>
-        <p>Atendimentos Externos</p>
-        <a href="#">Ver atendimentos</a>
-      </div>
-      <div class="card">
+        <a href="/Devices/List">Ver detalhes</a>
+    </div>
+    
+  <div class="card">
+    <h3 id="cpuUsage">@Model.CpuUsage.ToString("N1")%</h3>
+    <p>Uso de CPU</p>
+</div>
+
+<div class="card">
+    <h3 id="memoryUsage">@Model.MemoryUsage.ToString("N1")%</h3>
+    <p>Uso de Memória</p>
+</div>
+    
+    <div class="card">
         <h3>@Model.MaintenanceCount</h3>
         <p>Manutenções Registradas</p>
-        <a href="#">Ver todas</a>
-      </div>
+        <a href="/Maintenances/MaintenanceList">Ver todas</a>
     </div>
+</div>
 
     <!-- Ações Rápidas -->
     <div class="quick-actions">
@@ -230,45 +231,71 @@
   <!-- Scripts para Gráficos (Chart.js) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Gráfico de Uso de Memória
-    const memoryCtx = document.getElementById('memoryChart').getContext('2d');
-    const memoryChart = new Chart(memoryCtx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Usada', 'Livre'],
-        datasets: [{
-          data: [47, 53],
-          backgroundColor: ['#ff6384', '#36a2eb'],
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-      }
+   let memoryChart, maintenanceChart;
+
+function initCharts(initialData, maintenanceData) {
+    // Gráfico de Memória
+    memoryChart = new Chart(document.getElementById('memoryChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Usada', 'Livre'],
+            datasets: [{
+                data: [initialData.memory, 100 - initialData.memory],
+                backgroundColor: ['#ff6384', '#36a2eb']
+            }]
+        }
     });
 
-    // Gráfico de Manutenções por Mês
-    const maintenanceCtx = document.getElementById('maintenanceChart').getContext('2d');
-    const maintenanceChart = new Chart(maintenanceCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-        datasets: [{
-          label: 'Manutenções',
-          data: [12, 19, 8, 15, 10, 7],
-          backgroundColor: '#007bff',
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
+    // Gráfico de Manutenções com dados reais
+    maintenanceChart = new Chart(document.getElementById('maintenanceChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(maintenanceData),
+            datasets: [{
+                label: 'Manutenções',
+                data: Object.values(maintenanceData),
+                backgroundColor: '#007bff'
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
-      }
     });
-  </script>
+}
+
+// Atualização periódica
+setInterval(async () => {
+    try {
+        const response = await fetch('/server/status/resources');
+        const data = await response.json();
+        
+        // Atualiza os cards
+        document.getElementById('cpuUsage').textContent = `${data.cpu}%`;
+        document.getElementById('memoryUsage').textContent = `${data.memory}%`;
+        
+        // Atualiza os gráficos
+        memoryChart.data.datasets[0].data = [data.memory, 100 - data.memory];
+        memoryChart.update();
+        
+    } catch (error) {
+        console.error('Erro na atualização:', error);
+    }
+}, 5000);
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', () => {
+    initCharts(
+        {
+            cpu: @Model.CpuUsage,
+            memory: @Model.MemoryUsage
+        },
+        @Json.Serialize(Model.MaintenancesByMonth)
+    );
+});
+    </script>
 </body>
 </html>

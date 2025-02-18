@@ -11,6 +11,7 @@ using ControllRR.Domain.Interfaces;
 using ControllRR.Domain.Enums;
 using Microsoft.EntityFrameworkCore.Storage;
 using ControllRR.Infrastructure.Repositories;
+using System.Globalization;
 
 public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRepository
 {
@@ -245,4 +246,18 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
         return await _context.Maintenances.CountAsync();
     }
 
+   public async Task<Dictionary<string, int>> MaintenanceMonth()
+   {
+      return await _context.Maintenances
+        .Where(m => m.OpenDate.HasValue) // Filtra registros com data não nula
+        .GroupBy(m => m.OpenDate.Value.Month) // Acessa o Month do DateTime garantido
+        .Select(g => new { 
+            Month = g.Key, 
+            Count = g.Count()
+        })
+        .ToDictionaryAsync(
+            k => CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(k.Month), 
+            v => v.Count
+        );
+   }
 }

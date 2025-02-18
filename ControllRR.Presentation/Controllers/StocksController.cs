@@ -119,7 +119,7 @@ public class StocksController : Controller
                 movementType = m.MovementType,
                 quantity = m.Quantity
             })
-        });
+        }); 
     }
 
     [Authorize(Roles = "Admin, Manager")]
