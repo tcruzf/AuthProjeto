@@ -67,8 +67,7 @@ public class DocumentService : IDocumentService
             throw new InvalidOperationException("Erro ao salvar arquivo.");
         }
 
-
-
-
     }
+
+    
 }
