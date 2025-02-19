@@ -69,5 +69,11 @@ public class DocumentService : IDocumentService
 
     }
 
-    
+    public async Task DeleteAsync(int id)
+    {
+        await _uow.BeginTransactionAsync();
+        await _documentRepository.DeleteAsync(id);
+        await _uow.SaveChangesAsync();
+        await _uow.CommitAsync();
+    }
 }

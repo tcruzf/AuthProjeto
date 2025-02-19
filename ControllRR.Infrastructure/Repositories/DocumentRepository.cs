@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using ControllRR.Domain.Interfaces;
 using ControllRR.Infrastructure.Repositories;
 
-public class DocumentRepository : BaseRepository<Document> ,IDocumentRepository
+public class DocumentRepository : BaseRepository<Document>, IDocumentRepository
 {
 
   public DocumentRepository(ControllRRContext context) : base(context)
-  { 
+  {
   }
 
   //Retorna uma lista de documentos contidos na base de dados
@@ -28,11 +28,20 @@ public class DocumentRepository : BaseRepository<Document> ,IDocumentRepository
   {
 
     _context.Documents.Add(document);
-  
+
 
   }
 
-  // Persiste as informações de documentos no banco de dados
-  
+  public async Task DeleteAsync(int id)
+  {
+    var document = await _context.Documents.FindAsync(id);
+    if (document != null)
+    {
+      _context.Documents.Remove(document);
+    }
+
+
+  }
+
 
 }

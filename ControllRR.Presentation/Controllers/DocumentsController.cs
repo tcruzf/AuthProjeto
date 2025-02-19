@@ -73,4 +73,21 @@ public class DocumentsController : Controller
         };
         return View(viewModel);
     }
+
+    [Authorize(Roles = "Manager, Admin")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _documentService.DeleteAsync(id);
+            TempData["SuccessMessage"] = "Documento deletado com sucesso!";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Erro ao deletar documento: {ex.Message}";
+        }
+        return RedirectToAction("FileUpload");
+    }
 }
