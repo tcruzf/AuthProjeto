@@ -42,7 +42,7 @@ public class MaintenancesController : Controller
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> External()
     {
-          // Busca usuários
+        // Busca usuários
         var users = await _userService.FindAllAsync();
         //System.Console.WriteLine(users.);
         var applicationUserDto = users?
@@ -149,23 +149,15 @@ public class MaintenancesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> New(MaintenanceDto maintenanceDto)
     {
-        Console.WriteLine("Iniciando inserção de manutenção...");
-        if (maintenanceDto.ApplicationUserId != null)
+        if (!ModelState.IsValid)
         {
-            System.Console.WriteLine("Id não é nulo:");
-            System.Console.WriteLine("Id do usuario:");
-            System.Console.WriteLine(maintenanceDto.ApplicationUserId);
-
+            var viewModel = new MaintenanceViewModel
+            {
+                ApplicationUserDto = await _userService.FindAllAsync(),
+                DeviceDto = await _deviceService.FindAllAsync()
+            };
         }
-        System.Console.WriteLine("Id da manutenção:");
-        System.Console.WriteLine(maintenanceDto.Id);
-        System.Console.WriteLine("Status da manutenção:");
-        System.Console.WriteLine(maintenanceDto.Status);
-        System.Console.WriteLine("Nome do usuario:");
-        System.Console.WriteLine(maintenanceDto.ApplicationUser);
-        //System.Console.WriteLine(maintenanceDto.ApplicationUser.Name);
 
-        Console.WriteLine("Iniciando Verificação de usuario");
         var user = await _userService.FindAllAsync();
         var applicationUserDto = user.Select(u => new ApplicationUserDto
         {
@@ -174,10 +166,16 @@ public class MaintenancesController : Controller
             Register = u.Register
 
         }).ToList();
-        await _maintenanceService.InsertAsync(maintenanceDto);
-
-
-        return RedirectToAction(nameof(MaintenanceList));
+        try
+        {
+            await _maintenanceService.InsertAsync(maintenanceDto);
+            TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
+            return RedirectToAction(nameof(MaintenanceList));
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
 
     }
 
@@ -185,6 +183,7 @@ public class MaintenancesController : Controller
     [HttpGet]
     public async Task<IActionResult> MaintenanceList()
     {
+        //await Task.Delay(2000);
         return View();
     }
 
@@ -222,37 +221,38 @@ public class MaintenancesController : Controller
         return View(viewModel);
     }
 
-    //[Authorize(Roles = "Manager, Admin")]
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ChangeMaintenance(int? id, MaintenanceDto maintenanceDto)
+    [Authorize(Roles = "Manager, Admin")]
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> ChangeMaintenance(int? id, MaintenanceDto maintenanceDto)
+{
+   
+
+    try
+    {
+        await _maintenanceService.UpdateAsync(maintenanceDto);
+        TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
+        return RedirectToAction(nameof(MaintenanceList));
+    }
+    catch (Exception ex)
+    {
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        {
+            return Json(new { 
+                success = false,
+                error = ex.Message 
+            });
+        }
+        return RedirectToAction(nameof(Error), new { message = ex.Message });
+    }
+}
+
+    [Authorize(Roles = "Manager, Admin")]
+    [HttpGet]
+    public async Task<IActionResult> GetProductsTable(int maintenanceId)
     {
 
-        if (!ModelState.IsValid)
-        {
-            var users = await _userService.FindAllAsync();
-            var applicationUserDtos = await _userService.FindAllAsync();//Sem await
-            var devices = await _deviceService.FindAllAsync(); // Mais um sem await
-
-            MaintenanceViewModel viewModel = new MaintenanceViewModel
-            {
-                ApplicationUserDto = users,
-                MaintenanceDto = maintenanceDto
-
-            };
-        }
-
-        try
-        {
-            await _maintenanceService.UpdateAsync(maintenanceDto);
-            TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
-            return RedirectToAction(nameof(MaintenanceList));
-        }
-        catch (ApplicationException e)
-        {
-            return RedirectToAction(nameof(Error), new { message = e.Message });
-        }
-
+        return PartialView("Partials/_ProductsTable");
     }
 
     [Authorize(Roles = "Manager, Admin")]

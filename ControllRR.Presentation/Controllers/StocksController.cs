@@ -38,15 +38,15 @@ public class StocksController : Controller
     [HttpPost]
     public async Task<IActionResult> NewProduct(StockViewModel model)
     {
-        if(!ModelState.IsValid)
+        if (!ModelState.IsValid)
             throw new Exception();
-       
+
         try
         {
             TempData["SuccessMessage"] = "Produto inserido com sucesso!";
             // Usa o serviço para toda a lógica
             System.Console.WriteLine("Salvando produto");
-             await _stockService.CreateProductWithInitialMovementAsync(model.StockDto);
+            await _stockService.CreateProductWithInitialMovementAsync(model.StockDto);
             System.Console.WriteLine("Agora redirecionando");
             return RedirectToAction("SearchProduct");
         }
@@ -56,7 +56,7 @@ public class StocksController : Controller
 
             // Log para o usuário
             ModelState.AddModelError("", $"Erro interno: {ex.Message}");
-           TempData["ErrorMessage"] = "Ocorreu um erro inesperado ao tentar incluir o produto!";
+            TempData["ErrorMessage"] = "Ocorreu um erro inesperado ao tentar incluir o produto!";
             return View(model);
         }
     }
@@ -106,8 +106,8 @@ public class StocksController : Controller
     }
 
     [Authorize(Roles = "Manager, Admin")]
-    [HttpGet("GetProduct/{id}")]
-    public async Task<IActionResult> GetProduct(int id)
+    [HttpGet("DDGetProduct/{id}")]
+    public async Task<IActionResult> Desativado(int id)
     {
         var product = await _stockRepository.GetByIdAsync(id);
         return Json(new
@@ -119,7 +119,14 @@ public class StocksController : Controller
                 movementType = m.MovementType,
                 quantity = m.Quantity
             })
-        }); 
+        });
+    }
+
+    [HttpGet("Stocks/GetProduct/{id}")]
+    public async Task<IActionResult> GetProduct(int id)
+    {
+        var product = await _stockService.GetProductWithMovementsAsync(id);
+        return Ok(product);
     }
 
     [Authorize(Roles = "Admin, Manager")]
@@ -128,16 +135,16 @@ public class StocksController : Controller
     {
         var temp = "Temp temp";
         return Json(temp
-            
+
         );
     }
 
-//
+    //
     [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
     public async Task<IActionResult> AddMovement(int stockId, StockMovementType type, int quantity, DateTime movementDate)
     {
-        if(stockId == null)
+        if (stockId == null)
             return Content("<script type='text/javascript'>alert('Erro ao Cadastrar Plano: Rx005');</script>");
         System.Console.WriteLine(type.ToString());
         try

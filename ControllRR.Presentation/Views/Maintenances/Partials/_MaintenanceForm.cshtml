@@ -1,0 +1,112 @@
+@model ControllRR.Presentation.ViewModels.MaintenanceViewModel
+@using ControllRR.Domain.Enums
+
+          <form asp-controller="Maintenances" asp-action="ChangeMaintenance" method="post">
+                                        <input type="hidden" asp-for="MaintenanceDto.MaintenanceNumber">
+                                        <input type="hidden" asp-for="MaintenanceDto.Id" />
+                                       
+                                        <div class="row">
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.OpenDate"></label>
+                                                <input asp-for="MaintenanceDto.OpenDate" class="form-control input-sm" readonly />
+                                                <span asp-validation-for="MaintenanceDto.OpenDate" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.SimpleDesc"></label>
+                                                <input asp-for="MaintenanceDto.SimpleDesc" class="form-control input-sm" readonly />
+                                                <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.CloseDate"></label>
+                                                <input asp-for="MaintenanceDto.CloseDate" class="form-control input-sm" />
+                                                <span asp-validation-for="MaintenanceDto.CloseDate" class="text-danger"></span>
+                                            </div>
+                                          <div class="col">
+                                            <label asp-for="MaintenanceDto.ApplicationUser" class="control-label"></label>
+                                            <select asp-for="MaintenanceDto.ApplicationUserId" asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name" ))" class="form-control"></select>
+                                                </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.DeviceId"></label>
+                                                <input asp-for="MaintenanceDto.DeviceId" class="form-control input-sm" />
+                                                <span asp-validation-for="MaintenanceDto.DeviceId" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.Status" class="control-label"></label>
+                                                <select asp-for="MaintenanceDto.Status" 
+                                                        class="form-control" 
+                                                        asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <h5>Produtos Utilizados</h5>
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Produto</th>
+                                                        <th>Quantidade</th>
+                                                        <th>Ação</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.MaintenanceDto.MaintenanceProducts != null)
+                                                    {
+                                                        @for (var i = 0; i < Model.MaintenanceDto.MaintenanceProducts.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @(Model.MaintenanceDto.MaintenanceProducts[i].Stock?.ProductName ?? "N/A")
+                                                                    <input type="hidden" 
+                                                                           name="MaintenanceDto.MaintenanceProducts[@i].StockId" 
+                                                                           value="@Model.MaintenanceDto.MaintenanceProducts[i].StockId" />
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" 
+                                                                           name="MaintenanceDto.MaintenanceProducts[@i].QuantityUsed" 
+                                                                           value="@Model.MaintenanceDto.MaintenanceProducts[i].QuantityUsed" 
+                                                                           class="form-control" />
+                                                                </td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-danger" 
+                                                                            onclick="removerProdutoExistente(this)">Remover</button>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="productSearch">Buscar e inserir produto</label>
+                                            <input type="text" id="productSearch" class="form-control" placeholder="Digite para buscar...">
+                                            <div id="productSuggestions" class="list-group"></div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <table class="table" id="productsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Produto</th>
+                                                        <th>Quantidade</th>
+                                                        <th>Ação</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                   
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label asp-for="MaintenanceDto.Description"></label>
+                                            <textarea asp-for="MaintenanceDto.Description" class="form-control" rows="9"></textarea>
+                                            <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <button type="submit" class="btn btn-success">Salvar</button>
+                                        </div>
+                                    </form>
+
+@await Html.PartialAsync("Partials/_LoadingOverlay")

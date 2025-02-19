@@ -1,0 +1,40 @@
+@model ControllRR.Presentation.ViewModels.MaintenanceViewModel
+
+<div class="form-group">
+    <h5>Produtos Utilizados</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.MaintenanceDto.MaintenanceProducts != null)
+            {
+                @for (var i = 0; i < Model.MaintenanceDto.MaintenanceProducts.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @(Model.MaintenanceDto.MaintenanceProducts[i].Stock?.ProductName ?? "N/A")
+                            <input type="hidden" 
+                                   name="MaintenanceDto.MaintenanceProducts[@i].StockId" 
+                                   value="@Model.MaintenanceDto.MaintenanceProducts[i].StockId" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   name="MaintenanceDto.MaintenanceProducts[@i].QuantityUsed" 
+                                   value="@Model.MaintenanceDto.MaintenanceProducts[i].QuantityUsed" 
+                                   class="form-control" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" 
+                                    onclick="removerProdutoExistente(this)">Remover</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

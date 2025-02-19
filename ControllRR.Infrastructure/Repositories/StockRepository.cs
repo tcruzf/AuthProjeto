@@ -42,5 +42,4 @@ public class StockRepository : BaseRepository<Stock>, IStockRepository
             .FirstOrDefaultAsync(s => s.Id == id);
     }
 
-  
 }

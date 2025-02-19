@@ -8,4 +8,6 @@ public interface IStockService
     Task<List<StockDto>> Search(string term);
    //  Task AddAsync(StockDto stock);
     Task<StockDto> CreateProductWithInitialMovementAsync(StockDto stockDto);
+
+     Task<StockDto> GetProductWithMovementsAsync(int id);
 }

@@ -22,40 +22,40 @@
 </div>
 }
 <!-- Modal para Movimentações -->
-<div id="movementModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+<div id="movementModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h4 class="modal-title">Adicionar Movimentação</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title">Adicionar Movimentação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="movementForm" asp-controller="Stocks" asp-action="AddMovement" method="post">
+                    @Html.AntiForgeryToken()
                     <input type="hidden" id="StockId" name="StockId" />
 
-                    <div class="form-group">
-                        <label>Tipo de Movimentação</label>
-                        <select class="form-control" name="MovementType" required>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Movimentação</label>
+                        <select class="form-select" name="MovementType" required>
                             <option value="1">Entrada</option>
                             <option value="2">Saída</option>
                         </select>
                     </div>
 
-
-                    <div class="form-group">
-                        <label>Quantidade</label>
+                    <div class="mb-3">
+                        <label class="form-label">Quantidade</label>
                         <input type="number" class="form-control" name="Quantity" required min="1" />
                     </div>
 
-                    <div class="form-group">
-                        <label>Data</label>
-                        <input type="date" class="form-control" name="MovementDate"
-                            value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    <div class="mb-3">
+                        <label class="form-label">Data</label>
+                        <input type="date" class="form-control" name="MovementDate" 
+                               value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
                     </div>
 
-                    <div class="form-group text-right">
+                    <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Salvar</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                     </div>
                 </form>
             </div>
@@ -70,12 +70,12 @@
         <li class="breadcrumb-item"><a href="/Stock/Index">Estoque</a></li>
         <li class="breadcrumb-item active">Buscar</li>
     </ol>
-    <div class="mt-4">
-        <a asp-action="CreateNewUser" class="btn btn-danger fa fa-edit"> Alterar Produto</a>
-        <!-- <button type="button" class="btn btn-success fa fa-edit" data-toggle="modal" data-target="#movementModal">Inser           Movimentação</button> -->
-        <button type="button" class="btn btn-success fa fa-edit" data-toggle="modal" data-target="#movementModal"
-            onclick="prepareMovementModal()"> Inserir Movimentação </button>
-    </div>
+    <button type="button" class="btn btn-success" 
+        data-bs-toggle="modal" 
+        data-bs-target="#movementModal"
+        onclick="prepareMovementModal()">
+    <i class="fas fa-plus me-2"></i>Inserir Movimentação
+</button>
 </div>
 <div class="row">
     <div class="col-md-12">
@@ -159,165 +159,168 @@
                                    -->
 
                                 </div>
-                                @section Scripts {
-                                    @{
-                                        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-                                    }
-                                    <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
-                                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                                    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-                                    <link rel="stylesheet"
-                                        href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+                           @section Scripts {
+    <!-- Remova referências duplicadas do jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-                                    <script>
-                                        // Variável para armazenar o termo de busca atual
-                                        let currentSearchTerm = '';
-                                        let currentStockId = null;
+    <script>
+        // Variável para armazenar o termo de busca atual
+        let currentSearchTerm = '';
+        let currentStockId = null;
 
-                                        $(document).ready(function () {
-                                            $("#productSearch").autocomplete({
-                                                source: function (request, response) {
-                                                    currentSearchTerm = request.term;
-                                                    $.ajax({
-                                                        url: '/Stocks/Search',
-                                                        type: 'GET',
-                                                        data: { term: request.term },
-                                                        success: function (data) {
-                                                            response($.map(data, function (item) {
-                                                                return {
-                                                                    label: item.productName + " - " + item.productDescription,
-                                                                    value: item.productName,
-                                                                    id: item.id,
-                                                                    desc: item.productDescription,
-                                                                    app: item.productApplication,
-                                                                    ref: item.productReference,
-                                                                    qtt: item.productQuantity,
-                                                                    movements: item.movements
-                                                                };
-                                                            }));
-                                                        }
-                                                    });
-                                                },
-                                                select: function (event, ui) {
-                                                    currentStockId = ui.item.id;
-                                                    updateProductFields(ui.item);
-                                                    return false;
-                                                }
-                                            });
+        $(document).ready(function () {
+            // Configuração do autocomplete
+            $("#productSearch").autocomplete({
+                source: function (request, response) {
+                    currentSearchTerm = request.term;
+                    $.ajax({
+                        url: '/Stocks/Search',
+                        type: 'GET',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.productName + " - " + item.productDescription,
+                                    value: item.productName,
+                                    id: item.id,
+                                    desc: item.productDescription,
+                                    app: item.productApplication,
+                                    ref: item.productReference,
+                                    qtt: item.productQuantity,
+                                    movements: item.movements
+                                };
+                            }));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    currentStockId = ui.item.id;
+                    updateProductFields(ui.item);
+                    return false;
+                }
+            });
 
-                                            // Novo: Atualizar campos do produto
-                                            function updateProductFields(item) {
-                                                $("#productSearch").val(item.label);
-                                                $("#productId").val(item.id);
-                                                $("#StockDto_ProductDescription").val(item.desc);
-                                                $("#StockDto_ProductApplication").val(item.app);
-                                                $("#StockDto_ProductReference").val(item.ref);
-                                                $("#StockDto_ProductQuantity").val(item.qtt);
-                                                updateMovementsTable(item.movements);
-                                            }
+            // Função para atualizar campos do produto
+            function updateProductFields(item) {
+                $("#productSearch").val(item.label);
+                $("#productId").val(item.id);
+                $("#StockDto_ProductDescription").val(item.desc);
+                $("#StockDto_ProductApplication").val(item.app);
+                $("#StockDto_ProductReference").val(item.ref);
+                $("#StockDto_ProductQuantity").val(item.qtt);
+                updateMovementsTable(item.movements);
+            }
 
-                                            // Novo: Atualizar tabela de movimentações
-                                                // Na função updateMovementsTable
-function updateMovementsTable(movements) {
-    const tbody = $("#movementsTable tbody");
-    tbody.empty();
+            // Função para atualizar a tabela de movimentações
+            function updateMovementsTable(movements) {
+                const tbody = $("#movementsTable tbody");
+                tbody.empty();
 
-    if (movements && movements.length > 0) {
-        movements.forEach(movement => {
-            const maintenanceLink = movement.maintenanceId ? 
-                `<a href="/Maintenances/Details/${movement.maintenanceId}" class="btn btn-link">
-                    ${movement.maintenanceNumber || 'Ver Manutenção'}
-                 </a>` : 
-                'N/A';
+                if (movements && movements.length > 0) {
+                    movements.forEach(movement => {
+                        const movementType = movement.movementType == 1 ? "Entrada" : "Saída";
+                        const movementDate = new Date(movement.movementDate).toLocaleDateString('pt-BR');
+                        const maintenanceLink = movement.maintenanceId ? 
+                            `<a href="/Maintenances/Details/${movement.maintenanceId}" class="btn btn-link">
+                                ${movement.maintenanceNumber || 'Ver Manutenção'}
+                            </a>` : 
+                            'N/A';
 
-            tbody.append(`
-                <tr>
-                    <td>${new Date(movement.movementDate).toLocaleDateString()}</td>
-                    <td>${movement.movementType}</td>
-                    <td>${movement.quantity}</td>
-                    <td>${maintenanceLink}</td>
-                </tr>
-            `);
-        });
-    } else {
-        tbody.append(`
-            <tr>
-                <td colspan="4">Nenhuma movimentação registrada.</td>
-            </tr>
-        `);
-    }
-}
+                        tbody.append(`
+                            <tr>
+                                <td>${movementDate}</td>
+                                <td>${movementType}</td>
+                                <td>${movement.quantity}</td>
+                                <td>${maintenanceLink}</td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    tbody.append(`
+                        <tr>
+                            <td colspan="4">Nenhuma movimentação registrada.</td>
+                        </tr>
+                    `);
+                }
+            }
 
-                                            // Submit do formulário via AJAX
-                                            $("#movementForm").submit(function (e) {
-                                                e.preventDefault();
+            // Submit do formulário de movimentação
+            $("#movementForm").submit(function (e) {
+                e.preventDefault();
 
-                                                const formData = {
-                                                    stockId: $("#StockId").val(),
-                                                    type: parseInt($("select[name='MovementType']").val()),
-                                                    quantity: parseInt($("input[name='Quantity']").val()),
-                                                    movementDate: $("input[name='MovementDate']").val()
-                                                };
+                const formData = {
+                    stockId: $("#StockId").val(),
+                    type: parseInt($("select[name='MovementType']").val()),
+                    quantity: parseInt($("input[name='Quantity']").val()),
+                    movementDate: $("input[name='MovementDate']").val(),
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                };
 
-                                                $.ajax({
-                                                    url: $(this).attr("action"),
-                                                    type: "POST",
-                                                    data: formData,
-                                                    success: async function (response) {
-                                                        if (response.success) {
-                                                            $("#movementModal").modal("hide");
-                                                            // Atualiza os dados sem recarregar a página
-                                                            if (currentSearchTerm) {
-                                                                // Força nova busca com o termo atual
-                                                                $("#productSearch").autocomplete("search", currentSearchTerm);
-                                                                
-                                                                // Atualiza os campos específicos após 3000ms (tempo para a busca completar)
-                                                                setTimeout(async () => {
-                                                                    const updatedProduct = await getUpdatedProduct(currentStockId);
-                                                                    if (updatedProduct) {
-                                                                        $("#StockDto_ProductQuantity").val(updatedProduct.productQuantity);
-                                                                        updateMovementsTable(updatedProduct.movements);
-                                                                    }
-                                                                }, 3000);
-                                                            }
-                                                        } else {
-                                                            alert("Erro: " + response.message);
-                                                        }
-                                                    }
-                                                });
-                                            });
-
-                                            // Novo: Busca dados atualizados do produto
-                                            async function getUpdatedProduct(stockId) {
-                                                try {
-                                                    const response = await $.get(`/Stocks/GetProduct/${stockId}`);
-                                                    return response;
-                                                } catch (error) {
-                                                    console.error("Erro ao buscar produto:", error);
-                                                    return null;
-                                                }
-                                            }
-                                        });
-
-                                        function prepareMovementModal() {
-                                            const stockId = $("#productId").val();
-                                            if (!stockId) {
-                                                    Product_Error();
-                                                     $("#movementModal").modal("hide");
-                                                return;
-                                            }
-                                            $("#StockId").val(stockId);
-                                         }
-                                       
-                                           function Product_Error(){
-                                                  Swal.fire({
-                                                    icon: "error",
-                                                    title: "Oi! Você está se apressando...",
-                                                    text: "Você não selecionou Nenhum produto para movimentar!",
-                                                    footer: '<a href="../Help/Documentation/Movements">Como realizar uma movimentação?</a>'
-                                                    });
-                                                   
-                                            }
-                                       
-                                    </script>
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: formData,
+                    success: async function (response) {
+                        if (response.success) {
+                            $('#movementModal').modal('hide');
+                            
+                            // Atualização otimizada dos dados
+                            if (currentStockId) {
+                                const updatedProduct = await getUpdatedProduct(currentStockId);
+                                if (updatedProduct) {
+                                    updateProductFields(updatedProduct);
                                 }
+                            }
+                            
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: 'Movimentação registrada com sucesso',
+                                timer: 2000
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: xhr.responseJSON?.message || 'Erro ao processar a solicitação'
+                        });
+                    }
+                });
+            });
+
+            // Função para buscar dados atualizados do produto
+            async function getUpdatedProduct(stockId) {
+                try {
+                    const response = await $.get(`/Stocks/GetProduct/${stockId}`);
+                    return response;
+                } catch (error) {
+                    console.error("Erro ao buscar produto:", error);
+                    return null;
+                }
+            }
+        });
+
+        function prepareMovementModal() {
+            const stockId = $("#productId").val();
+            if (!stockId) {
+                Product_Error();
+                $('#movementModal').modal('hide');
+                return;
+            }
+            $("#StockId").val(stockId);
+        }
+       
+        function Product_Error() {
+            Swal.fire({
+                icon: "error",
+                title: "Seleção necessária",
+                text: "Por favor, selecione um produto antes de adicionar movimentações!",
+                footer: '<a href="/Help/Documentation/Movements">Guia de movimentações</a>'
+            });
+        }
+    </script>
+}

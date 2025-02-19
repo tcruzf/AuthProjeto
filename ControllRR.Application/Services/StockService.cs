@@ -67,8 +67,10 @@ public class StockService : IStockService
         }
     }
 
+    public async Task<StockDto> GetProductWithMovementsAsync(int id)
+    {
+        var product = await _stockRepository.GetByIdAsync(id);
 
-    
-
-
+        return _mapper.Map<StockDto>(product);
+    }
 }
