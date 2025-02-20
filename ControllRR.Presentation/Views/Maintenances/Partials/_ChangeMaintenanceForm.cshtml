@@ -4,10 +4,7 @@
           <form asp-controller="Maintenances" asp-action="ChangeMaintenance" method="post">
                                         <input type="hidden" asp-for="MaintenanceDto.MaintenanceNumber">
                                         <input type="hidden" asp-for="MaintenanceDto.Id" />
-                                        <div id="overlay">
-                                        <div id="progstat"></div>
-                                        <div id="progress"></div>
-                                        </div>
+                                      
                                         <div class="row">
                                             <div class="col">
                                                 <label asp-for="MaintenanceDto.OpenDate"></label>
