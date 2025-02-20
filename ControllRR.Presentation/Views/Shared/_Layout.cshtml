@@ -19,8 +19,7 @@
 
 <body>
 <div id="overlay">
-        <div id="progstat">Carregando...</div>
-        <div id="progress"></div>
+        <div class="spinner"></div>
     </div>
 
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark"></nav>
@@ -91,55 +90,7 @@
             });
         });
     </script>
-    <script>
-        (function () {
-            function id(v) { return document.getElementById(v); }
-
-            function loadbar() {
-                var ovrl = id("overlay"),
-                    prog = id("progress"),
-                    stat = id("progstat"),
-                    content = id("content"),
-                    img = document.images,
-                    c = 0,
-                    tot = img.length;
-
-                if (tot === 0) {
-                    // Se não houver imagens, esconder o overlay direto
-                    doneLoading();
-                    return;
-                }
-
-                function imgLoaded() {
-                    c += 1;
-                    var perc = Math.floor((c / tot) * 100) + "%";
-                    prog.style.width = perc;
-                    stat.innerHTML = "CARREGANDO " + perc;
-
-                    if (c === tot) {
-                        doneLoading();
-                    }
-                }
-
-                function doneLoading() {
-                    ovrl.style.opacity = 0;
-                    setTimeout(function () {
-                        ovrl.style.display = "none";
-                        content.style.display = "block";
-                    }, 1000);
-                }
-
-                for (var i = 0; i < tot; i++) {
-                    var tImg = new Image();
-                    tImg.onload = imgLoaded;
-                    tImg.onerror = imgLoaded;
-                    tImg.src = img[i].src;
-                }
-            }
-
-            document.addEventListener('DOMContentLoaded', loadbar, false);
-        }());
-    </script>
+   
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
