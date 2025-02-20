@@ -1,0 +1,56 @@
+@model ControllRR.Presentation.ViewModels.MaintenanceViewModel
+@using ControllRR.Domain.Enums
+
+          <form asp-controller="Maintenances" asp-action="ChangeMaintenance" method="post">
+                                        <input type="hidden" asp-for="MaintenanceDto.MaintenanceNumber">
+                                        <input type="hidden" asp-for="MaintenanceDto.Id" />
+                                        <div id="overlay">
+                                        <div id="progstat"></div>
+                                        <div id="progress"></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.OpenDate"></label>
+                                                <input asp-for="MaintenanceDto.OpenDate" class="form-control input-sm" readonly />
+                                                <span asp-validation-for="MaintenanceDto.OpenDate" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.SimpleDesc"></label>
+                                                <input asp-for="MaintenanceDto.SimpleDesc" class="form-control input-sm" readonly />
+                                                <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.CloseDate"></label>
+                                                <input asp-for="MaintenanceDto.CloseDate" class="form-control input-sm" />
+                                                <span asp-validation-for="MaintenanceDto.CloseDate" class="text-danger"></span>
+                                            </div>
+                                          <div class="col">
+                                            <label asp-for="MaintenanceDto.ApplicationUser" class="control-label"></label>
+                                            <select asp-for="MaintenanceDto.ApplicationUserId" asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name" ))" class="form-control"></select>
+                                                </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.DeviceId"></label>
+                                                <input asp-for="MaintenanceDto.DeviceId" class="form-control input-sm" />
+                                                <span asp-validation-for="MaintenanceDto.DeviceId" class="text-danger"></span>
+                                            </div>
+                                            <div class="col">
+                                                <label asp-for="MaintenanceDto.Status" class="control-label"></label>
+                                                <select asp-for="MaintenanceDto.Status" 
+                                                        class="form-control" 
+                                                        asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
+                                            </div>
+                                        </div>
+                                         @await Html.PartialAsync("Partials/_ProductsTable", Model)
+                                         @await Html.PartialAsync("Partials/_ProductSearch", Model)
+                                        <div class="form-group">
+                                            <label asp-for="MaintenanceDto.Description"></label>
+                                            <textarea asp-for="MaintenanceDto.Description" class="form-control" rows="9"></textarea>
+                                            <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <button type="submit" class="btn btn-success">Salvar</button>
+                                        </div>
+                                    </form>
+
+@await Html.PartialAsync("Partials/_LoadingOverlay")

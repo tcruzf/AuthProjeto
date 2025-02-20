@@ -122,6 +122,7 @@ public class StocksController : Controller
         });
     }
 
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet("Stocks/GetProduct/{id}")]
     public async Task<IActionResult> GetProduct(int id)
     {

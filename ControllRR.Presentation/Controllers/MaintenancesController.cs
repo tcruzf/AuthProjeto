@@ -88,18 +88,22 @@ public class MaintenancesController : Controller
     }
 
     [Authorize(Roles = "Manager, Admin")]
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> Details(int? id)
     {
-        var list = await _maintenanceService.FindByIdAsync(id);
+        // Checa se o id é nulo, caso seja, lança uma exceção(redirecionamento para pagina de erro)
         if (id == null)
         {
             return RedirectToAction(nameof(Error), new { message = "ID não pode ser nulo!" });
         }
-        if (list == null)
+        // Caso o id não seja nulo, faz a busca da manutenção através do id fornecido.
+        var maintenance = await _maintenanceService.FindByIdAsync(id.Value);
+        //Checa se a manutenção buscada não é nula. Caso seja, lança o erro referente
+        if (maintenance == null)
         {
             return RedirectToAction(nameof(Error), new { message = "Identificador não encontrado!" });
         }
-        return View(list);
+        // Caso os criterios tenham sido corretamente atendidos, então retorna a view com os valores referente a manutenção.
+        return View(maintenance);
 
     }
     [Authorize(Roles = "Manager, Admin")]
@@ -108,7 +112,7 @@ public class MaintenancesController : Controller
     {
         // Busca usuários
         var users = await _userService.FindAllAsync();
-        //System.Console.WriteLine(users.);
+        // Mapeia usuarios para DTO
         var applicationUserDto = users?
             .Select(u => new ApplicationUserDto
             {
@@ -133,7 +137,7 @@ public class MaintenancesController : Controller
                 SectorId = d.SectorId
             })
             .ToList() ?? new List<DeviceDto>();
-        System.Console.WriteLine("Get NEW COntroller ##########################################################");
+
         var viewModel = new MaintenanceViewModel
         {
             ApplicationUserDto = users,
@@ -183,6 +187,7 @@ public class MaintenancesController : Controller
     [HttpGet]
     public async Task<IActionResult> MaintenanceList()
     {
+        // Gera um delay de 2 segundos - Usei para testar o spinner
         //await Task.Delay(2000);
         return View();
     }
@@ -211,7 +216,6 @@ public class MaintenancesController : Controller
         //var device = await _deviceService.FindByIdAsync(maintenance.Device.Id);
         var users = await _userService.FindAllAsync();
 
-
         MaintenanceViewModel viewModel = new MaintenanceViewModel
         {
             ApplicationUserDto = users,
@@ -222,30 +226,31 @@ public class MaintenancesController : Controller
     }
 
     [Authorize(Roles = "Manager, Admin")]
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> ChangeMaintenance(int? id, MaintenanceDto maintenanceDto)
-{
-   
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangeMaintenance(int? id, MaintenanceDto maintenanceDto)
+    {
 
-    try
-    {
-        await _maintenanceService.UpdateAsync(maintenanceDto);
-        TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
-        return RedirectToAction(nameof(MaintenanceList));
-    }
-    catch (Exception ex)
-    {
-        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+
+        try
         {
-            return Json(new { 
-                success = false,
-                error = ex.Message 
-            });
+            await _maintenanceService.UpdateAsync(maintenanceDto);
+            TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
+            return RedirectToAction(nameof(MaintenanceList));
         }
-        return RedirectToAction(nameof(Error), new { message = ex.Message });
+        catch (Exception ex)
+        {
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new
+                {
+                    success = false,
+                    error = ex.Message
+                });
+            }
+            return RedirectToAction(nameof(Error), new { message = ex.Message });
+        }
     }
-}
 
     [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
