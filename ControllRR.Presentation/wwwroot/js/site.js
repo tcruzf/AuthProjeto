@@ -2,7 +2,7 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-;(function(){
+(function(){
     function id(v){return document.getElementById(v); }
     function loadbar() {
       var ovrl = id("overlay"),
