@@ -41,31 +41,30 @@ var createResult = await userManager.CreateAsync(user, "SenhaSegura123##");
 ```
 
 ✨ Funcionalidades
-Módulo	Status	Descrição
-Autenticação	✅ Completo	Login com roles de usuário
-Manutenções	🚧 Em Desenv.	Registro de ordens de serviço
-Estoque	🚧 Em Desenv.	Gestão de produtos e inventário
-Dashboard	⏳ Planejado	Métricas operacionais
-Relatórios	⏳ Planejado	Exportação de dados em PDF/Excel
-🤝 Contribuição
-Faça um Fork do projeto
+- Módulo	Status	Descrição
+- Autenticação	✅ Completo	Login com roles de usuário
+- Manutenções	🚧 Em Desenv.	Registro de ordens de serviço
+- Estoque	🚧 Em Desenv.	Gestão de produtos e inventário
+- Dashboard	⏳ Planejado	Métricas operacionais
+- Relatórios	⏳ Planejado	Exportação de dados em PDF/Excel
+- 🤝 Contribuição
+- Faça um Fork do projeto
 
 Crie sua Branch:
 
-bash
-Copy
+```bash
+
 git checkout -b feature/nova-feature
 Commit suas mudanças:
 
-bash
-Copy
+
 git commit -m 'feat: Adiciona nova funcionalidade'
 Push para a Branch:
 
-bash
-Copy
 git push origin feature/nova-feature
 Abra um Pull Request
+```
+
 
 📄 Licença
 Distribuído sob licença MIT. Veja LICENSE para mais detalhes.
