@@ -4,83 +4,21 @@
     ViewData["Title"] = "Criar nova Manutenção";
 }
 <div class="container-fluid px-4">
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Arquivos</li>
-                    </ol>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-edit me-1"></i>
-                            Editar Manutenção
-                        </div>
-                        <div class="card-body">
-<form asp-controller="Maintenances" asp-action="New" method="post" id="mainForm">
-    <div class="row">
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item active">Manutenções</li>
+        <li class="breadcrumb-item active">Criar</li>
+    </ol>
     
-     <div class="col">
-    <label asp-for="MaintenanceDto.OpenDate"></label>
-    <input asp-for="MaintenanceDto.OpenDate" class="form-control input-sm" />
-    <span asp-validation-for="MaintenanceDto.OpenDate" class="text-danger"></span>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit me-1"></i>
+            Nova Manutenção
+        </div>
+        <div class="card-body">
+            @await Html.PartialAsync("Partials/_NewMaintenanceForm", Model)
+        </div>
     </div>
-    <div class="col">
-    <label asp-for="MaintenanceDto.SimpleDesc"></label>
-    <input asp-for="MaintenanceDto.SimpleDesc" class="form-control input-sm" />
-    <span asp-validation-for="MaintenanceDto.SimpleDesc" class="text-danger"></span>
-    </div> 
-    <div class="col">
-         <label asp-for="MaintenanceDto.ApplicationUser"></label>
-   <select asp-for="MaintenanceDto.ApplicationUserId" 
-        asp-items="@(new SelectList(Model.ApplicationUserDto, "Id", "Name"))" 
-        class="form-control">
-    <option value="">Selecione um usuário</option> <!-- Opção vazia -->
-</select>
-<span asp-validation-for="MaintenanceDto.ApplicationUserId" class="text-danger"></span>
-    </div>
-    <div class="col">
-    <label asp-for="MaintenanceDto.Device" class="control-label"></label>
-    <input id="deviceSearch" class="form-control" placeholder="Procure por modelo, serial ou tipo" required />
-    <input type="hidden" id="deviceId" name="MaintenanceDto.DeviceId" />
-    <span asp-validation-for="MaintenanceDto.Device" class="text-danger"></span>
-   
-    </div>
-     <div class="col">
-     <label asp-for="MaintenanceDto.Status" class="control-label"></label>
-    <select asp-for="MaintenanceDto.Status" class="form-control" asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
-    
-    </div>
-   
-    <div class="form-group">
-        <label for="productSearch">Buscar Produto</label>
-        <input type="text" id="productSearch" class="form-control" placeholder="Digite para buscar..." required>
-        <div id="productSuggestions" class="list-group"></div>
-    
-
-    <table class="table" id="productsTable">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Preço</th>
-                <th>Quantidade</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
-</div>
-   <div class="form-group">
-   <label asp-for="MaintenanceDto.Description"></label>
-    <textarea asp-for="MaintenanceDto.Description" class="form-control" id="MaintenanceDescription" rows="9"></textarea>
-    <span asp-validation-for="MaintenanceDto.Description" class="text-danger"></span>
-  </div>
-    
-    </div>
-    <div class="mt-4">
-    <button type="submit" class="btn btn-success">Salvar</button>
-    </div>
-</form>
-</div>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

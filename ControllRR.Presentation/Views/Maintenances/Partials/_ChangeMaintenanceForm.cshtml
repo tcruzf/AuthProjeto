@@ -37,6 +37,7 @@
                                                         asp-items="@Html.GetEnumSelectList<MaintenanceStatus>()"></select>
                                             </div>
                                         </div>
+                                        @await Html.PartialAsync("Partials/_LoadingPartial")
                                          @await Html.PartialAsync("Partials/_ProductsTable", Model)
                                          @await Html.PartialAsync("Partials/_ProductSearch", Model)
                                         <div class="form-group">
@@ -46,8 +47,8 @@
                                         </div>
 
                                         <div class="mt-4">
-                                            <button type="submit" class="btn btn-success">Salvar</button>
+                                            <button type="submit" class="btn btn-success" onclick="displayBusyIndicator()" >Salvar</button>
                                         </div>
                                     </form>
 
-@await Html.PartialAsync("Partials/_LoadingOverlay")
+@await Html.PartialAsync("Partials/_LoadingPartial")

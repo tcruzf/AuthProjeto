@@ -5,44 +5,49 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ControllRR</title>
-    
+
     <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/loading.css"/>
-    <script src="~/js/loading.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="//cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" />
 
+    <!-- Loading Styles -->
+   
 </head>
 
 <body>
-<div id="overlay">
-        <div class="spinner"></div>
-    </div>
-
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark"></nav>
-    
-    @if (User.Identity.IsAuthenticated)
-    {
-        @Html.Partial("_Menu")
-    }
-
-   
-
-    <div class="container-fluid mt-4 mb-5">
-        <main role="main">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; V134 2025 - ControllRR -
-            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidade</a>
+    <!-- Loading Overlay -->
+    <div id="global-loading">
+        <div class="loading-content">
+            
         </div>
-    </footer>
+    </div>
+
+    <!-- Conteúdo principal (hidden inicialmente) -->
+    <div id="main-content">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark"></nav>
+        
+        @if (User.Identity.IsAuthenticated)
+        {
+            @Html.Partial("_Menu")
+        }
+
+        <div class="container-fluid mt-4 mb-5">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; V134 2025 - ControllRR -
+                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidade</a>
+            </div>
+        </footer>
+    </div>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -55,44 +60,40 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
-        // Controle do Loading
-        $(document).ajaxStart(function() {
-            $('#loadingOverlay').show();
-        }).ajaxStop(function() {
-            $('#loadingOverlay').hide();
+        // Controle de carregamento global
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar conteúdo principal quando tudo estiver carregado
+            window.addEventListener('load', function() {
+                const loading = document.getElementById('global-loading');
+                const mainContent = document.getElementById('main-content');
+                
+                // Suaviza a transição
+                loading.classList.add('loading-hidden');
+                mainContent.style.opacity = '1';
+                
+                // Remove completamente o loading após a transição
+                setTimeout(() => {
+                    loading.remove();
+                }, 500);
+            });
+             function showGlobalLoading() {
+            document.getElementById('globalLoading').style.display = 'flex';
+        }
+            // Fallback para caso o evento load não dispare
+            setTimeout(() => {
+                document.getElementById('global-loading')?.remove();
+                document.getElementById('main-content').style.opacity = '1';
+            }, 5000);
         });
 
-        // Inicialização de componentes após carregamento
-        $(document).ready(function() {
-            // Inicializar DataTables
-            $('.datatable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
-                },
-                layout: {
-                    topStart: {
-                        buttons: ['copy', 'excel', 'pdf']
-                    }
-                }
-            });
-
-            // Inicializar modais
-            $('.modal').on('show.bs.modal', function() {
-                $(this).find('.modal-content').addClass('animate__animated animate__fadeInDown');
-            });
-
-            // Inicializar autocomplete
-            $('.autocomplete').each(function() {
-                $(this).autocomplete({
-                    source: $(this).data('source-url'),
-                    minLength: 2
-                });
-            });
+        // Controle de AJAX Loading
+        $(document).ajaxStart(function() {
+            $('#global-loading').addClass('ajax-loading');
+        }).ajaxStop(function() {
+            $('#global-loading').removeClass('ajax-loading');
         });
     </script>
-   
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-
 </html>
