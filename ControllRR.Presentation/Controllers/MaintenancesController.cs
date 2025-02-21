@@ -208,6 +208,7 @@ public class MaintenancesController : Controller
 
         return Json(result);
     }
+
     [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     public async Task<IActionResult> ChangeMaintenance(int? id)

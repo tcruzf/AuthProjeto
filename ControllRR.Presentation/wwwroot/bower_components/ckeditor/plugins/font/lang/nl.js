@@ -1,0 +1,1 @@
+﻿CKEDITOR.plugins.setLang("font","nl",{fontSize:{label:"Lettergnetplususerte",voiceLabel:"Lettergnetplususerte",panelTitle:"Lettergnetplususerte"},label:"Lettertype",panelTitle:"Lettertype",voiceLabel:"Lettertype"});

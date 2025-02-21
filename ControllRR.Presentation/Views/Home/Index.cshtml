@@ -54,7 +54,7 @@
       background: white;
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+      padding: 15px;
       text-align: center;
       transition: transform 0.3s, box-shadow 0.3s;
     }
@@ -76,18 +76,6 @@
       margin-bottom: 15px;
     }
 
-    .card a {
-      text-decoration: none;
-      color: #007bff;
-      font-weight: 500;
-      display: inline-block;
-      margin-top: 10px;
-    }
-
-    .card a:hover {
-      text-decoration: underline;
-    }
-
     .quick-actions {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -99,7 +87,7 @@
       background: white;
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+      padding: 15px;
       text-align: center;
       transition: transform 0.3s, box-shadow 0.3s;
     }
@@ -121,181 +109,181 @@
       display: block;
     }
 
+    /* Redução do tamanho dos gráficos */
     .charts {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px; /* Aumentei o gap para melhor espaçamento */
+      justify-content: center; /* Centraliza horizontalmente */
+      align-items: center; /* Centraliza verticalmente */
+      width: 100%;
+      max-width: 800px; /* Largura máxima para melhor centralização */
+      margin: 0 auto; /* Centraliza o container dos gráficos */
     }
 
-    .chart {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 250px; /* Altura ajustada */
+      margin: 0 auto; /* Centraliza o gráfico dentro do container */
+      text-align: center; /* Centraliza o título */
     }
 
-    .chart h4 {
-      font-size: 1.2rem;
-      margin-bottom: 20px;
+    .chart-container h4 {
+      margin-bottom: 15px;
       color: #007bff;
+      font-size: 1.2rem;
     }
 
-    .chart canvas {
-      width: 100% !important;
-      height: 200px !important;
-    }
+  
   </style>
 </head>
 <body>
+  <div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/System/Help/Version/PT_BR/ALL/info">ControlRR</a></li>
+    </ol>
+</div>
   <div class="container">
-    <!-- Cabeçalho -->
-
     <!-- Cards de Estatísticas -->
-  <div class="dashboard">
-    <div class="card">
+    <div class="dashboard">
+      <div class="card">
         <h3>@Model.DeviceCount</h3>
         <p>Dispositivos</p>
         <a href="/Devices/List">Ver detalhes</a>
-    </div>
-    
-  <div class="card">
-    <h3 id="cpuUsage">@Model.CpuUsage.ToString("N1")%</h3>
-    <p>Uso de CPU</p>
-</div>
+      </div>
+      
+      <div class="card">
+        <h3 id="cpuUsage">@Model.CpuUsage.ToString("N1")%</h3>
+        <p>Uso de CPU</p>
+      </div>
 
-<div class="card">
-    <h3 id="memoryUsage">@Model.MemoryUsage.ToString("N1")%</h3>
-    <p>Uso de Memória</p>
-</div>
-    
-    <div class="card">
+      <div class="card">
+        <h3 id="memoryUsage">@Model.MemoryUsage.ToString("N1")%</h3>
+        <p>Uso de Memória</p>
+      </div>
+      
+      <div class="card">
         <h3>@Model.MaintenanceCount</h3>
         <p>Manutenções Registradas</p>
         <a href="/Maintenances/MaintenanceList">Ver todas</a>
+      </div>
     </div>
-</div>
 
     <!-- Ações Rápidas -->
     <div class="quick-actions">
       <div class="quick-action">
-          <a href="/Stocks/SearchProduct">
-        <i class="fas fa-barcode"></i>
-        <span>Estoque</span>
-          </a>
+        <a href="/Stocks/SearchProduct">
+          <i class="fas fa-barcode"></i>
+          <span>Estoque</span>
+        </a>
       </div>
       <div class="quick-action">
         <a href="/Maintenances/MaintenanceList">
-        <i class="fas fa-file"></i>
-        <span>Manutenções</span>
+          <i class="fas fa-file"></i>
+          <span>Manutenções</span>
         </a>
       </div>
       <div class="quick-action">
         <a href="/Users/GetAll">
-        <i class="fas fa-users"></i>
-        <span>Usuarios</span>
+          <i class="fas fa-users"></i>
+          <span>Usuários</span>
         </a>
       </div>
       <div class="quick-action">
-         <a href="/Sectors/GetAll">
-        <i class="fas fa-home"></i>
-        <span>Setores</span>
-        </a>
-      </div>
-      <div class="quick-action">
-        <a href="/Devices/List">
-        <i class="fas fa-laptop"></i>
-        <span>Dispositivos</span>
-        </a>
-      </div>
-      <div class="quick-action">
-        <a href="/Documents/FileUpload">
-        <i class="fas fa-server"></i>
-        <span>Arquivos</span>
+        <a href="/Sectors/GetAll">
+          <i class="fas fa-home"></i>
+          <span>Setores</span>
         </a>
       </div>
     </div>
 
     <!-- Gráficos -->
-    <div class="charts">
-      <div class="chart">
-        <h4>Uso de Memória</h4>
-        <canvas id="memoryChart"></canvas>
-      </div>
-      <div class="chart">
-        <h4>Manutenções por Mês</h4>
-        <canvas id="maintenanceChart"></canvas>
-      </div>
+  <div class="charts">
+  <div class="chart-container">
+    <h4>Uso de Memória</h4>
+    <div style="width: 100%; height: 100%">
+      <canvas id="memoryChart"></canvas>
     </div>
   </div>
-
+  
+  <div class="chart-container">
+    <h4>Manutenções por Mês</h4>
+    <div style="width: 100%; height: 100%">
+      <canvas id="maintenanceChart"></canvas>
+    </div>
+  </div>
+ 
+<script type="text/javascript" href="~/js/graficos.js"></script>
   <!-- Scripts para Gráficos (Chart.js) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-   let memoryChart, maintenanceChart;
+    let memoryChart, maintenanceChart;
 
-function initCharts(initialData, maintenanceData) {
-    // Gráfico de Memória
-    memoryChart = new Chart(document.getElementById('memoryChart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Usada', 'Livre'],
-            datasets: [{
-                data: [initialData.memory, 100 - initialData.memory],
-                backgroundColor: ['#ff6384', '#36a2eb']
-            }]
-        }
-    });
+    function initCharts(initialData, maintenanceData) {
+        // Gráfico de Memória
+        memoryChart = new Chart(document.getElementById('memoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Usada', 'Livre'],
+                datasets: [{
+                    data: [initialData.memory, 100 - initialData.memory],
+                    backgroundColor: ['#ff6384', '#36a2eb']
+                }]
+            }
+        });
 
-    // Gráfico de Manutenções com dados reais
-    maintenanceChart = new Chart(document.getElementById('maintenanceChart'), {
-        type: 'bar',
-        data: {
-            labels: Object.keys(maintenanceData),
-            datasets: [{
-                label: 'Manutenções',
-                data: Object.values(maintenanceData),
-                backgroundColor: '#007bff'
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+        // Gráfico de Manutenções
+        maintenanceChart = new Chart(document.getElementById('maintenanceChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(maintenanceData),
+                datasets: [{
+                    label: 'Manutenções',
+                    data: Object.values(maintenanceData),
+                    backgroundColor: '#007bff'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
-}
-
-// Atualização periódica
-setInterval(async () => {
-    try {
-        const response = await fetch('/server/status/resources');
-        const data = await response.json();
-        
-        // Atualiza os cards
-        document.getElementById('cpuUsage').textContent = `${data.cpu}%`;
-        document.getElementById('memoryUsage').textContent = `${data.memory}%`;
-        
-        // Atualiza os gráficos
-        memoryChart.data.datasets[0].data = [data.memory, 100 - data.memory];
-        memoryChart.update();
-        
-    } catch (error) {
-        console.error('Erro na atualização:', error);
+        });
     }
-}, 5000);
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', () => {
-    initCharts(
-        {
-            cpu: @Model.CpuUsage,
-            memory: @Model.MemoryUsage
-        },
-        @Json.Serialize(Model.MaintenancesByMonth)
-    );
-});
-    </script>
+    // Atualização periódica
+    setInterval(async () => {
+        try {
+            const response = await fetch('/server/status/resources');
+            const data = await response.json();
+            
+            // Atualiza os cards
+            document.getElementById('cpuUsage').textContent = `${data.cpu}%`;
+            document.getElementById('memoryUsage').textContent = `${data.memory}%`;
+            
+            // Atualiza os gráficos
+            memoryChart.data.datasets[0].data = [data.memory, 100 - data.memory];
+            memoryChart.update();
+            
+        } catch (error) {
+            console.error('Erro na atualização:', error);
+        }
+    }, 5000);
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+        initCharts(
+            { memory: @Model.MemoryUsage },
+            @Json.Serialize(Model.MaintenancesByMonth)
+        );
+    });
+    
+
+  </script>
 </body>
 </html>

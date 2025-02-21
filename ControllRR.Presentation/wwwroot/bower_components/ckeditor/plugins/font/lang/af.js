@@ -1,0 +1,1 @@
+﻿CKEDITOR.plugins.setLang("font","af",{fontSize:{label:"Gnetplususerte",voiceLabel:"Fontgnetplususerte",panelTitle:"Fontgnetplususerte"},label:"Font",panelTitle:"Fontnaam",voiceLabel:"Font"});

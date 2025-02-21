@@ -1,85 +1,110 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]  ControllRR</title>
+    <title>@ViewData["Title"] - ControllRR</title>
 
-    <!-- CSS -->
+    <!-- CSS Principal -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/loading.css"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+    
+    <!-- Ícones e Fontes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <!-- DataTables -->
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="//cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" />
 
-    <!-- Loading Styles -->
-   
+    <!-- AdminLTE -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
 </head>
-
-<body>
-    <!-- Loading Overlay -->
-    <div id="global-loading">
-        <div class="loading-content">
-            
+ 
+                    {
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <!-- Loading Global
+        <div id="global-loading">
+            <div id="progstat"></div>
+            <div id="progress"></div>
         </div>
-    </div>
-
-    <!-- Conteúdo principal (hidden inicialmente) -->
-    <div id="main-content">
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark"></nav>
+         -->
         
-        @if (User.Identity.IsAuthenticated)
-        {
-            @Html.Partial("_Menu")
-        }
 
-        <div class="container-fluid mt-4 mb-5">
-            <main role="main">
-                @RenderBody()
-            </main>
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Conteúdo do Navbar -->
+        </nav>
+
+        <!-- Sidebar -->
+     
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @Html.Partial("_Menu")
+                    }
+
+                    <div class="container-fluid mt-4 mb-5">
+                        <main role="main">
+                            @RenderBody()
+                        </main>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <footer class="border-top footer text-muted">
-            <div class="container">
-                &copy; V140 2025 - ControllRR -
-                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidade</a>
+        <!-- Footer -->
+        <footer class="main-footer">
+            <strong>Copyright &copy;2021 <a href="https://thiagoferreira.net/sistemas/smartbsp">Gabriel Ferreira</a></strong>
+            <div class="float-right d-none d-sm-inline-block">
+                <b>Versão </b> <a href="/s/changelog/">1.2.07.29</a>
             </div>
         </footer>
     </div>
 
     <!-- Scripts -->
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- DataTables -->
     <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="//cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="//cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="//cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    
+    <!-- AdminLTE -->
+    <script src="~/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <script src="~/dist/js/adminlte.js"></script>
+    
+    <!-- Highcharts -->
+    <script src="~/interfaces/highchart/js/highcharts.js"></script>
+    <script src="~/interfaces/highchart/js/themes/hc.blue.js"></script>
+    
+    <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Scripts Customizados -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/dist/loading/loading.js"></script>
 
+    <!-- Scripts de Controle -->
     <script>
         // Controle de carregamento global
         document.addEventListener('DOMContentLoaded', function() {
-            // Mostrar conteúdo principal quando tudo estiver carregado
             window.addEventListener('load', function() {
                 const loading = document.getElementById('global-loading');
                 const mainContent = document.getElementById('main-content');
                 
-                // Suaviza a transição
                 loading.classList.add('loading-hidden');
                 mainContent.style.opacity = '1';
                 
-                // Remove completamente o loading após a transição
-                setTimeout(() => {
-                    loading.remove();
-                }, 500);
+                setTimeout(() => loading.remove(), 500);
             });
-             function showGlobalLoading() {
-            document.getElementById('globalLoading').style.display = 'flex';
-        }
-            // Fallback para caso o evento load não dispare
+
             setTimeout(() => {
                 document.getElementById('global-loading')?.remove();
                 document.getElementById('main-content').style.opacity = '1';
@@ -87,11 +112,9 @@
         });
 
         // Controle de AJAX Loading
-        $(document).ajaxStart(function() {
-            $('#global-loading').addClass('ajax-loading');
-        }).ajaxStop(function() {
-            $('#global-loading').removeClass('ajax-loading');
-        });
+        $(document)
+            .ajaxStart(() => $('#global-loading').addClass('ajax-loading'))
+            .ajaxStop(() => $('#global-loading').removeClass('ajax-loading'));
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

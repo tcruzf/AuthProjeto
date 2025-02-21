@@ -36,7 +36,7 @@ public class SystemRoutines : ISystemRoutines
             System.Runtime.InteropServices.OSPlatform.Linux);
     }
 
-   public async Task<(double CpuUsage, double MemoryUsage)> GetServerStatus()
+    public async Task<(double CpuUsage, double MemoryUsage)> GetServerStatus()
     {
         if (IsLinux())
         {
@@ -47,6 +47,7 @@ public class SystemRoutines : ISystemRoutines
             return await GetWindowsMetrics();
         }
     }
+    //
 
     private async Task<(double CpuUsage, double MemoryUsage)> GetLinuxMetricsAsync()
     {
@@ -89,13 +90,26 @@ public class SystemRoutines : ISystemRoutines
     private async Task<(double used, double total)> ReadMemoryStats()
     {
         var memLines = await File.ReadAllLinesAsync("/proc/meminfo");
-        var total = ParseMemValue(memLines[0]);
-        var free = ParseMemValue(memLines[1]);
-        var buffers = ParseMemValue(memLines[2]);
-        var cached = ParseMemValue(memLines[3]);
 
-        var used = total - (free + buffers + cached);
+        // Busca os valores pelos nomes corretos
+        double total = GetMemValue(memLines, "MemTotal:");
+        double free = GetMemValue(memLines, "MemFree:");
+        double buffers = GetMemValue(memLines, "Buffers:");
+        double cached = GetMemValue(memLines, "Cached:");
+        double sReclaimable = GetMemValue(memLines, "SReclaimable:"); // Para sistemas mais novos
+
+        // Cálculo ajustado considerando buffers e cached (incluindo SReclaimable)
+        var used = total - (free + buffers + cached + sReclaimable);
         return (used, total);
+    }
+
+    private double GetMemValue(string[] lines, string prefix)
+    {
+        var line = lines.FirstOrDefault(l => l.StartsWith(prefix));
+        if (line == null) return 0;
+
+        var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        return double.Parse(parts[1]);
     }
 
     private double ParseMemValue(string line)
@@ -109,7 +123,7 @@ public class SystemRoutines : ISystemRoutines
     }
 
     public async Task<Dictionary<string, int>> MaintenanceMonth()
-   {
+    {
         return await _maintenances.MaintenanceMonth();
-   }
+    }
 }
