@@ -36,12 +36,9 @@ dotnet restore
 dotnet ef migrations remove -f --project ControllRR.Infrastructure
 dotnet ef migrations add InitialMigration --project ControllRR.Infrastructure --output-dir Data/Migrations
 dotnet ef database update --project ControllRR.Infrastructure
-
 var adminEmail = "admin@controllrr.com";
 var createResult = await userManager.CreateAsync(user, "SenhaSegura123##");
 ```
-
-##
 
 ✨ Funcionalidades
 Módulo	Status	Descrição
@@ -50,9 +47,6 @@ Manutenções	🚧 Em Desenv.	Registro de ordens de serviço
 Estoque	🚧 Em Desenv.	Gestão de produtos e inventário
 Dashboard	⏳ Planejado	Métricas operacionais
 Relatórios	⏳ Planejado	Exportação de dados em PDF/Excel
-
-
-
 🤝 Contribuição
 Faça um Fork do projeto
 
@@ -79,7 +73,8 @@ Distribuído sob licença MIT. Veja LICENSE para mais detalhes.
 📧 Contato
 Thiago Cruz
 LinkedIn
-Email: thiago.cruz@controllrr.com
+Email: thiago@prefirolinux.com
 
 Preview do Sistema
 Dashboard Preview
+
