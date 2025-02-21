@@ -32,3 +32,9 @@ Sistema para controle de manutenções e gestão de produtos com interface web.
 git clone https://github.com/tcruzf/AuthProjeto.git
 cd AuthProjeto
 dotnet restore
+
+
+```bash
+dotnet ef migrations remove -f --project ControllRR.Infrastructure
+dotnet ef migrations add InitialMigration --project ControllRR.Infrastructure --output-dir Data/Migrations
+dotnet ef database update --project ControllRR.Infrastructure
