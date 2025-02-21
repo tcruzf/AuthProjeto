@@ -38,7 +38,6 @@ dotnet ef migrations add InitialMigration --project ControllRR.Infrastructure --
 dotnet ef database update --project ControllRR.Infrastructure
 var adminEmail = "admin@controllrr.com";
 var createResult = await userManager.CreateAsync(user, "SenhaSegura123##");```
-
 ✨ Funcionalidades
 Módulo	Status	Descrição
 Autenticação	✅ Completo	Login com roles de usuário
@@ -52,15 +51,17 @@ Faça um Fork do projeto
 Crie sua Branch:
 
 bash
-
+Copy
 git checkout -b feature/nova-feature
 Commit suas mudanças:
 
-
+bash
+Copy
 git commit -m 'feat: Adiciona nova funcionalidade'
 Push para a Branch:
 
-
+bash
+Copy
 git push origin feature/nova-feature
 Abra um Pull Request
 
