@@ -1,0 +1,60 @@
+@model ControllRR.Application.Dto.MaintenanceDto;
+@{
+
+    ViewData["Title"] = "Listagem de Manutenções por Dispositivos";
+}
+<h2></h2>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    @TempData["SuccessMessage"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    @TempData["ErrorMessage"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/Maintenances/MaintenanceList">Manutenções</a></li>
+        <li class="breadcrumb-item active">Filtrar</li>
+    </ol>
+</div>
+<hr> 
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            Data:: -- Consulta Manutenções por Dispositivos / Computadores / Impressoras / Tablets
+        </div>
+         
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="container-fluid">
+                    <div class="table-responsive">
+                        <table id="deviceTable" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th>Nº Serie</th>
+                                    <th>Modelo</th>
+                                    <th># OS</th>
+                                    <th>Usuario</th>
+                                    <th>ações Disponiveis</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            @await Html.PartialAsync("Partials/_LoadingPartial")
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
