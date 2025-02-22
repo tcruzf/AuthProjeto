@@ -1,6 +1,8 @@
+using AutoMapper;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Exceptions;
 using ControllRR.Application.Interfaces;
+using ControllRR.Domain.Entities;
 using ControllRR.Domain.Interfaces;
 
 namespace ControllRR.Application.Services;
@@ -10,15 +12,21 @@ public class SystemRoutines : ISystemRoutines
     private readonly IUnitOfWork _uow;
     private readonly IDeviceService _devices;
     private readonly IMaintenanceService _maintenances;
+    private readonly IMapper _mapper;
+    private readonly ISystemRoutinesRepository _systemRoutinesRepository;
     public SystemRoutines(
         IUnitOfWork uow,
         IDeviceService devices,
-        IMaintenanceService maintenances
+        IMaintenanceService maintenances,
+        IMapper mapper,
+        ISystemRoutinesRepository systemRoutinesRepository
                            )
     {
         _uow = uow;
         _devices = devices;
         _maintenances = maintenances;
+        _mapper = mapper;
+        _systemRoutinesRepository = systemRoutinesRepository;
     }
     public async Task<int> CountDevices()
     {
@@ -149,14 +157,22 @@ public class SystemRoutines : ISystemRoutines
         return await _maintenances.MaintenanceMonth();
     }
 
-    public Task<SystemRoutinesDto> FindConfigAsync(int id)
+    public async Task<SystemRoutinesDto> FindConfigAsync(int id)
     {
-        throw new NotImplementedException();
+        await _uow.BeginTransactionAsync();
+        var result = await _systemRoutinesRepository.FindConfigAsync(id);
+        return _mapper.Map<SystemRoutinesDto>(result);
+
     }
 
-    public Task CreateConfigAsync(SystemRoutinesDto systemRoutinesDto)
+    public async Task CreateConfigAsync(SystemRoutinesDto systemRoutinesDto)
     {
-        throw new NotImplementedException();
+        await _uow.BeginTransactionAsync();
+        var config = _mapper.Map<SystemRoutine>(systemRoutinesDto);
+        await _systemRoutinesRepository.CreateConfigAsync(config);
+        await _uow.SaveChangesAsync();
+        await _uow.CommitAsync();
+
     }
 
     public Task UpdateConfigAsync(SystemRoutinesDto systemRoutinesDto)
