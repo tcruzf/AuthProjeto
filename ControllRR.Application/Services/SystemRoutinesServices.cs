@@ -36,6 +36,11 @@ public class SystemRoutines : ISystemRoutines
             System.Runtime.InteropServices.OSPlatform.Linux);
     }
 
+    /// <summary>
+    /// Testa pelo sistema operacional, caso seja linux, chama o metodo reponsavel por colher as informações referentes
+    /// a hardware disponiveis 
+    /// </summary>
+    /// <returns></returns>
     public async Task<(double CpuUsage, double MemoryUsage)> GetServerStatus()
     {
         if (IsLinux())
@@ -44,11 +49,17 @@ public class SystemRoutines : ISystemRoutines
         }
         else
         {
+            // Não implementada por não ter um sistema operacional windows disponivel
             return await GetWindowsMetrics();
         }
     }
     //
 
+    /// <summary>
+    /// Pega as informações referentes ao hardware(memoria e cpu) para montar o json com os valores que serão exibidos
+    /// no dashboard
+    /// </summary>
+    /// <returns></returns>
     private async Task<(double CpuUsage, double MemoryUsage)> GetLinuxMetricsAsync()
     {
         try
@@ -77,6 +88,10 @@ public class SystemRoutines : ISystemRoutines
         }
     }
 
+    /// <summary>
+    /// Faz a leitura dos dados relacionados a cpu do servidor que hospeda a aplicação
+    /// </summary>
+    /// <returns></returns>
     private async Task<(double total, double idle)> ReadCpuStats()
     {
         var cpuLine = (await File.ReadAllLinesAsync("/proc/stat"))[0];
@@ -87,6 +102,10 @@ public class SystemRoutines : ISystemRoutines
         return (values.Sum(), values[3]);
     }
 
+    /// <summary>
+    /// Faz a leitura dos dados relacionados a memoria do servidor que hospeda a aplicação
+    /// </summary>
+    /// <returns></returns>
     private async Task<(double used, double total)> ReadMemoryStats()
     {
         var memLines = await File.ReadAllLinesAsync("/proc/meminfo");
@@ -117,6 +136,10 @@ public class SystemRoutines : ISystemRoutines
         return double.Parse(line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[1]);
     }
 
+    // Não implementada por não ter o sistema operacional windows disponivel.
+    // Depois eu testo isso com um windows, por enquanto é irrelevante
+    // E para acabar de ferrar, os caras estão discutindo no grupo quem é que está com cheiro de cú.
+    // Tem cabimento? kkkkkk 
     private async Task<(double CpuUsage, double MemoryUsage)> GetWindowsMetrics()
     {
         throw new NotImplementedException();
