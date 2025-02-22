@@ -37,6 +37,8 @@ dotnet ef migrations add InitialMigration --project ControllRR.Infrastructure --
 dotnet ef database update --project ControllRR.Infrastructure
 var adminEmail = "admin@controllrr.com";
 var createResult = await userManager.CreateAsync(user, "SenhaSegura123##");
+Caso queira, poderá gerar um arquivo sql após as alterações:
+/usr/bin/dotnet ef migrations --project ControllRR.Infrastructure script -o database.sql
 ```
 
 ✨ Funcionalidades
