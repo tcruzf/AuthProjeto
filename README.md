@@ -22,9 +22,8 @@ Sistema para controle de manutenções e gestão de produtos com interface web.
 - [Contato](#contato)
 
 ## 🛠️ Pré-requisitos
-- .NET 7.0 SDK
-- PostgreSQL 14+
-- Node.js 18.x
+- .NET 6.0 SDK
+- Mysql 14+
 - Entity Framework Core CLI
 
 ## 🚀 Instalação

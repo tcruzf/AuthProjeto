@@ -1,0 +1,78 @@
+@model DashboardViewModel
+
+  <div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/System/Help/Version/PT_BR/ALL/info">ControlRR</a></li>
+    </ol>
+</div>
+  <div class="container">
+    <!-- Cards de Estatísticas -->
+    <div class="dashboard">
+      <div class="card">
+        <h3>@Model.DeviceCount</h3>
+        <p>Dispositivos</p>
+        <a href="/Devices/List">Ver detalhes</a>
+      </div>
+      
+      <div class="card">
+        <h3 id="cpuUsage">@Model.CpuUsage.ToString("N1")%</h3>
+        <p>Uso de CPU</p>
+      </div>
+
+      <div class="card">
+        <h3 id="memoryUsage">@Model.MemoryUsage.ToString("N1")%</h3>
+        <p>Uso de Memória</p>
+      </div>
+      
+      <div class="card">
+        <h3>@Model.MaintenanceCount</h3>
+        <p>Manutenções Registradas</p>
+        <a href="/Maintenances/MaintenanceList">Ver todas</a>
+      </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="quick-actions">
+      <div class="quick-action">
+        <a href="/Stocks/SearchProduct">
+          <i class="fas fa-barcode"></i>
+          <span>Estoque</span>
+        </a>
+      </div>
+      <div class="quick-action">
+        <a href="/Maintenances/MaintenanceList">
+          <i class="fas fa-file"></i>
+          <span>Manutenções</span>
+        </a>
+      </div>
+      <div class="quick-action">
+        <a href="/Users/GetAll">
+          <i class="fas fa-users"></i>
+          <span>Usuários</span>
+        </a>
+      </div>
+      <div class="quick-action">
+        <a href="/Sectors/GetAll">
+          <i class="fas fa-home"></i>
+          <span>Setores</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+  <div class="charts">
+  <div class="chart-container">
+    <h4>Uso de Memória</h4>
+    <div style="width: 100%; height: 100%">
+      <canvas id="memoryChart"></canvas>
+    </div>
+  </div>
+  
+  <div class="chart-container">
+    <h4>Manutenções por Mês</h4>
+    <div style="width: 100%; height: 100%">
+      <canvas id="maintenanceChart"></canvas>
+    </div>
+  </div>

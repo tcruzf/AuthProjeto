@@ -1,0 +1,49 @@
+@model ControllRR.Application.Dto.SectorDto;
+
+<form asp-controller="Sectors" asp-action="CreateNewSector" method="post">
+    <div class="row">
+     <div class="form-group col-md-2">
+    <label asp-for="Name"></label>
+    <input asp-for="Name" class="form-control input-sm" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+    <label asp-for="Location"></label>
+    <input asp-for="Location" class="form-control input-sm" />
+    <span asp-validation-for="Location" class="text-danger"></span>
+    </div> 
+    <div class="form-group col-md-4">
+    <label asp-for="Address"></label>
+    <input asp-for="Address" class="form-control input-sm" />
+    <span asp-validation-for="Address" class="text-danger"></span>
+    </div> 
+    <div class="col">
+    <label asp-for="Number"></label>
+    <input asp-for="Number" class="form-control input-sm" />
+    <span asp-validation-for="Number" class="text-danger"></span>
+    </div> 
+    <div class="form-group col-md-2">
+    <label asp-for="Neighborhood"></label>
+    <input asp-for="Neighborhood" class="form-control input-sm" />
+    <span asp-validation-for="Neighborhood" class="text-danger"></span>
+    </div> 
+    <div class="form-group col-md-3">
+    <label asp-for="City"></label>
+    <input asp-for="City" class="form-control input-sm" />
+    <span asp-validation-for="City" class="text-danger"></span>
+    </div> 
+    <div class="form-group col-md-2">
+    <label asp-for="Cep"></label>
+    <input asp-for="Cep" class="form-control input-sm" />
+    <span asp-validation-for="Cep" class="text-danger"></span>
+    </div> 
+    <div class="col">
+    <label asp-for="RequesterName"></label>
+    <input asp-for="RequesterName" class="form-control input-sm" />
+    <span asp-validation-for="RequesterName" class="text-danger"></span>
+    </div> 
+    </div>
+    <div class="mt-4">
+    <button type="submit" class="btn btn-success">Salvar</button>
+    </div>
+</form>
