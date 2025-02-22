@@ -148,4 +148,19 @@ public class SystemRoutines : ISystemRoutines
     {
         return await _maintenances.MaintenanceMonth();
     }
+
+    public Task<SystemRoutinesDto> FindConfigAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task CreateConfigAsync(SystemRoutinesDto systemRoutinesDto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateConfigAsync(SystemRoutinesDto systemRoutinesDto)
+    {
+        throw new NotImplementedException();
+    }
 }

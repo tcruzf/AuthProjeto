@@ -40,7 +40,7 @@ public partial class ControllRRContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<Login> Logins { get; set; }
     public virtual DbSet<ServerLogin> ServerLogins { get; set; }
     public virtual DbSet<MaintenanceProduct> MaintenanceProduct { get; set; }
-
+    public virtual DbSet<SystemRoutine> SystemRoutines { get; set; }
    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
     if (!optionsBuilder.IsConfigured)
