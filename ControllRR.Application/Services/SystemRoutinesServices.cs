@@ -138,8 +138,7 @@ public class SystemRoutines : ISystemRoutines
 
     // Não implementada por não ter o sistema operacional windows disponivel.
     // Depois eu testo isso com um windows, por enquanto é irrelevante
-    // E para acabar de ferrar, os caras estão discutindo no grupo quem é que está com cheiro de cú.
-    // Tem cabimento? kkkkkk 
+    // 
     private async Task<(double CpuUsage, double MemoryUsage)> GetWindowsMetrics()
     {
         throw new NotImplementedException();
