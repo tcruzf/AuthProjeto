@@ -85,6 +85,7 @@ builder.Services.AddAutoMapper(
 //builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 builder.Services.AddScoped<ISystemRoutines, SystemRoutines>();
+builder.Services.AddScoped<ISystemRoutinesRepository, SystemRoutinesRepository>();
 builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IStockService, StockService>();
