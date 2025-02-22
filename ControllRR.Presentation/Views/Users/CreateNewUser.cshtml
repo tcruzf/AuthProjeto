@@ -2,28 +2,15 @@
 @{
     ViewData["Title"] = "Cadastro de Usuario";
 }
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-    @TempData["SuccessMessage"]
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    @TempData["ErrorMessage"]
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-}
-    <div class="container-fluid px-4">
+<div class="container-fluid px-4">
     <h1 class="mt-4"></h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="/Users/GetAll">Usuarios</a></li>
+        <li class="breadcrumb-item"><a href="/Devices">Usuarios</a></li>
           <li class="breadcrumb-item active">Adicionar</li>
     </ol>
 </div>
+
 <div class="row">
 <div class="col-md-12">
 <br>
@@ -34,59 +21,29 @@
 <div class="card-header text-center bg-dark text-white">
 <div class="row align-items-center">
 <div class="col-md-12">
-<h5>Novo Usuario do Sistema</h5>
+<h5>::Novo Usuário::</h5>
 </div>
 </div>
 </div>
-<div class="card mt-4">
-<div class="card-header">Data::
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<div class="card mt-12">
+<div class="card-header">Data:: Formulario de criação de usuário
 </div>
 <div class="card-body">
 <div class="row">
-    <div class="row">
-    <div class="col-md-4">
-        <form asp-controller="Users" asp-action="CreateNewUser" method="post">
-            @Html.AntiForgeryToken()
-            <h2>Criar nova conta.</h2>
-            <hr />
-            <div class="form-floating">
-                <input asp-for="applicationUserDto.Name" class="form-control" autocomplete="name" aria-required="true" />
-                <label asp-for="applicationUserDto.Name"></label>
-                <span asp-validation-for="applicationUserDto.Name" class="text-danger"></span>
-            </div>
-
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="applicationUserDto.Email" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="applicationUserDto.Email"></label>
-                <span asp-validation-for="applicationUserDto.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="applicationUserDto.Password" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="applicationUserDto.Password"></label>
-                <span asp-validation-for="applicationUserDto.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="applicationUserDto.ConfirmPassword" class="form-control" autocomplete="new-password"
-                    aria-required="true" />
-                <label asp-for="applicationUserDto.ConfirmPassword"></label>
-                <span asp-validation-for="applicationUserDto.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="applicationUserDto.Register" class="form-control" autocomplete="register" aria-required="true" />
-                <label asp-for="applicationUserDto.Register"></label>
-                <span asp-validation-for="applicationUserDto.Register" class="text-danger"></span>
-            </div>
-           
-                <div class="form-group">
-                    <label asp-for="applicationUserDto.Role" class="form-label"></label>
-                    <select asp-for="applicationUserDto.Role" class="form-control" asp-items="Model.Roles"></select>
-                    <span asp-validation-for="applicationUserDto.Role" class="text-danger"></span>
-                </div>
-                <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Salvar</button>
-           
-        </form>
-    </div>
+@await Html.PartialAsync("Partials/_NewUserForm", Model)
+</div>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

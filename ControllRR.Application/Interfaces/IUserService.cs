@@ -9,6 +9,11 @@ public interface IUserService
     Task InsertAsync(ApplicationUserDto user);
     Task RemoveAsync(int id);
     Task UpdateAsync(ApplicationUserDto userDto);
-
+    Task<object> GetUserAsync(
+    int start,
+    int length,
+    string searchValue,
+    string sortColumn,
+    string sortDirection);
 
 }

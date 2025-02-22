@@ -1,0 +1,39 @@
+@model ControllRR.Presentation.ViewModels.RoleViewModel
+
+<form asp-controller="Users" asp-action="CreateNewUser" method="post">
+     <div class="row">
+        <div class="form-group col-md-3">
+    <label asp-for="applicationUserDto.Name"></label>
+    <input asp-for="applicationUserDto.Name" class="form-control input-sm" />
+    <span asp-validation-for="applicationUserDto.Name" class="text-danger"></span>
+    </div>
+     <div class="form-group col-md-3">
+    <label asp-for="applicationUserDto.Email"></label>
+    <input asp-for="applicationUserDto.Email" class="form-control input-sm" />
+    <span asp-validation-for="applicationUserDto.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-2">
+    <label asp-for="applicationUserDto.Password"></label>
+    <input asp-for="applicationUserDto.Password" class="form-control input-sm" />
+    <span asp-validation-for="applicationUserDto.Password" class="text-danger"></span>
+    </div> 
+    <div class="form-group col-md-3">
+    <label asp-for="applicationUserDto.ConfirmPassword"></label>
+    <input asp-for="applicationUserDto.ConfirmPassword" class="form-control input-sm" />
+    <span asp-validation-for="applicationUserDto.ConfirmPassword" class="text-danger"></span>
+    </div> 
+     <div class="form-group col-md-2">
+    <label asp-for="applicationUserDto.Register"></label>
+    <input asp-for="applicationUserDto.Register" class="form-control input-sm" />
+    <span asp-validation-for="applicationUserDto.Register" class="text-danger"></span>
+    </div> 
+    <div class="form-group col-md-3">
+    <label asp-for="applicationUserDto.Role"></label>
+    <select asp-for="applicationUserDto.Role" class="form-control" asp-items="Model.Roles"></select>
+    <span asp-validation-for="applicationUserDto.Role" class="text-danger"></span>
+    </div> 
+    </div>
+    <div class="mt-4">
+    <button type="submit" class="btn btn-success" onclick="displayBusyIndicator()">Salvar</button>
+    </div>
+</form>

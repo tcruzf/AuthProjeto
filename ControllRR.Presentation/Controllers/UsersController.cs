@@ -107,24 +107,24 @@ public class UsersController : Controller
             if (result.Succeeded) // Verifica se a criação do usuario foi realizada com sucesso
             {
                 if (await _roleManager.RoleExistsAsync(tempRole)) // Verifica se a permissão atribuida existe no banco de dados
-                    {
-                        var roleAssignResult = await _userManager.AddToRoleAsync(user, tempRole); // Atribui uma permissão ao usuario recem-criado
+                {
+                    var roleAssignResult = await _userManager.AddToRoleAsync(user, tempRole); // Atribui uma permissão ao usuario recem-criado
 
-                        if (!roleAssignResult.Succeeded) // Caso a inserção das permissões ocorra  problemas, então retorna erro
-                        {
-                            foreach (var error in roleAssignResult.Errors)
-                            {
-                                TempData["ErrorMessage"] = "Permissão não pode ser adicionada.";
-                                ModelState.AddModelError(string.Empty, error.Description);
-                            }
-                           
-                        }
-                    }
-                    else
+                    if (!roleAssignResult.Succeeded) // Caso a inserção das permissões ocorra  problemas, então retorna erro
                     {
-                        ModelState.AddModelError(string.Empty, "Permissão selecionada não existe.");
-                      
+                        foreach (var error in roleAssignResult.Errors)
+                        {
+                            TempData["ErrorMessage"] = "Permissão não pode ser adicionada.";
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+
                     }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Permissão selecionada não existe.");
+
+                }
                 // Baseaddo no identity, algumas alterações para que o usuario possa
                 // confirmar a conta sem ter que receber o link. Claro, isso é uma gambiarra temporaria.
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -305,5 +305,24 @@ public class UsersController : Controller
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
         };
         return View(viewModel);
+    }
+
+    // Retorna uma lista de usuarios, se baseia em datatables para consulta em tempo real com retorno em json
+    //[HttpPost("Users/IdentityUsers/Search/User/RestrictedSearch")]
+    [Authorize(Roles = "Manager, Admin")]
+    [HttpPost]
+    public async Task<IActionResult> GetList()
+    {
+        var draw = Request.Form["draw"].FirstOrDefault();
+        var start = Convert.ToInt32(Request.Form["start"].FirstOrDefault() ?? "0");
+        var length = Convert.ToInt32(Request.Form["length"].FirstOrDefault() ?? "10");
+        var searchValue = Request.Form["search[value]"].FirstOrDefault()?.ToLower();
+        var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"] + "][data]"].FirstOrDefault();
+        var sortDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+
+        var result = await _userService.GetUserAsync(
+            start, length, searchValue, sortColumn, sortDirection);
+
+        return Json(result);
     }
 }

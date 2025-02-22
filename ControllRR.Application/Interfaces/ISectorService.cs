@@ -8,7 +8,7 @@ public interface ISectorService
     Task<SectorDto> FindByIdAsync(int id);
 
     Task InsertAsync(SectorDto sectorDto);
-      Task<object> GetSectorAsync(
+    Task<object> GetSectorAsync(
     int start,
     int length,
     string searchValue,

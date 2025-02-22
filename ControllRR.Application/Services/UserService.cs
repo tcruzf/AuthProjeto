@@ -15,11 +15,17 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly IUnitOfWork _uow;
 
-    public UserService(IUserRepository userRepository, IMapper mapper)
+    public UserService(
+        IUserRepository userRepository,
+        IMapper mapper,
+        IUnitOfWork uow
+        )
     {
         _userRepository = userRepository;
         _mapper = mapper;
+        _uow = uow;
     }
     public async Task<List<ApplicationUserDto>> FindAllAsync()
     {
@@ -83,6 +89,22 @@ public class UserService : IUserService
         var user = _mapper.Map<ApplicationUser>(userDto);
         await _userRepository.UpdateAsync(user);
         //await _userRepository.SaveChangesAsync();
+    }
+
+    // Realiza busca de usuario com parametros pre-definidos
+    // Este metodo retornar um resultado json com base nos termos informados no searchBox da dataTables
+    public async Task<object> GetUserAsync(int start, int length, string searchValue, string sortColumn, string sortDirection)
+    {
+        (IEnumerable<object> data, int totalRecords, int filteredRecords) =
+              await _userRepository.GetUserAsync(start, length, searchValue, sortColumn, sortDirection);
+
+        return new
+        {
+            draw = Guid.NewGuid().ToString(),
+            recordsTotal = totalRecords,
+            recordsFiltered = filteredRecords,
+            data
+        };
     }
 
 }
