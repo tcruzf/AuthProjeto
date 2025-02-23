@@ -3,6 +3,7 @@ using System;
 using ControllRR.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    partial class ControllRRContextModelSnapshot : ModelSnapshot
+    [Migration("20250223021328_StockChanges")]
+    partial class StockChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,7 +109,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.Property<string>("CPF_CNPJ")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ContactInfo")
                         .HasColumnType("longtext");
@@ -115,9 +118,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CPF_CNPJ")
-                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
@@ -187,7 +187,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
@@ -197,9 +197,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.Property<int?>("SaleId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("TotalTaxes")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -392,9 +389,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderDate")
-                        .HasDatabaseName("IX_PurchaseOrders_OrderDate");
-
                     b.HasIndex("SupplierId");
 
                     b.ToTable("PurchaseOrders");
@@ -560,7 +554,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ProductName")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("ProductQuantity")
                         .HasColumnType("int");
@@ -569,9 +563,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<decimal>("PurchasePrice")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,2)")
-                        .HasDefaultValue(0m);
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("SalePrice")
                         .HasColumnType("decimal(18,2)");
@@ -580,14 +572,9 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("TaxRate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(5,2)")
-                        .HasDefaultValue(0m);
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductName")
-                        .HasDatabaseName("IX_Stocks_ProductName");
 
                     b.HasIndex("SupplierId");
 
@@ -645,7 +632,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.Property<string>("CNPJ")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ContactEmail")
                         .HasColumnType("longtext");
@@ -657,9 +644,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CNPJ")
-                        .IsUnique();
 
                     b.ToTable("Suppliers");
                 });

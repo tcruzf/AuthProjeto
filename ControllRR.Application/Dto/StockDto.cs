@@ -26,5 +26,17 @@ public class StockDto
     public string? ProductReference { get; set; }
 
     public List<StockManagementDto> Movements { get; set; } = new();
+
+    [Display(Name = "Preço de Compra")]
+    [DataType(DataType.Currency)]
+    public decimal PurchasePrice { get; set; }
+    [Display(Name = "Preço de Venda")]
+    [DataType(DataType.Currency)]
+    public decimal SalePrice { get; set; }
+    public int? SupplierId { get; set; }
+    public Supplier? Supplier { get; set; }
+    [Display(Name = "Imposto (%)")]
+    [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    public decimal TaxRate { get; set; }
 }
 
