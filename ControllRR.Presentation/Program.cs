@@ -10,6 +10,7 @@ using ControllRR.Domain.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Security.Claims;
+using ControllRR.Application.Profiles;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -77,9 +78,11 @@ builder.Services.AddAutoMapper(
     typeof(ApplicationUserMappingProfile),
     typeof(StockMappingProfile),
     typeof(StockManagementMappingProfile),
-    typeof(MaintenanceProductProfile)
+    typeof(MaintenanceProductProfile),
+    typeof(SupplierMappingProfile)
+    //typeof()
 );
-
+ 
 
 
 //builder.Services.AddAutoMapper(typeof(UserMappingProfile));
@@ -104,6 +107,8 @@ builder.Services.AddScoped<ISectorRepository, SectorRepository>();
 builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 builder.Services.AddScoped<IStockManagementService, StockManagementService>();
 builder.Services.AddScoped<IStockManagementRepository, StockManagementRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
 
 // Adicionar suporte ao MVC e Razor Pages
 builder.Services.AddControllersWithViews();

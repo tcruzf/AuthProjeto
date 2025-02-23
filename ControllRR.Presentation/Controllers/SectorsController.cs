@@ -61,7 +61,8 @@ public class SectorsController : Controller
 
         return Json(result);
     }
-
+    //
+    
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> SectorDetails(int id)
     {
