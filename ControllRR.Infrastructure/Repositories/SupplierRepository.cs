@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ControllRR.Infrastructure.Repositories;
 
-public class SupplierRepository : BaseRepository<Supplier>, ISupplierRepository
+public class SupplierRepository : GenericRepository<Supplier>, ISupplierRepository
 {
     public SupplierRepository(ControllRRContext context) : base(context)
     {
