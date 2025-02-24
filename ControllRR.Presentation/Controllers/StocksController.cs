@@ -45,9 +45,7 @@ public class StocksController : Controller
         {
             TempData["SuccessMessage"] = "Produto inserido com sucesso!";
             // Usa o serviço para toda a lógica
-            System.Console.WriteLine("Salvando produto");
             await _stockService.CreateProductWithInitialMovementAsync(model.StockDto);
-            System.Console.WriteLine("Agora redirecionando");
             return RedirectToAction("SearchProduct");
         }
         catch (Exception ex)

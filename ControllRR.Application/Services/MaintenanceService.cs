@@ -11,38 +11,33 @@ namespace ControllRR.Application.Services;
 
 public class MaintenanceService : IMaintenanceService
 {
-    private readonly IMaintenanceRepository _maintenanceRepository;
     private readonly IMapper _mapper;
-    private readonly IStockRepository _stockRepository;
     private readonly IStockManagementService _stockManagementService;
     private readonly IUnitOfWork _uow;
 
     public MaintenanceService(
-     IMaintenanceRepository maintenanceRepository,
      IMapper mapper,
-     IStockRepository stockRepository,
      IStockManagementService stockManagementService,
      IUnitOfWork uow
      )
     {
-        _maintenanceRepository = maintenanceRepository;
         _mapper = mapper;
-        _stockRepository = stockRepository;
         _stockManagementService = stockManagementService;
         _uow = uow;
     }
 
     public async Task<List<MaintenanceDto>> FindAllAsync()
     {
-
-        var maintenance = await _maintenanceRepository.FindAllAsync();
-        return _mapper.Map<List<MaintenanceDto>>(maintenance);
+       var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+        var maintenances = await maintenanceRepo.FindAllAsync();
+        return _mapper.Map<List<MaintenanceDto>>(maintenances);
 
     }
 
     public async Task<MaintenanceDto> FindByIdAsync(int id)
     {
-        var maintenance = await _maintenanceRepository.FindByIdAsync(id);
+        var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+        var maintenance = await maintenanceRepo.GetByIdWithDetailsAsync(id);
         return _mapper.Map<MaintenanceDto>(maintenance);
 
     }
@@ -55,12 +50,22 @@ public class MaintenanceService : IMaintenanceService
         {
             await _uow.BeginTransactionAsync();
             var maintenance = _mapper.Map<Maintenance>(maintenanceDto);
-            await _maintenanceRepository.InsertAsync(maintenance);
-            await _uow.SaveChangesAsync();
-
+            if (maintenance.MaintenanceProducts == null || !maintenance.MaintenanceProducts.Any())
+            {
+                throw new BusinessException("Nenhum produto foi associdado a manutenção");
+            }
+            // Controle de numero de ordem de serviço
+            var controlRepo = _uow.GetRepository<IMaintenanceNumberControlRepository>();
+            var control = await controlRepo.GetCurrentControlAsync();
+            control.CurrentNumber += 1;
+            maintenance.MaintenanceNumber = control.CurrentNumber;
+            
+            var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+            await maintenanceRepo.AddAsync(maintenance);
+            var stockRepo = _uow.GetRepository<IStockRepository>();
             foreach (var product in maintenance.MaintenanceProducts)
             {
-                var stock = await _stockRepository.GetByIdAsync(product.StockId);
+                var stock = await stockRepo.GetByIdAsync(product.StockId);
 
                 if (stock.ProductQuantity < product.QuantityUsed)
                 {
@@ -74,7 +79,7 @@ public class MaintenanceService : IMaintenanceService
                     //throw new Exception($"Estoque insuficiente: {stock.ProductName}");
                 }
                 stock.ProductQuantity -= product.QuantityUsed; // Única alteração do estoque
-                await _stockRepository.UpdateAsync(stock);
+                await stockRepo.UpdateAsync(stock);
 
                 await _stockManagementService.AddMovementAsync( // Agora só registra a movimentação
                     product.StockId,
@@ -125,9 +130,10 @@ public class MaintenanceService : IMaintenanceService
         try
         {
             await _uow.BeginTransactionAsync();
-            var existingMaintenance = await _maintenanceRepository.FindByIdAsync(maintenanceDto.Id, includeProducts: true);
-            System.Console.WriteLine("######################");
-            System.Console.WriteLine(existingMaintenance.MaintenanceProducts.Count());
+            var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+
+            var existingMaintenance = await maintenanceRepo.GetByIdWithDetailsAsync(maintenanceDto.Id, includeProducts: true);
+            // System.Console.WriteLine(existingMaintenance.MaintenanceProducts.Count());
             var maintenance = _mapper.Map<Maintenance>(maintenanceDto);
 
             foreach (var existingProduct in existingMaintenance.MaintenanceProducts)
@@ -156,7 +162,7 @@ public class MaintenanceService : IMaintenanceService
                 await _uow.SaveChangesAsync();
             }
 
-            await _maintenanceRepository.UpdateAsync(maintenance);
+            await maintenanceRepo.UpdateAsync(maintenance);
             await _uow.SaveChangesAsync();
             await _uow.CommitAsync();
             return new OperationResultDto { Success = true };
@@ -179,10 +185,11 @@ public class MaintenanceService : IMaintenanceService
 
         if (quantityDifference != 0)
         {
-            var stock = await _stockRepository.GetByIdAsync(original.StockId);
+            var stockRepo = _uow.GetRepository<IStockRepository>();
+            var stock = await stockRepo.GetByIdAsync(original.StockId);
             stock.ProductQuantity -= quantityDifference; // Única atualização
 
-            await _stockRepository.UpdateAsync(stock);
+            await stockRepo.UpdateAsync(stock);
 
             await _stockManagementService.AddMovementAsync(
                 original.StockId,
@@ -197,9 +204,10 @@ public class MaintenanceService : IMaintenanceService
 
     private async Task DeductStock(MaintenanceProduct product, int maintenanceId)
     {
-        var stock = await _stockRepository.GetByIdAsync(product.StockId);
+        var stockRepo = _uow.GetRepository<IStockRepository>();
+        var stock = await stockRepo.GetByIdAsync(product.StockId);
         stock.ProductQuantity -= product.QuantityUsed;
-        await _stockRepository.UpdateAsync(stock);
+        await stockRepo.UpdateAsync(stock);
 
         await _stockManagementService.AddMovementAsync(
             product.StockId,
@@ -212,9 +220,10 @@ public class MaintenanceService : IMaintenanceService
 
     private async Task RestockProduct(MaintenanceProduct product, int maintenanceId)
     {
-        var stock = await _stockRepository.GetByIdAsync(product.StockId);
+        var stockRepo = _uow.GetRepository<IStockRepository>();
+        var stock = await stockRepo.GetByIdAsync(product.StockId);
         stock.ProductQuantity += product.QuantityUsed;
-        await _stockRepository.UpdateAsync(stock);
+        await stockRepo.UpdateAsync(stock);
 
         await _stockManagementService.AddMovementAsync(
             product.StockId,
@@ -228,13 +237,15 @@ public class MaintenanceService : IMaintenanceService
 
     public async Task FinalizeAsync(int id)
     {
-        await _maintenanceRepository.FinalizeAsync(id);
+        var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+        await maintenanceRepo.FinalizeMaintenanceAsync(id);
 
     }
 
     public async Task RemoveAsync(int id)
     {
-        await _maintenanceRepository.RemoveAsync(id);
+        var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+        await maintenanceRepo.RemoveAsync(id);
 
     }
     //
@@ -245,27 +256,30 @@ public class MaintenanceService : IMaintenanceService
            string sortColumn,
            string sortDirection)
     {
-        (IEnumerable<object> data, int totalRecords, int filteredRecords) =
-            await _maintenanceRepository.GetMaintenancesAsync(start, length, searchValue, sortColumn, sortDirection);
+        var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+         
+        var result = await maintenanceRepo.GetPaginatedMaintenancesAsync(start, length, searchValue, sortColumn, sortDirection);
 
         return new
         {
             draw = Guid.NewGuid().ToString(),
-            recordsTotal = totalRecords,
-            recordsFiltered = filteredRecords,
-            data
+            recordsTotal = result.TotalRecords,
+            recordsFiltered = result.FilteredRecords,
+            data = result.Data
         };
     }
 
     // Retorna o numero de manutenção registradas no bano de dados
     public async Task<int> CountMaintenance()
     {
-        return await _maintenanceRepository.CountMaintenance();
+        var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+        return await maintenanceRepo.CountMaintenance();
     }
 
     public async Task<Dictionary<string, int>> MaintenanceMonth()
-   {
-        return await _maintenanceRepository.MaintenanceMonth();
-   }
+    {
+        var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+        return await maintenanceRepo.GetMaintenanceCountByMonth();
+    }
 
 }

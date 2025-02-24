@@ -32,6 +32,7 @@ public class StockService : IStockService
         return _mapper.Map<List<StockDto>>(stocks);
     }
 
+    //
     public async Task<StockDto> CreateProductWithInitialMovementAsync(StockDto stockDto)
     {
         if(stockDto == null)
@@ -44,7 +45,8 @@ public class StockService : IStockService
             // Cria e persiste o Stock
             var stock = _mapper.Map<Stock>(stockDto);
             stock.ProductQuantity = 0;
-            await _stockRepository.AddAsync(stock);
+            var stockRepo = _uow.GetRepository<IStockRepository>();
+            await stockRepo.AddAsync(stock);
             await _uow.SaveChangesAsync(); 
             // Adiciona a movimentação inicial
             await _stockManagementService.AddMovementAsync(

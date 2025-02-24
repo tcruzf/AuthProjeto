@@ -1,13 +1,20 @@
-@model ControllRR.Application.Dto.SectorDto;
+<!-- CreateNewSupplier.cshtml -->
+@model ControllRR.Application.Dto.SupplierDto;
  @{
     ViewData["Title"] = "Editar registro de setor";
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary()
+    </div>
 }
 <div class="container-fluid px-4">
     <h1 class="mt-4"></h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="/Sectors">Setores</a></li>
-          <li class="breadcrumb-item active">Editar</li>
+        <li class="breadcrumb-item"><a href="/Sectors">Fornecedores</a></li>
+          <li class="breadcrumb-item active">Novo</li>
     </ol>
 </div>
 
@@ -21,7 +28,7 @@
 <div class="card-header text-center bg-dark text-white">
 <div class="row align-items-center">
 <div class="col-md-12">
-<h5>::Editar Setor::</h5>
+<h5>::Novo Fornecedor::</h5>
 </div>
 </div>
 </div>
@@ -38,14 +45,22 @@
     </div>
 }
 <div class="card mt-12">
-<div class="card-header">::Informações do Setor::
+<div class="card-header">::Informações do Fornecedor::
 </div>
 <div class="card-body">
 <div class="row">
-     @await Html.PartialAsync("Partials/_EditSectorForm", Model)
+     @await Html.PartialAsync("Partials/_NewSupplierForm", Model)
 </div>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
        <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+
+        <script>
+        $(document).ready(function(){
+            $('.cnpj-mask').mask('00.000.000/0000-00');
+        });
+       </script>
+
+
                  }

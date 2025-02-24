@@ -9,7 +9,7 @@ public interface IUnitOfWork : IDisposable, IAsyncDisposable
     Task<IDbContextTransaction> BeginTransactionAsync();
     Task CommitAsync();
     Task RollbackAsync();
-
+    T GetRepository<T>() where T : class;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
 }

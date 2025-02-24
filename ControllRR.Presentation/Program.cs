@@ -109,7 +109,7 @@ builder.Services.AddScoped<IStockManagementService, StockManagementService>();
 builder.Services.AddScoped<IStockManagementRepository, StockManagementRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
-
+builder.Services.AddScoped<IMaintenanceNumberControlRepository, MaintenanceNumberControlRepository>();
 // Adicionar suporte ao MVC e Razor Pages
 builder.Services.AddControllersWithViews();
 

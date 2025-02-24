@@ -1,28 +1,21 @@
 using ControllRR.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Storage;
-
+using ControllRR.Domain.PaginatedResult;
 namespace ControllRR.Domain.Interfaces;
-public interface IMaintenanceRepository
+public interface IMaintenanceRepository : IRepository<Maintenance>
 {
   Task<List<Maintenance>> FindAllAsync();
- Task<Maintenance?> FindByIdAsync(
+ Task<Maintenance?> GetByIdWithDetailsAsync(
       int id,
       bool includeProducts = true,
       bool includeDevice = true,
       bool includeUser = true);
-  Task InsertAsync(Maintenance maintenance);
-  Task RemoveAsync(int id);
-  Task UpdateAsync(Maintenance maintenance);
-  Task FinalizeAsync(int id);
-  Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetMaintenancesAsync(
-                int start,
-                int length,
-                string searchValue,
-                string sortColumn,
-                string sortDirection);
+ 
+  Task FinalizeMaintenanceAsync(int id);
+   Task<PaginatedResult<object>> GetPaginatedMaintenancesAsync(int start, int length, string searchValue, string sortColumn, string sortDirection);
   
   Task<bool> ExistsAsync(int id);
   Task<int> CountMaintenance();
-
-  Task<Dictionary<string, int>> MaintenanceMonth();
+  Task RemoveAsync(int id);
+  Task<Dictionary<string, int>> GetMaintenanceCountByMonth();
 }

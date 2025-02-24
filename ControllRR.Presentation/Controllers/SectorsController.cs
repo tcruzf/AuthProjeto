@@ -30,7 +30,7 @@ public class SectorsController : Controller
     {
         if (!ModelState.IsValid)
         {
-            TempData["SuccessMessage"] = "Setor inserido com sucesso!";
+            TempData["SuccessMessage"] = "Setor Não pode ser inserido!";
             return View(sectorDto);
         }
         await _sectorService.InsertAsync(sectorDto);

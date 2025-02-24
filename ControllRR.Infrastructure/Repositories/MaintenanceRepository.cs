@@ -12,8 +12,9 @@ using ControllRR.Domain.Enums;
 using Microsoft.EntityFrameworkCore.Storage;
 using ControllRR.Infrastructure.Repositories;
 using System.Globalization;
+using ControllRR.Domain.PaginatedResult;
 
-public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRepository
+public class MaintenanceRepository : GenericRepository<Maintenance>, IMaintenanceRepository
 {
 
     public MaintenanceRepository(ControllRRContext context) : base(context)
@@ -28,70 +29,19 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
         .ToListAsync();
     }
 
-    public async Task<Maintenance?> FindByIdAsync(
-      int id,
-      bool includeProducts = true,
-      bool includeDevice = true,
-      bool includeUser = true)
+    public async Task<Maintenance?> GetByIdWithDetailsAsync(int id, bool includeProducts = true, bool includeDevice = true, bool includeUser = true)
     {
-
-        var query = _context.Maintenances.AsQueryable();
-        System.Console.WriteLine("Proxima linha busca por manutenções e carrega o stock");
-        if (includeProducts)
-        {
-            query = query
-                .Include(x => x.MaintenanceProducts)
-                    .ThenInclude(xp => xp.Stock);
-            System.Console.WriteLine("Fim da consulta de produtos e estoque");
-        }
-        System.Console.WriteLine("Proxima consulta é por dispositivos!");
-        if (includeDevice)
-        {
-            query = query
-                .Include(x => x.Device)
-                    .ThenInclude(d => d.Sector);
-            System.Console.WriteLine("Fim da consulta por dispositivos");
-        }
-        System.Console.WriteLine("Proxima consulta é por Usuarios!");
-        if (includeUser)
-        {
-            query = query.Include(x => x.ApplicationUser);
-            System.Console.WriteLine("Fim da consulta por usuarios");
-        }
-        System.Console.WriteLine(query);
-        System.Console.WriteLine("Iniciando retorno da query");
+        var query = BuildDetailedQuery(includeProducts, includeDevice, includeUser);
         return await query.FirstOrDefaultAsync(x => x.Id == id);
-
-
-
-    }
-
-    public async Task InsertAsync(Maintenance maintenance)
-    {
-
-        if (maintenance.MaintenanceProducts == null || !maintenance.MaintenanceProducts.Any())
-        {
-            throw new Exception("Nenhum produto foi associdado a manutenção");
-        }
-        var control = await _context.MaintenanceNumberControls.FirstOrDefaultAsync();
-        if (control == null)
-        {
-            control = new MaintenanceNumberControl { CurrentNumber = 99 };
-            await _context.MaintenanceNumberControls.AddAsync(control);
-
-        }
-        control.CurrentNumber += 1;
-        maintenance.MaintenanceNumber = control.CurrentNumber;
-        await _context.AddAsync(maintenance);
     }
 
     public async Task RemoveAsync(int id)
     {
-
         var obj = await _context.Maintenances.FindAsync(id);
-        _context.Remove(obj);
-
-
+        if (obj != null)
+        {
+            _context.Maintenances.Remove(obj);
+        }
     }
 
     public async Task UpdateAsync(Maintenance maintenance)
@@ -127,8 +77,6 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
         // Remove produtos excluídos
         foreach (var existingProduct in existingMaintenance.MaintenanceProducts.ToList())
         {
-            System.Console.WriteLine("$$$#########################################");
-            System.Console.WriteLine(existingProduct);
             if (!maintenance.MaintenanceProducts.Any(p => p.StockId == existingProduct.StockId)
                 || existingProduct.QuantityUsed <= 0)
             {
@@ -155,23 +103,18 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
 
     }
 
-    public async Task FinalizeAsync(int id)
+    public async Task FinalizeMaintenanceAsync(int id)
     {
 
         var maintenance = await _context.Maintenances.FindAsync(id);
-        if (maintenance == null)
-        {
-            throw new NotFoundException("Id não encontrado1");
-        }
-        var final = MaintenanceStatus.Finalizada;
-        maintenance.Status = final;
+        if (maintenance == null) throw new NotFoundException("Maintenance não encontrada!");
+
+        maintenance.Status = MaintenanceStatus.Finalizada;
         maintenance.CloseDate = DateTime.Now;
-
-        _context.Maintenances.Update(maintenance);
-
+        await UpdateAsync(maintenance);
     }
 
-    public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetMaintenancesAsync(
+    public async Task<PaginatedResult<object>> GetPaginatedMaintenancesAsync(
        int start,
        int length,
        string searchValue,
@@ -179,6 +122,69 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
        string sortDirection)
     {
 
+        var query = BuildMaintenanceQuery(searchValue);
+        var orderedQuery = ApplySorting(query, sortColumn, sortDirection);
+
+        return new PaginatedResult<object>
+        {
+
+            Data = await orderedQuery
+            .Skip(start)
+            .Take(length)
+            .Select(x => new
+            {
+                Id = x.Id,
+                SimpleDesc = x.SimpleDesc,
+                Status = x.Status,
+                MaintenanceNumber = x.MaintenanceNumber,
+                Description = x.Description,
+                Device = x.Device.Model,
+                User = x.ApplicationUser.Name,
+                Identifier = x.Device.Identifier,
+                SerialNumber = x.Device.SerialNumber,
+                DeviceId = x.DeviceId//
+            })
+            .ToListAsync(),
+            TotalRecords = await _context.Maintenances.CountAsync(),
+            FilteredRecords = await query.CountAsync()
+        };
+
+
+    }
+
+    public async Task<Dictionary<string, int>> GetMaintenanceCountByMonth()
+    {
+        return await _context.Maintenances
+          .Where(m => m.OpenDate.HasValue) // Filtra registros com data não nula
+          .GroupBy(m => m.OpenDate.Value.Month) // Acessa o Month do DateTime garantido
+          .Select(g => new
+          {
+              Month = g.Key,
+              Count = g.Count()
+          })
+          .ToDictionaryAsync(
+              k => CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(k.Month),
+              v => v.Count
+          );
+    }
+
+    #region Private Helpers
+    private IQueryable<Maintenance> BuildDetailedQuery(bool includeProducts, bool includeDevice, bool includeUser)
+    {
+        var query = _context.Maintenances.AsQueryable();
+        if (includeProducts)
+            query = query.Include(x => x.MaintenanceProducts).ThenInclude(xp => xp.Stock);
+
+        if (includeDevice)
+            query = query.Include(x => x.Device).ThenInclude(d => d.Sector);
+
+        if (includeUser)
+            query = query.Include(x => x.ApplicationUser);
+
+        return query;
+    }
+    private IQueryable<Maintenance> BuildMaintenanceQuery(string searchValue)
+    {
         var query = _context.Maintenances
             .Include(x => x.Device)
             .Include(x => x.ApplicationUser)
@@ -195,45 +201,16 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
                 (x.ApplicationUser != null && x.ApplicationUser.Name != null && x.ApplicationUser.Name.ToLower().Contains(searchValue)) ||
                 (x.Device != null && x.Device.Identifier != null && x.Device.Identifier.ToLower().Contains(searchValue)));
         }
-
-        // Contagem após o filtro
-        var filteredCount = await query.CountAsync();
-
-        // Ordenação
-        if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortDirection))
-        {
-            query = query.OrderBy($"{sortColumn} {sortDirection}");
-        }
-        else
-        {
-            query = query.OrderBy(x => x.Id);
-        }
-
-        // Paginação
-        var data = await query
-            .Skip(start)
-            .Take(length)
-            .Select(x => new
-            {
-                Id = x.Id,
-                SimpleDesc = x.SimpleDesc,
-                Status = x.Status,
-                MaintenanceNumber = x.MaintenanceNumber,
-                Description = x.Description,
-                Device = x.Device.Model,
-                User = x.ApplicationUser.Name,
-                Identifier = x.Device.Identifier,
-                SerialNumber = x.Device.SerialNumber,
-                DeviceId = x.DeviceId//
-            })
-            .ToListAsync();
-
-        var totalRecords = await _context.Maintenances.CountAsync();
-
-        return (data, totalRecords, filteredCount);
+        return query;
     }
 
-
+    private IQueryable<Maintenance> ApplySorting(IQueryable<Maintenance> query, string sortColumn, string sortDirection)
+    {
+        return !string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortDirection)
+        ? query.OrderBy($"{sortColumn} {sortDirection}")
+        : query = query.OrderBy(x => x.Id);
+    }
+    #endregion
     public async Task<bool> ExistsAsync(int id)
     {
 
@@ -246,18 +223,7 @@ public class MaintenanceRepository : BaseRepository<Maintenance>, IMaintenanceRe
         return await _context.Maintenances.CountAsync();
     }
 
-   public async Task<Dictionary<string, int>> MaintenanceMonth()
-   {
-      return await _context.Maintenances
-        .Where(m => m.OpenDate.HasValue) // Filtra registros com data não nula
-        .GroupBy(m => m.OpenDate.Value.Month) // Acessa o Month do DateTime garantido
-        .Select(g => new { 
-            Month = g.Key, 
-            Count = g.Count()
-        })
-        .ToDictionaryAsync(
-            k => CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(k.Month), 
-            v => v.Count
-        );
-   }
+
+
+
 }

@@ -1,5 +1,7 @@
+using System.Reflection;
 using ControllRR.Domain.Interfaces;
 using ControllRR.Infrastructure.Data.Context;
+using ControllRR.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -7,6 +9,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly ControllRRContext _context;
     private IDbContextTransaction _transaction;
+    private readonly Dictionary<Type, object> _repositories = new();
 
     public UnitOfWork(ControllRRContext context)
     {
@@ -23,12 +26,36 @@ public class UnitOfWork : IUnitOfWork
         return _transaction;
     }
 
+    public T GetRepository<T>() where T : class
+    {
+        var type = typeof(T);
+        if (_repositories.TryGetValue(type, out var repo))
+            return (T)repo;
+
+        // Se T for uma interface de repositório customizada
+        if (typeof(T).IsInterface)
+        {
+            var repoType = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .FirstOrDefault(t => t.IsClass && !t.IsAbstract && typeof(T).IsAssignableFrom(t));
+
+            if (repoType != null)
+            {
+                var repository = Activator.CreateInstance(repoType, _context);
+                _repositories.Add(type, repository);
+                return (T)repository;
+            }
+        }
+
+        throw new InvalidOperationException($"Repositório não encontrado para o tipo {type.Name}");
+    }
+
     public async Task CommitAsync()
     {
         if (_transaction == null)
             throw new InvalidOperationException("Nenhuma transação ativa.");
 
-     
+
         await _transaction.CommitAsync();
         _transaction = null;
     }
