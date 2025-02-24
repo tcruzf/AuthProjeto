@@ -239,3 +239,182 @@ VALUES ('20250218005628_UnitOfWork', '7.0.13');
 
 COMMIT;
 
+START TRANSACTION;
+
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20250222012923_System', '7.0.13');
+
+COMMIT;
+
+START TRANSACTION;
+
+ALTER TABLE `Stocks` ADD `PurchasePrice` decimal(18,2) NOT NULL DEFAULT 0.0;
+
+ALTER TABLE `Stocks` ADD `SalePrice` decimal(18,2) NOT NULL DEFAULT 0.0;
+
+ALTER TABLE `Stocks` ADD `SupplierId` int NULL;
+
+ALTER TABLE `Stocks` ADD `TaxRate` decimal(65,30) NOT NULL DEFAULT 0.0;
+
+ALTER TABLE `StockManagements` ADD `PurchaseOrderId` int NULL;
+
+ALTER TABLE `StockManagements` ADD `SaleId` int NULL;
+
+CREATE TABLE `Customers` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Name` longtext CHARACTER SET utf8mb4 NULL,
+    `CPF_CNPJ` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `ContactInfo` longtext CHARACTER SET utf8mb4 NULL,
+    CONSTRAINT `PK_Customers` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `FinancialRecords` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Date` datetime(6) NOT NULL,
+    `Amount` decimal(65,30) NOT NULL,
+    `Type` int NOT NULL,
+    `PurchaseOrderId` int NULL,
+    `SaleId` int NULL,
+    CONSTRAINT `PK_FinancialRecords` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `Suppliers` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Name` longtext CHARACTER SET utf8mb4 NULL,
+    `CNPJ` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `ContactEmail` longtext CHARACTER SET utf8mb4 NULL,
+    `PhoneNumber` longtext CHARACTER SET utf8mb4 NULL,
+    `Address` longtext CHARACTER SET utf8mb4 NULL,
+    CONSTRAINT `PK_Suppliers` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `SystemRoutines` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Version` int NULL,
+    `AutoUpdate` longtext CHARACTER SET utf8mb4 NULL,
+    `Url` longtext CHARACTER SET utf8mb4 NULL,
+    `Protocol` longtext CHARACTER SET utf8mb4 NULL,
+    `Dashboard` int NULL,
+    `Scripts` int NULL,
+    `PathProject` longtext CHARACTER SET utf8mb4 NULL,
+    CONSTRAINT `PK_SystemRoutines` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `TaxConfigurations` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `TaxType` int NOT NULL,
+    `Rate` decimal(65,30) NOT NULL,
+    `StockId` int NULL,
+    CONSTRAINT `PK_TaxConfigurations` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_TaxConfigurations_Stocks_StockId` FOREIGN KEY (`StockId`) REFERENCES `Stocks` (`Id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `Sales` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `SaleDate` datetime(6) NOT NULL,
+    `CustomerId` int NOT NULL,
+    `InvoiceNumber` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `TotalAmount` decimal(65,30) NOT NULL,
+    `TotalTaxes` decimal(65,30) NOT NULL,
+    CONSTRAINT `PK_Sales` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Sales_Customers_CustomerId` FOREIGN KEY (`CustomerId`) REFERENCES `Customers` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `PurchaseOrders` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `OrderDate` datetime(6) NOT NULL,
+    `DeliveryDate` datetime(6) NULL,
+    `SupplierId` int NOT NULL,
+    `InvoiceNumber` longtext CHARACTER SET utf8mb4 NULL,
+    `TotalAmount` decimal(65,30) NOT NULL,
+    `TotalTaxes` decimal(65,30) NOT NULL,
+    `NFeAccessKey` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `NFeEmissionDate` datetime(6) NOT NULL,
+    CONSTRAINT `PK_PurchaseOrders` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_PurchaseOrders_Suppliers_SupplierId` FOREIGN KEY (`SupplierId`) REFERENCES `Suppliers` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `SaleItems` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `SaleId` int NOT NULL,
+    `StockId` int NOT NULL,
+    `Quantity` int NOT NULL,
+    `UnitPrice` decimal(18,2) NOT NULL,
+    `TaxAmount` decimal(65,30) NOT NULL,
+    CONSTRAINT `PK_SaleItems` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_SaleItems_Sales_SaleId` FOREIGN KEY (`SaleId`) REFERENCES `Sales` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_SaleItems_Stocks_StockId` FOREIGN KEY (`StockId`) REFERENCES `Stocks` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `PurchaseItems` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `PurchaseOrderId` int NOT NULL,
+    `StockId` int NOT NULL,
+    `Quantity` int NOT NULL,
+    `UnitPrice` decimal(18,2) NOT NULL,
+    `TaxAmount` decimal(65,30) NOT NULL,
+    CONSTRAINT `PK_PurchaseItems` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_PurchaseItems_PurchaseOrders_PurchaseOrderId` FOREIGN KEY (`PurchaseOrderId`) REFERENCES `PurchaseOrders` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_PurchaseItems_Stocks_StockId` FOREIGN KEY (`StockId`) REFERENCES `Stocks` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+
+CREATE INDEX `IX_Stocks_SupplierId` ON `Stocks` (`SupplierId`);
+
+CREATE INDEX `IX_StockManagements_PurchaseOrderId` ON `StockManagements` (`PurchaseOrderId`);
+
+CREATE INDEX `IX_StockManagements_SaleId` ON `StockManagements` (`SaleId`);
+
+CREATE INDEX `IX_PurchaseItems_PurchaseOrderId` ON `PurchaseItems` (`PurchaseOrderId`);
+
+CREATE INDEX `IX_PurchaseItems_StockId` ON `PurchaseItems` (`StockId`);
+
+CREATE INDEX `IX_PurchaseOrders_SupplierId` ON `PurchaseOrders` (`SupplierId`);
+
+CREATE INDEX `IX_SaleItems_SaleId` ON `SaleItems` (`SaleId`);
+
+CREATE INDEX `IX_SaleItems_StockId` ON `SaleItems` (`StockId`);
+
+CREATE INDEX `IX_Sales_CustomerId` ON `Sales` (`CustomerId`);
+
+CREATE INDEX `IX_TaxConfigurations_StockId` ON `TaxConfigurations` (`StockId`);
+
+ALTER TABLE `StockManagements` ADD CONSTRAINT `FK_StockManagements_PurchaseOrders_PurchaseOrderId` FOREIGN KEY (`PurchaseOrderId`) REFERENCES `PurchaseOrders` (`Id`);
+
+ALTER TABLE `StockManagements` ADD CONSTRAINT `FK_StockManagements_Sales_SaleId` FOREIGN KEY (`SaleId`) REFERENCES `Sales` (`Id`);
+
+ALTER TABLE `Stocks` ADD CONSTRAINT `FK_Stocks_Suppliers_SupplierId` FOREIGN KEY (`SupplierId`) REFERENCES `Suppliers` (`Id`);
+
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20250223021328_StockChanges', '7.0.13');
+
+COMMIT;
+
+START TRANSACTION;
+
+ALTER TABLE `Suppliers` MODIFY COLUMN `CNPJ` varchar(255) CHARACTER SET utf8mb4 NOT NULL;
+
+ALTER TABLE `Stocks` MODIFY COLUMN `TaxRate` decimal(5,2) NOT NULL DEFAULT 0.0;
+
+ALTER TABLE `Stocks` MODIFY COLUMN `PurchasePrice` decimal(18,2) NOT NULL DEFAULT 0.0;
+
+ALTER TABLE `Stocks` MODIFY COLUMN `ProductName` varchar(255) CHARACTER SET utf8mb4 NULL;
+
+ALTER TABLE `FinancialRecords` MODIFY COLUMN `Amount` decimal(18,2) NOT NULL;
+
+ALTER TABLE `FinancialRecords` ADD `TotalTaxes` decimal(18,2) NOT NULL DEFAULT 0.0;
+
+ALTER TABLE `Customers` MODIFY COLUMN `CPF_CNPJ` varchar(255) CHARACTER SET utf8mb4 NOT NULL;
+
+CREATE UNIQUE INDEX `IX_Suppliers_CNPJ` ON `Suppliers` (`CNPJ`);
+
+CREATE INDEX `IX_Stocks_ProductName` ON `Stocks` (`ProductName`);
+
+CREATE INDEX `IX_PurchaseOrders_OrderDate` ON `PurchaseOrders` (`OrderDate`);
+
+CREATE UNIQUE INDEX `IX_Customers_CPF_CNPJ` ON `Customers` (`CPF_CNPJ`);
+
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20250223023621_StockChangesTaxes', '7.0.13');
+
+COMMIT;
+
