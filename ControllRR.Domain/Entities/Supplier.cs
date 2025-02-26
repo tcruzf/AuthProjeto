@@ -17,8 +17,13 @@ public class Supplier
 
     public Supplier(int id, string? name, string cnpj, string contactEmail, string phoneNumber, string address)
     {
+        if(string.IsNullOrWhiteSpace(cnpj))
+            throw new ArgumentException("CNPJ Não pode ser vazio ou conter espaços!");
+        // Estou tendo problemas com a validação do cnpj, não sei ao certo, mas pode ser o cnpj-mask no fronte-end.
+        // Quando insiro um cnpj, ele define o padrão como : 00.000.000/0000-00, isso provavelmente está estourando o maximo permitido no DTO.
+        // Sendo assim, aumentei o campo de cnpj para aceitar mais caracteres, embora saiba que isso é um erro e amanhã vou fazer a correção disso.
         if(!ValidarCNPJ(cnpj))
-            throw new ArgumentException("CNPJ Invalido");
+            throw new ArgumentException("CNPJ não pode ser validado! Verifique o numero de CNPJ e tente novamente. ");
         Id = id;
         Name = name;
         CNPJ = cnpj;

@@ -1,0 +1,34 @@
+@model ControllRR.Presentation.ViewModels.StockViewModel
+
+<form asp-controller="Stocks" asp-action="NewProduct" method="post">
+    <div class="row">
+    <div class="col">
+    <label asp-for="StockDto.ProductName" class="control-label"></label>
+    <input asp-for="StockDto.ProductName" id="StockDto.ProductProductName" class="form-control" />
+    <span asp-validation-for="StockDto.ProductName" class="text-danger"></span>
+    </div>
+     <div class="col">
+    <label asp-for="StockDto.ProductDescription"></label>
+    <input asp-for="StockDto.ProductDescription" id="StockDto.ProductDescription" class="form-control" />
+    <span asp-validation-for="StockDto.ProductDescription" class="text-danger"></span>
+    </div>
+    <div class="col">
+    <label asp-for="StockDto.ProductApplication"></label>
+    <input asp-for="StockDto.ProductApplication" id="StockDto.ProductApplication" class="form-control" />
+    <span asp-validation-for="StockDto.ProductApplication" class="text-danger"></span>
+    </div> 
+    <div class="col">
+     <label asp-for="StockDto.ProductReference"></label>
+    <input asp-for="StockDto.ProductReference" id="StockDto.ProductReference" class="form-control" />
+    <span asp-validation-for="StockDto.ProductReference" class="text-danger"></span>
+    </div>
+     <div class="col">
+     <label asp-for="StockDto.ProductQuantity"></label>
+    <input asp-for="StockDto.ProductQuantity" id="StockDto.ProductQuantity" class="form-control" />
+    <span asp-validation-for="StockDto.ProductQuantity" class="text-danger"></span>
+    </div>
+    <div class="mt-4">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#StockProduct">Inser Movimentação</button>
+    <button type="submit" class="btn btn-primary">Salvar Produto</button>
+    </div>
+</form>

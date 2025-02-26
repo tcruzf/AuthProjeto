@@ -1,37 +1,16 @@
-<!-- CreateNewSupplier.cshtml -->
-@model ControllRR.Application.Dto.SupplierDto;
- @{
-    ViewData["Title"] = "Editar registro de setor";
+@using ControllRR.Application.Dto
+@model SupplierDto
+
+@{
+    ViewData["Title"] = Model?.Id == 0 ? "Novo Fornecedor" : "Editar Fornecedor";
 }
+
 @if (!ViewData.ModelState.IsValid)
 {
     <div class="alert alert-danger">
         @Html.ValidationSummary()
     </div>
 }
-<div class="container-fluid px-4">
-    <h1 class="mt-4"></h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="/Sectors">Fornecedores</a></li>
-          <li class="breadcrumb-item active">Novo</li>
-    </ol>
-</div>
-
-<div class="row">
-<div class="col-md-12">
-<br>
-<div class="container">
-<div class="row">
-<div class="col-12">
-<div class="card">
-<div class="card-header text-center bg-dark text-white">
-<div class="row align-items-center">
-<div class="col-md-12">
-<h5>::Novo Fornecedor::</h5>
-</div>
-</div>
-</div>
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">
@@ -44,23 +23,93 @@
         @TempData["ErrorMessage"]
     </div>
 }
-<div class="card mt-12">
-<div class="card-header">::Informações do Fornecedor::
+<div class="container-fluid px-4">
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/Suppliers">Fornecedores</a></li>
+        <li class="breadcrumb-item active">@(Model?.Id == 0 ? "Novo" : "Editar")</li>
+    </ol>
 </div>
-<div class="card-body">
-<div class="row">
-     @await Html.PartialAsync("Partials/_NewSupplierForm", Model)
+
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link @(Model?.Id == 0 ? "active" : "")" 
+                   href="#supplier-info">Informações</a>
+            </li>
+            @if (Model?.Id != 0)
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="#supplier-products">Produtos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#add-product">Adicionar Produto</a>
+                </li>
+            }
+        </ul>
+    </div>
+    
+    <div class="card-body">
+        <div class="tab-content">
+            <!-- Aba 1 -->
+            <div class="tab-pane @(Model?.Id == 0 ? "active" : "")" id="supplier-info">
+                @if (Model != null)//Checa se o model passado para a view não é nulo. Caso seja, então pagina de cadastro de fornecedor apenas que ficará disponivel
+                {
+                    @await Html.PartialAsync("Partials/_NewSupplierForm", Model)
+                }
+            </div>
+            
+            @if (Model?.Id != 0)
+            {
+                <!-- Aba 2 -->
+                <div class="tab-pane" id="supplier-products">
+                    @await Component.InvokeAsync("SupplierProducts", new { supplierId = Model.Id })
+                </div>
+                
+                <!-- Aba 3 -->
+                <div class="tab-pane" id="add-product">
+                    @await Html.PartialAsync("Partials/_AddProductForm", new StockDto { SupplierId = Model.Id })
+                </div>
+            }
+        </div>
+    </div>
 </div>
-</div>
+
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-       <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
 
-        <script>
-        $(document).ready(function(){
+    <script>
+        $(document).ready(function() {
+            // Máscara CNPJ
             $('.cnpj-mask').mask('00.000.000/0000-00');
+
+            // Controle de abas
+            $('.nav-tabs a').on('click', function(e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+
+            // SweetAlert
+            @if (Model?.Id != 0)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Fornecedor salvo!',
+                    text: 'Deseja adicionar um produto agora?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('a[href="#add-product"]').tab('show');
+                    }
+                });
+                </text>
+            }
         });
-       </script>
-
-
-                 }
+    </script>
+}

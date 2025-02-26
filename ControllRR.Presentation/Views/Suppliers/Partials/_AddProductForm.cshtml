@@ -1,0 +1,36 @@
+@model ControllRR.Application.Dto.StockDto
+
+<form asp-controller="Suppliers" asp-action="SupplierNewProduct" method="post">
+    <!-- SupplierId necessario para cadastro dos produtos serem relacionados ao fornecedor -->    
+    <input type="hidden" asp-for="SupplierId" />
+    <div class="row">
+    <div class="col">
+    <label asp-for="ProductName" class="control-label"></label>
+    <input asp-for="ProductName" id="StockDto.ProductProductName" class="form-control" />
+    <span asp-validation-for="ProductName" class="text-danger"></span>
+    </div>
+     <div class="col">
+    <label asp-for="ProductDescription"></label>
+    <input asp-for="ProductDescription" id="StockDto.ProductDescription" class="form-control" />
+    <span asp-validation-for="ProductDescription" class="text-danger"></span>
+    </div>
+    <div class="col">
+    <label asp-for="ProductApplication"></label>
+    <input asp-for="ProductApplication" id="StockDto.ProductApplication" class="form-control" />
+    <span asp-validation-for="ProductApplication" class="text-danger"></span>
+    </div> 
+    <div class="col">
+     <label asp-for="ProductReference"></label>
+    <input asp-for="ProductReference" id="StockDto.ProductReference" class="form-control" />
+    <span asp-validation-for="ProductReference" class="text-danger"></span>
+    </div>
+     <div class="col">
+     <label asp-for="ProductQuantity"></label>
+    <input asp-for="ProductQuantity" id="StockDto.ProductQuantity" class="form-control" />
+    <span asp-validation-for="ProductQuantity" class="text-danger"></span>
+    </div>
+    <div class="mt-4">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#StockProduct">Inser Movimentação</button>
+    <button type="submit" class="btn btn-primary">Salvar Produto</button>
+    </div>
+</form>

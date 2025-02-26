@@ -1,6 +1,7 @@
 //Toda honra e gloria ao meu Deus
 // O senhor me acompanhou até aqui, te amo meu Pai
 using AutoMapper;
+using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
 using ControllRR.Domain.Entities;
 using ControllRR.Domain.Enums;
@@ -36,7 +37,7 @@ public class StocksController : Controller
 
     [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
-    public async Task<IActionResult> NewProduct(StockViewModel model)
+    public async Task<IActionResult> NewProduct(StockViewModel model)//
     {
         if (!ModelState.IsValid)
             throw new Exception();
@@ -59,7 +60,10 @@ public class StocksController : Controller
         }
     }
 
+
+
     [Authorize(Roles = "Manager, Admin")]
+    [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
         var stockProduct = await _stockService.FindAllAsync();
@@ -67,6 +71,7 @@ public class StocksController : Controller
     }
 
     // Pode ser síncrono se não carregar dados
+    // Mas o dotnet fica reclamando, então, vou aguardar e ver isso um pouco mais para frente.
     public IActionResult SearchProduct()
     {
         return View();

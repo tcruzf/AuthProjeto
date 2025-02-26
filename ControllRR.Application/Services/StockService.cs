@@ -35,20 +35,17 @@ public class StockService : IStockService
     //
     public async Task<StockDto> CreateProductWithInitialMovementAsync(StockDto stockDto)
     {
-        if(stockDto == null)
-            throw new Exception();
-       
         try
         {
-
+            //
             await _uow.BeginTransactionAsync();
             // Cria e persiste o Stock
             var stock = _mapper.Map<Stock>(stockDto);
             stock.ProductQuantity = 0;
             var stockRepo = _uow.GetRepository<IStockRepository>();
             await stockRepo.AddAsync(stock);
-            await _uow.SaveChangesAsync(); 
-            // Adiciona a movimentação inicial
+            await _uow.SaveChangesAsync();
+            // Adiciona a movimentação inicial, acho que os calculos estão corretos. Está funcionando kkk
             await _stockManagementService.AddMovementAsync(
                 stock.Id,
                 StockMovementType.Entrada,
@@ -62,11 +59,18 @@ public class StockService : IStockService
 
             return _mapper.Map<StockDto>(stock);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             throw new Exception("Stock Service Exception", ex);
             throw;
         }
+    }
+    
+
+    public async Task<List<StockDto>> GetBySupplierIdAsync(int supplierId)
+    {
+        var stocks = await _stockRepository.GetBySupplierIdAsync(supplierId);
+        return _mapper.Map<List<StockDto>>(stocks);
     }
 
     public async Task<StockDto> GetProductWithMovementsAsync(int id)

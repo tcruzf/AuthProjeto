@@ -6,6 +6,7 @@ public interface ISupplierService
 {
 
     Task<List<SupplierDto>> FindAllAsync();
-    Task<SupplierDto> FindByIdAsync(int id);
+    Task<SupplierDto> GetSupplierByIdAsync(int id);
     Task<OperationResultDto> InsertAsync (SupplierDto supplierDto);
+
 }

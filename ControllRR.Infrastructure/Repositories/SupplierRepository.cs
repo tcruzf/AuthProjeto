@@ -13,16 +13,23 @@ public class SupplierRepository : GenericRepository<Supplier>, ISupplierReposito
 
     }
 
+    // Retorna uma lista de fornecedores
     public async Task<List<Supplier>> FindAllAsync()
     {
         return await _context.Suppliers.ToListAsync();
     }
 
-    public Task<Supplier?> GetByIdAsync(int id)
+    // Busca um unico fornecedor com base no id fornecido.
+    public async Task<Supplier?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _context.Suppliers.FindAsync(id);
+
+
     }
 
+    // Logo irei implementar essa busca.
+    // O objetivo é que seja bem similar a busca por produtos https://one.tva.one:8443/Stocks/SearchProduct
+    // O form estará vazio, terei uma busca tem tempo real, após satisfeita a busca com a escolha inserida, carrego todos os outros campos. xD
     public Task<List<Supplier>> SearchAsync(string term)
     {
         throw new NotImplementedException();

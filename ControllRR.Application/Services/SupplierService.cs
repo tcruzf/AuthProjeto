@@ -28,9 +28,10 @@ public class SupplierService : ISupplierService
         return _mapper.Map<List<SupplierDto>>(suppliers);
     }
 
-    public Task<SupplierDto> FindByIdAsync(int id)
+    public async Task<SupplierDto> GetSupplierByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var supplier = await _supplierRepository.GetByIdAsync(id);
+        return _mapper.Map<SupplierDto>(supplier);
     }
 
     public async Task<OperationResultDto> InsertAsync(SupplierDto supplierDto)
@@ -47,7 +48,11 @@ public class SupplierService : ISupplierService
             await supplierRepo.AddAsync(supplier);
             await _uow.SaveChangesAsync();
             await _uow.CommitAsync();
-            return new OperationResultDto { Success = true };
+            return new OperationResultDto
+            {
+                Success = true,
+                Id = supplier.Id
+            };
         }
         catch (Exception ex)
         {
@@ -61,6 +66,8 @@ public class SupplierService : ISupplierService
 
     }
 
+    // Isso abaixo não serve para nada ainda.
+    // Será uma das novas implementações.
     private string GenerateSupplierErrorScript()
     {
         return $@"

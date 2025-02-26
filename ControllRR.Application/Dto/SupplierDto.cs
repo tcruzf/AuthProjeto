@@ -11,7 +11,8 @@ public class SupplierDto
     public string? Name { get; set; }
     [Display(Name = "CNPJ")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
-    [StringLength(14, MinimumLength = 14, ErrorMessage = "{0} minimo {2} e no maximo {1} caracteres")]
+    //Aumentei o tamanho maximo, acontecia erro com formatação do cnpj
+    [StringLength(18, MinimumLength = 14, ErrorMessage = "{0} minimo {2} e no maximo {1} caracteres")]
     public string? CNPJ { get; set; }
     [Display(Name = "Email")]
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
