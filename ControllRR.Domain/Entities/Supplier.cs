@@ -5,6 +5,7 @@ public class Supplier
 {
     public int Id { get; set; }
     public string? Name { get; set; }
+    public string? FantasyName { get; set; }
     public string? CNPJ { get; set; }
     public string? ContactEmail { get; set; }
     public string? PhoneNumber { get; set; }
@@ -15,7 +16,7 @@ public class Supplier
 
     }
 
-    public Supplier(int id, string? name, string cnpj, string contactEmail, string phoneNumber, string address)
+    public Supplier(int id, string? name, string fantasyName, string cnpj, string contactEmail, string phoneNumber, string address)
     {
         if(string.IsNullOrWhiteSpace(cnpj))
             throw new ArgumentException("CNPJ Não pode ser vazio ou conter espaços!");
@@ -26,6 +27,7 @@ public class Supplier
             throw new ArgumentException("CNPJ não pode ser validado! Verifique o numero de CNPJ e tente novamente. ");
         Id = id;
         Name = name;
+        FantasyName = fantasyName;
         CNPJ = cnpj;
         ContactEmail = contactEmail;
         PhoneNumber = phoneNumber;

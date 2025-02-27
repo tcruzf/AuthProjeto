@@ -1,8 +1,11 @@
+using System.ComponentModel;
 using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
 using ControllRR.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ControllRR.Presentation.Controllers;
 
@@ -26,18 +29,27 @@ public class SuppliersController : Controller
 
     [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
-    public async Task<IActionResult> CreateNewSupplier(int? id)
+    public async Task<IActionResult> CreateNewSupplier(int id)
     {
-        var model = new SupplierDto();
-        if (id.HasValue)
-        {
-            var result = await _supplierService.GetSupplierByIdAsync(id.Value);
-            if (result != null)
-                model = result;
-            return View(model);
+       SupplierDto supplierDto;
+    if (id == 0)
+    {
+        supplierDto = new SupplierDto();
+    }
+    else
+    {
+        supplierDto = await _supplierService.GetSupplierByIdAsync(id);
+        // Carrega produtos ou inicializa lista vazia
+        ViewBag.SupplierProducts = await _stockService.GetBySupplierIdAsync(id) ?? new List<StockDto>();
+    }
+    return View(supplierDto);
+    }
 
-        }
-        return View(model);
+    [HttpGet]
+    public async Task<IActionResult> GetSupplierProducts(int supplierId)
+    {
+        var products = await _stockService.GetBySupplierIdAsync(supplierId);
+        return ViewComponent("SupplierProducts", new { supplierId });
     }
 
     [Authorize(Roles = "Manager, Admin")]// Setadas as permissões para definir quem pode criar um novo fornecedor
@@ -48,6 +60,8 @@ public class SuppliersController : Controller
         if (!ModelState.IsValid)
         {
             TempData["ErrorMessage"] = "Fornecedor não pode ser inserido!";
+            System.Console.WriteLine(supplierDto.Name);
+            System.Console.WriteLine(supplierDto.CNPJ);
             return View(supplierDto);
         }
         var result = await _supplierService.InsertAsync(supplierDto);
@@ -82,13 +96,62 @@ public class SuppliersController : Controller
         try
         {
             await _stockService.CreateProductWithInitialMovementAsync(model);
-            TempData["SuccessMessage"] = "Produto inserido com sucesso!";
+            TempData["ProductSuccessMessage"] = "Produto cadastrado com sucesso!";
             return RedirectToAction("CreateNewSupplier", new { id = model.SupplierId });
         }
         catch (Exception ex)
         {
             TempData["ErrorMessage"] = $"Ocorreu um erro inesperado ao tentar incluir o produto! {ex.Message}";
             return RedirectToAction("CreateNewSupplier", new { id = model.SupplierId });
+        }
+    }
+
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Manager, Admin")]
+    [HttpPost]
+    public async Task<IActionResult> CreateNewPurcharseOrder(PurchaseOrderDto dto)
+    {
+        // Lógica de criação da ordem de compra
+        return RedirectToAction("CreateNewSupplier", new { id = dto.SupplierId });
+    }
+
+
+
+    [HttpGet]
+    [Authorize(Roles = "Manager, Admin")]
+    public async Task<IActionResult> Search(string term)
+    {
+
+
+        if (string.IsNullOrWhiteSpace(term))
+        {
+            return Json(new List<object>());
+        }
+        var result = await _supplierService.Search(term);
+
+        return Json(result.Select(p => new
+        {
+            Id = p.Id,
+            Name = p.Name,
+            CNPJ = p.CNPJ,
+            ContactEmail = p.ContactEmail,
+            PhoneNumber = p.PhoneNumber,
+            Address = p.Address
+        }));
+
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ValidateCnpj(string cnpj)
+    {
+        try
+        {
+            var exists = await _supplierService.CnpjExists(cnpj);
+            return Json(new { valid = !exists, message = exists ? "CNPJ já cadastrado" : "CNPJ válido" });
+        }
+        catch (ArgumentException ex)
+        {
+            return Json(new { valid = false, message = ex.Message });
         }
     }
 }

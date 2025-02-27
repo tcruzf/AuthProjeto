@@ -11,6 +11,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Security.Claims;
 using ControllRR.Application.Profiles;
+using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -41,6 +42,10 @@ builder.Services.AddEntityFrameworkMySQL()
        options.UseMySQL(builder.Configuration.GetConnectionString("ControlContext"));
    });
 */
+builder.Services.AddControllersWithViews()
+   .AddJsonOptions(options => 
+       options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+    
 
 builder.Services.AddDbContext<ControllRRContext>(options =>
 {
@@ -110,6 +115,8 @@ builder.Services.AddScoped<IStockManagementRepository, StockManagementRepository
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IMaintenanceNumberControlRepository, MaintenanceNumberControlRepository>();
+builder.Services.AddScoped<IPurchaseItemRepository, PurchaseItemRepository>();
+builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 // Adicionar suporte ao MVC e Razor Pages
 builder.Services.AddControllersWithViews();
 

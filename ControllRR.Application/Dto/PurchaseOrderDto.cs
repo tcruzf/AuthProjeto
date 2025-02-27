@@ -1,31 +1,25 @@
-namespace ControllRR.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
+using ControllRR.Domain.Entities;
+
+namespace ControllRR.Application.Dto;
 
 
-public class PurchaseOrder
+public class PurchaseOrderDto
 {
     public int Id { get; set; }
+    [Display(Name = "Data de compra")]
     public DateTime OrderDate { get; set; }
+    [Display(Name = "Data de entrega")]
     public DateTime? DeliveryDate { get; set; }
     public int SupplierId { get; set; }
+    [Display(Name = "Fornecedor")]
     public Supplier? Supplier { get; set; }
+    [Display(Name = "Numero da Nota")]
     public string? InvoiceNumber { get; set; }
     public decimal TotalAmount { get; set; }
     public decimal TotalTaxes { get; set; }
     public ICollection<PurchaseItem> Items { get; set; } = new List<PurchaseItem>();
-    public ICollection<FinancialRecord> FinancialRecords { get; set; } = new List<FinancialRecord>();
     public string NFeAccessKey { get; set; }
     public DateTime NFeEmissionDate { get; set; }
 
-    public PurchaseOrder()
-    {
-
-    }
-
-    public PurchaseOrder(DateTime orderDate, Supplier supplier)
-    {
-        OrderDate = orderDate;
-        Supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
-        SupplierId = supplier.Id;
-        Items = new List<PurchaseItem>();
-    }
 }

@@ -66,6 +66,28 @@ public class SupplierService : ISupplierService
 
     }
 
+    public async Task<List<SupplierDto>> Search(string term)
+    {
+        term = term?.Trim() ?? string.Empty;
+        await _uow.BeginTransactionAsync();
+        var supplierRepo = _uow.GetRepository<ISupplierRepository>();
+        var suppliersFind = await supplierRepo.SearchAsync(term);
+        return _mapper.Map<List<SupplierDto>>(suppliersFind);
+    }
+
+    public async Task<bool> CnpjExists(string cnpj)
+    {
+        await _uow.BeginTransactionAsync();
+        var supplierRepo = _uow.GetRepository<ISupplierRepository>();
+        // Remove máscara e valida formato
+        cnpj = new string(cnpj.Where(char.IsDigit).ToArray());
+        
+        if (!Supplier.ValidarCNPJ(cnpj))
+            throw new ArgumentException("CNPJ inválido");
+
+        return await supplierRepo.AnyAsync(s => s.CNPJ == cnpj);
+    }
+
     // Isso abaixo não serve para nada ainda.
     // Será uma das novas implementações.
     private string GenerateSupplierErrorScript()

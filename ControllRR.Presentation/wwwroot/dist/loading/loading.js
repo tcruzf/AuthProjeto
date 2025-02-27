@@ -1,3 +1,4 @@
+/*
 ;(function(){
     function id(v){return document.getElementById(v); }
     function loadbar() {
@@ -30,3 +31,4 @@
     }
     document.addEventListener('DOMContentLoaded', loadbar, false);
   }());
+  */

@@ -26,10 +26,13 @@ public class StockService : IStockService
         return _mapper.Map<List<StockDto>>(stockProduct);
     }
 
+    // Para realizar busca vinda do controller 
     public async Task<List<StockDto>> Search(string term)
     {
-        var stocks = await _stockRepository.SearchAsync(term);
-        return _mapper.Map<List<StockDto>>(stocks);
+        await _uow.BeginTransactionAsync();
+        var stockRepo = _uow.GetRepository<IStockRepository>();
+        var stocksFind = await stockRepo.SearchAsync(term);
+        return _mapper.Map<List<StockDto>>(stocksFind);
     }
 
     //

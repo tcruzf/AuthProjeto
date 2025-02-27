@@ -35,8 +35,7 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link @(Model?.Id == 0 ? "active" : "")" 
-                   href="#supplier-info">Informações</a>
+                <a class="nav-link @(Model?.Id == 0 ? "active" : "")" href="#supplier-info">Informações</a>
             </li>
             @if (Model?.Id != 0)
             {
@@ -46,51 +45,66 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#add-product">Adicionar Produto</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#purchase-orders">Ordens de Compra</a>
+                </li>
             }
         </ul>
     </div>
     
     <div class="card-body">
         <div class="tab-content">
-            <!-- Aba 1 -->
+            <!-- Aba Informações -->
             <div class="tab-pane @(Model?.Id == 0 ? "active" : "")" id="supplier-info">
-                @if (Model != null)//Checa se o model passado para a view não é nulo. Caso seja, então pagina de cadastro de fornecedor apenas que ficará disponivel
-                {
-                    @await Html.PartialAsync("Partials/_NewSupplierForm", Model)
-                }
+                @await Html.PartialAsync("Partials/_NewSupplierForm", Model)
             </div>
             
             @if (Model?.Id != 0)
             {
-                <!-- Aba 2 -->
+                <!-- Aba Produtos -->
                 <div class="tab-pane" id="supplier-products">
                     @await Component.InvokeAsync("SupplierProducts", new { supplierId = Model.Id })
                 </div>
                 
-                <!-- Aba 3 -->
+                <!-- Aba Adicionar Produto -->
                 <div class="tab-pane" id="add-product">
                     @await Html.PartialAsync("Partials/_AddProductForm", new StockDto { SupplierId = Model.Id })
+                </div>
+
+                <!-- Aba Ordens de Compra -->
+                <div class="tab-pane fade" id="purchase-orders">
+                    @await Component.InvokeAsync("SupplierPurchaseOrders", new { supplierId = Model.Id })
+                    @await Html.PartialAsync("Partials/_CreatePurchaseOrderForm", new PurchaseOrderDto { SupplierId = Model.Id })
                 </div>
             }
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
         $(document).ready(function() {
             // Máscara CNPJ
             $('.cnpj-mask').mask('00.000.000/0000-00');
-
-            // Controle de abas
-            $('.nav-tabs a').on('click', function(e) {
+            });
+            $(document).ready(function () {
+            $('.nav-tabs a').on('click', function (e) {
                 e.preventDefault();
                 $(this).tab('show');
             });
+
+            // Ativa a primeira aba ao carregar a página (caso novo fornecedor)
+            @if (Model?.Id == 0)
+            {
+                <text>$('a[href="#supplier-info"]').tab('show');</text>
+            }
+        });
 
             // SweetAlert
             @if (Model?.Id != 0)
@@ -98,7 +112,7 @@
                 <text>
                 Swal.fire({
                     icon: 'success',
-                    title: 'Fornecedor salvo!',
+                    title: '@TempData["SuccessMessage"]',
                     text: 'Deseja adicionar um produto agora?',
                     showCancelButton: true,
                     confirmButtonText: 'Sim',
@@ -110,6 +124,99 @@
                 });
                 </text>
             }
-        });
+            @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: '@TempData["SuccessMessage"]',
+                showConfirmButton: true
+            });
+            </text>
+        }
+        @if (TempData["ProductSuccessMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: '@TempData["ProductSuccessMessage"]',
+                text: 'Deseja adicionar outro produto?',
+                showCancelButton: true,
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Não'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('a[href="#add-product"]').tab('show');
+                }
+            });
+            </text>
+        }
+        
     </script>
+   
+         <script>
+      $(document).ready(function() {
+    // Configuração do autocomplete para fornecedores
+   $("#supplierSearch").autocomplete({
+    source: function(request, response) {
+        $.ajax({
+            url: '/Suppliers/Search',
+            data: { term: request.term },
+            success: function(data) {
+                response($.map(data, function(item) {
+                    return {
+                        label: item.name + " - " + item.cnpj, // PascalCase -- Se deixar PascalCase, exibe undefinied
+                        value: item.name, // PascalCase
+                        id: item.id,
+                        cnpj: item.cnpj,
+                        email: item.contactEmail,
+                        phone: item.phoneNumber,
+                        address: item.address
+                    };
+                }));
+            }
+        });
+    },
+    select: function(event, ui) {
+    console.log(ui.item); // Teste para ver a estrutura do objeto no console
+
+    if (ui.item && ui.item.id) {
+        window.location.href = '/Suppliers/CreateNewSupplier/' + ui.item.id;
+    } else {
+        console.error("ID do fornecedor não encontrado:", ui.item);
+    }
+}
+});
+
+    // Validação de CNPJ em tempo real
+    $("#supplierCNPJ").on('blur', function() {
+    const cnpj = $(this).val();
+    
+    $.get('/Suppliers/ValidateCnpj', { cnpj: cnpj }, function(response) {
+        if (!response.valid) {
+            Swal.fire('Atenção!', response.message, 'warning');
+            $(this).addClass('is-invalid');
+        } else {
+            $(this).removeClass('is-invalid');
+        }
+    });
+});
+
+    function updateSupplierFields(item) {
+        $("#supplierId").val(item.id);
+        $("#supplierSearch").val(item.name); 
+        $("#supplierCnpj").val(item.cnpj);
+        $("#supplierEmail").val(item.email);
+        $("#supplierPhone").val(item.phone);
+        $("#supplierAddress").val(item.address);
+    }
+
+    function loadSupplierProducts(supplierId) {
+        $.get('/Suppliers/GetSupplierProducts?supplierId=' + supplierId, function(data) {
+            $("#productsContainer").html(data);
+        });
+    }
+});
+    </script>
+   
 }

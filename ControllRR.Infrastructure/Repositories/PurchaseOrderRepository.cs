@@ -2,6 +2,7 @@ using ControllRR.Domain.Entities;
 using ControllRR.Domain.Interfaces;
 using ControllRR.Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ControllRR.Infrastructure.Repositories;
 
@@ -12,14 +13,33 @@ public class PurchaseOrderRepository : BaseRepository<PurchaseOrder>, IPurchaseO
 
     }
 
-    public Task<List<PurchaseOrder>> FindAllAsync()
+    public async Task<List<PurchaseOrder>> FindAllAsync()
     {
-        throw new NotImplementedException();
+        return await _context.PurchaseOrders.ToListAsync();
     }
 
-    public Task<PurchaseOrder?> GetByIdAsync(int id)
+    public async Task<PurchaseOrder?> GetByIdAsync(int? id)
     {
-        throw new NotImplementedException();
+        if(id == null)
+            throw new Exception("O id fornecido não é valido!");
+        return await _context.PurchaseOrders.Include(po => po.Supplier)
+                             .Include(po => po.Items)
+                                .ThenInclude(item => item.Stock)
+                             .Include(po => po.FinancialRecords)
+                             .FirstOrDefaultAsync(po => po.Id == id);
+
+
+    }
+
+    public async Task<List<PurchaseOrder>> GetBySupplierAsync(int supplierId)
+    {
+        if(supplierId == null)
+            throw new Exception("O id fornecido não é valido!");
+        return await _context.PurchaseOrders.Include(po => po.Supplier)
+                             .Include(po => po.Items)
+                                .ThenInclude(item => item.Stock)
+                             .Include(po => po.FinancialRecords)
+                             .Where(po => po.SupplierId == supplierId).ToListAsync() ?? new List<PurchaseOrder>();
     }
 
     public Task<List<PurchaseOrder>> SearchAsync(string term)
