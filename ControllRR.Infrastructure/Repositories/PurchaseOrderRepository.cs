@@ -20,7 +20,7 @@ public class PurchaseOrderRepository : BaseRepository<PurchaseOrder>, IPurchaseO
 
     public async Task<PurchaseOrder?> GetByIdAsync(int? id)
     {
-        if(id == null)
+        if (id == null)
             throw new Exception("O id fornecido não é valido!");
         return await _context.PurchaseOrders.Include(po => po.Supplier)
                              .Include(po => po.Items)
@@ -33,17 +33,22 @@ public class PurchaseOrderRepository : BaseRepository<PurchaseOrder>, IPurchaseO
 
     public async Task<List<PurchaseOrder>> GetBySupplierAsync(int supplierId)
     {
-        if(supplierId == null)
-            throw new Exception("O id fornecido não é valido!");
-        return await _context.PurchaseOrders.Include(po => po.Supplier)
-                             .Include(po => po.Items)
-                                .ThenInclude(item => item.Stock)
-                             .Include(po => po.FinancialRecords)
-                             .Where(po => po.SupplierId == supplierId).ToListAsync() ?? new List<PurchaseOrder>();
+       
+         return await _context.PurchaseOrders
+        .AsNoTracking() // Evita rastreamento de entidades
+        .Include(po => po.Items)
+        .Where(po => po.SupplierId == supplierId)
+        .ToListAsync() ?? new List<PurchaseOrder>();
     }
 
     public Task<List<PurchaseOrder>> SearchAsync(string term)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task CreateNewSupplierOrder(PurchaseOrder purchaseOrder)
+    {
+        await AddAsync(purchaseOrder);
+       
     }
 }

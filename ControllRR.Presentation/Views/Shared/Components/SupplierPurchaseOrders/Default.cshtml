@@ -1,21 +1,28 @@
 @model IEnumerable<ControllRR.Application.Dto.PurchaseOrderDto>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Data</th>
-            <th>Nº Nota Fiscal</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model)
-        {
+@if (Model.Any())
+{
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
-                <td>@order.InvoiceNumber</td>
-                <td>@order.TotalAmount.ToString("C")</td>
+                <th>Data</th>
+                <th>Nota Fiscal</th>
+                <th>Total</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                    <td>@order.InvoiceNumber</td>
+                    <td>@order.TotalAmount.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">Nenhuma ordem de compra encontrada.</div>
+}

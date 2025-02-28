@@ -26,4 +26,5 @@ public class PurchaseItemRepository : BaseRepository<PurchaseItem>, IPurchaseIte
     {
         throw new NotImplementedException();
     }
+    
 }

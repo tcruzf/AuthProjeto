@@ -28,7 +28,7 @@ public class MaintenanceService : IMaintenanceService
 
     public async Task<List<MaintenanceDto>> FindAllAsync()
     {
-       var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
+        var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
         var maintenances = await maintenanceRepo.FindAllAsync();
         return _mapper.Map<List<MaintenanceDto>>(maintenances);
 
@@ -59,7 +59,7 @@ public class MaintenanceService : IMaintenanceService
             var control = await controlRepo.GetCurrentControlAsync();
             control.CurrentNumber += 1;
             maintenance.MaintenanceNumber = control.CurrentNumber;
-            
+
             var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
             await maintenanceRepo.AddAsync(maintenance);
             var stockRepo = _uow.GetRepository<IStockRepository>();
@@ -257,7 +257,7 @@ public class MaintenanceService : IMaintenanceService
            string sortDirection)
     {
         var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
-         
+
         var result = await maintenanceRepo.GetPaginatedMaintenancesAsync(start, length, searchValue, sortColumn, sortDirection);
 
         return new

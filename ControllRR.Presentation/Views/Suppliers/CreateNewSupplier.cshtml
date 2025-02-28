@@ -1,3 +1,4 @@
+@*/Views/Suppliers/CreateNewSupplier.cshtml*@ 
 @using ControllRR.Application.Dto
 @model SupplierDto
 
@@ -32,61 +33,67 @@
 </div>
 
 <div class="card">
-    <div class="card-header">
-        <ul class="nav nav-tabs card-header-tabs">
+   <!-- Card Header (Tabs) -->
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+            <a class="nav-link @(Model?.Id == 0 ? "active" : "")" href="#supplier-info">Informações</a>
+        </li>
+        @if (Model?.Id != 0)
+        {
             <li class="nav-item">
-                <a class="nav-link @(Model?.Id == 0 ? "active" : "")" href="#supplier-info">Informações</a>
+                <a class="nav-link" href="#supplier-products">Produtos</a>
             </li>
-            @if (Model?.Id != 0)
-            {
-                <li class="nav-item">
-                    <a class="nav-link" href="#supplier-products">Produtos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#add-product">Adicionar Produto</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#purchase-orders">Ordens de Compra</a>
-                </li>
-            }
-        </ul>
-    </div>
-    
-    <div class="card-body">
-        <div class="tab-content">
-            <!-- Aba Informações -->
-            <div class="tab-pane @(Model?.Id == 0 ? "active" : "")" id="supplier-info">
-                @await Html.PartialAsync("Partials/_NewSupplierForm", Model)
-            </div>
-            
-            @if (Model?.Id != 0)
-            {
-                <!-- Aba Produtos -->
-                <div class="tab-pane" id="supplier-products">
-                    @await Component.InvokeAsync("SupplierProducts", new { supplierId = Model.Id })
-                </div>
-                
-                <!-- Aba Adicionar Produto -->
-                <div class="tab-pane" id="add-product">
-                    @await Html.PartialAsync("Partials/_AddProductForm", new StockDto { SupplierId = Model.Id })
-                </div>
+            <li class="nav-item">
+                <a class="nav-link" href="#add-product">Adicionar Produto</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#purchase-orders">Ordens de Compra</a>
+            </li>
+        }
+    </ul>
+</div>
 
-                <!-- Aba Ordens de Compra -->
-                <div class="tab-pane fade" id="purchase-orders">
+<!-- Card Body (Conteúdo das Abas) -->
+<div class="card-body">
+    <div class="tab-content">
+        <!-- Aba Informações -->
+        <div class="tab-pane @(Model?.Id == 0 ? "active" : "")" id="supplier-info">
+            @await Html.PartialAsync("Partials/_NewSupplierForm", Model)
+        </div>
+        @if(Model?.Id != 0)
+        {
+        <div class="tab-pane fade" id="purchase-orders">
                     @await Component.InvokeAsync("SupplierPurchaseOrders", new { supplierId = Model.Id })
                     @await Html.PartialAsync("Partials/_CreatePurchaseOrderForm", new PurchaseOrderDto { SupplierId = Model.Id })
                 </div>
-            }
-        </div>
+        }
+        @if (Model?.Id != 0)
+        {
+            <!-- Aba Produtos -->
+            <div class="tab-pane" id="supplier-products">
+                @await Component.InvokeAsync("SupplierProducts", new { supplierId = Model.Id })
+            </div>
+
+            <!-- Aba Adicionar Produto -->
+            <div class="tab-pane" id="add-product">
+                @await Html.PartialAsync("Partials/_AddProductForm", new StockDto { SupplierId = Model.Id })
+            </div>
+              
+            
+        }
+       
     </div>
 </div>
+</div>
 @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
 
     <script>
         $(document).ready(function() {
@@ -121,6 +128,10 @@
                     if (result.isConfirmed) {
                         $('a[href="#add-product"]').tab('show');
                     }
+                    else
+                    {
+                    $('a[href="#supplier-info"]').tab('show');
+                    }
                 });
                 </text>
             }
@@ -147,6 +158,10 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('a[href="#add-product"]').tab('show');
+                }
+                else
+                {
+                    $('a[href="#supplier-info"]').tab('show');
                 }
             });
             </text>
@@ -216,6 +231,25 @@
             $("#productsContainer").html(data);
         });
     }
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('.nav-tabs a').on('click', function(e) {
+        e.preventDefault();
+        const target = $(this).attr('href');
+        
+        if (target === '#purchase-orders') {
+            // Carrega APENAS a lista de ordens
+            $.get(`/Suppliers/GetPurchaseOrders?supplierId=@Model.Id`, function(data) {
+                $("#purchase-orders-list").html(data); // Insere a lista aqui
+            });
+        }
+
+        // Ativa a aba
+        $(target).addClass('active show').siblings().removeClass('active show');
+        $(this).addClass('active').parent().siblings().find('a').removeClass('active');
+    });
 });
     </script>
    

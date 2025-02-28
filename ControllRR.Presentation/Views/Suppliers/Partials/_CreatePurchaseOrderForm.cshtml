@@ -1,44 +1,58 @@
-<!-- _CreatePurchaseOrderForm -->
+@*/Views/Suppliers/Partials/_CreatePurchaseOrderForm.cshtml*@ 
 @model ControllRR.Application.Dto.PurchaseOrderDto
 
-<form asp-controller="Suppliers" asp-action="CreateNewPurcharseOrder" method="post">
+<form asp-controller="Suppliers" asp-action="CreateNewPurchaseOrder" method="post" class="row g-3">
     <input type="hidden" asp-for="SupplierId" />
-
-    <div class="form-group">
-        <label asp-for="OrderDate"></label>
+   
+    
+    <div class="col-md-4">
+        <label asp-for="OrderDate" class="form-label"></label>
         <input asp-for="OrderDate" class="form-control" type="date" />
     </div>
 
-    <div class="form-group">
-        <label asp-for="InvoiceNumber"></label>
+    <div class="col-md-4">
+        <label asp-for="InvoiceNumber" class="form-label"></label>
         <input asp-for="InvoiceNumber" class="form-control" />
     </div>
 
-    <div id="purchaseItems">
+    <div id="purchaseItems" class="col-12">
         <!-- Itens serão adicionados dinamicamente via JS -->
     </div>
 
-    <button type="button" class="btn btn-secondary" onclick="addPurchaseItem()">Adicionar Item</button>
-    <button type="submit" class="btn btn-primary">Salvar Ordem</button>
+    <div class="col-12 d-flex gap-2">
+        <button type="button" class="btn btn-secondary" onclick="addPurchaseItem()">Adicionar Item</button>
+        <button type="submit" class="btn btn-primary">Salvar Ordem</button>
+    </div>
 </form>
 
 <script>
-    let purchaseItemIndex = 0; // Contador dinâmico
+    let purchaseItemIndex = 0;
 
     function addPurchaseItem() {
         const itemHtml = `
-            <div class="purchase-item mb-2">
-               <select name="Items[${purchaseItemIndex}].ProductId" class="form-control">
-    @foreach (var product in ViewBag.SupplierProducts)
-    {
-        <option value="@product.Id">@product.ProductName</option>
-    }
-</select>
-                <input name="Items[${purchaseItemIndex}].Quantity" type="number" class="form-control" placeholder="Quantidade" />
-                <input name="Items[${purchaseItemIndex}].UnitPrice" type="number" step="0.01" class="form-control" placeholder="Preço Unitário" />
+            <div class="row g-2 align-items-center purchase-item mb-2">
+                <div class="col-md-4">
+                    <!-- Alterado para StockId -->
+                    <select name="Items[${purchaseItemIndex}].StockId" class="form-control">
+                    @if(ViewBag.SupplierProducts != null)// Estou verifiacando se existe null
+                     {
+                        @foreach (var product in ViewBag.SupplierProducts)
+                        {
+                            <!-- Garantia que product.Id é o StockId -->
+                            <option value="@product.Id">@product.ProductName</option>
+                        }
+                      }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input name="Items[${purchaseItemIndex}].Quantity" type="number" class="form-control" placeholder="Quantidade" />
+                </div>
+                <div class="col-md-4">
+                    <input name="Items[${purchaseItemIndex}].UnitPrice" type="number" step="0.01" class="form-control" placeholder="Preço Unitário" />
+                </div>
             </div>
         `;
         $("#purchaseItems").append(itemHtml);
-        purchaseItemIndex++; // Incrementa para o próximo item
+        purchaseItemIndex++;
     }
 </script>

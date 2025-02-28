@@ -13,6 +13,6 @@ public class SupplierPurchaseOrdersViewComponent : ViewComponent
     public async Task<IViewComponentResult> InvokeAsync(int supplierId)
     {
         var orders = await _purchaseOrderService.GetBySupplierAsync(supplierId);
-        return View(orders);
+        return View("Default", orders); // Renderiza a view "Default.cshtml"
     }
 }

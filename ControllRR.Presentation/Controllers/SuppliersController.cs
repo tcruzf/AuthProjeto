@@ -13,11 +13,13 @@ public class SuppliersController : Controller
 {
     private readonly ISupplierService _supplierService;
     private readonly IStockService _stockService;
+    private readonly IPurchaseOrderService _purchaseOrderService;
 
-    public SuppliersController(ISupplierService supplierService, IStockService stockService)
+    public SuppliersController(ISupplierService supplierService, IStockService stockService, IPurchaseOrderService purchaseOrderService)
     {
         _supplierService = supplierService;
         _stockService = stockService;
+        _purchaseOrderService = purchaseOrderService;
     }
 
     [Authorize(Roles = "Manager, Admin")]
@@ -31,18 +33,19 @@ public class SuppliersController : Controller
     [HttpGet]
     public async Task<IActionResult> CreateNewSupplier(int id)
     {
-       SupplierDto supplierDto;
-    if (id == 0)
-    {
-        supplierDto = new SupplierDto();
-    }
-    else
-    {
-        supplierDto = await _supplierService.GetSupplierByIdAsync(id);
-        // Carrega produtos ou inicializa lista vazia
-        ViewBag.SupplierProducts = await _stockService.GetBySupplierIdAsync(id) ?? new List<StockDto>();
-    }
-    return View(supplierDto);
+        SupplierDto supplierDto;
+        if (id == 0)
+        {
+            supplierDto = new SupplierDto();
+            ViewBag.SupplierProducts = new List<StockDto>();
+        }
+        else
+        {
+            supplierDto = await _supplierService.GetSupplierByIdAsync(id);
+            // Carrega produtos ou inicializa lista vazia
+            ViewBag.SupplierProducts = await _stockService.GetBySupplierIdAsync(id) ?? new List<StockDto>();
+        }
+        return View(supplierDto);
     }
 
     [HttpGet]
@@ -67,6 +70,8 @@ public class SuppliersController : Controller
         var result = await _supplierService.InsertAsync(supplierDto);
         if (result.Success)
         {
+            //ViewBag.SupplierProducts = await _stockService.GetBySupplierIdAsync(id) ?? new List<StockDto>();
+
             //TempData["SuccessMessage"] = "Fornecedor cadastrado com sucesso!";
             return RedirectToAction(nameof(CreateNewSupplier), new { id = result.Id });
         }
@@ -109,10 +114,38 @@ public class SuppliersController : Controller
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Manager, Admin")]
     [HttpPost]
-    public async Task<IActionResult> CreateNewPurcharseOrder(PurchaseOrderDto dto)
+    public async Task<IActionResult> CreateNewPurchaseOrder(PurchaseOrderDto model)
     {
-        // Lógica de criação da ordem de compra
-        return RedirectToAction("CreateNewSupplier", new { id = dto.SupplierId });
+        /*
+        -> Debug basico para verificar algumas informações
+        foreach (var item in model.Items)
+        {
+            Console.WriteLine($"StockId do item: {item.StockId}");
+        }*/
+
+        try
+        {
+            // Calcular TotalAmount e TotalTaxes com base nos itens (MOVIDO PARA SERVICES)
+           // model.TotalAmount = model.Items.Sum(item => item.Quantity * item.UnitPrice);
+            //model.TotalTaxes = model.TotalAmount * 0.18m; // Exemplo: 18% de imposto
+            // Definir data de emissão da NF-e
+            model.NFeEmissionDate = DateTime.Now;
+            model.OrderDate = DateTime.Now;
+            model.NFeAccessKey="Fsv5474ffasdpPmj--v2";
+            var sup = model.SupplierId;
+        
+            var result = await _purchaseOrderService.CreateNewSupplierOrder(model);
+            if (result.Success)
+                TempData["ProductSuccessMessage"] = "Produto cadastrado com sucesso!";
+            return RedirectToAction("CreateNewSupplier", new { id = model.SupplierId });
+
+        }
+        catch (Exception ex)
+        {
+            //throw new Exception(ex.Message);
+            TempData["ErrorMessage"] = $"Ocorreu um erro inesperado ao tentar incluir o ordem ! {ex.Message}";
+            return RedirectToAction("CreateNewSupplier", new { id = model.SupplierId });
+        }
     }
 
 
@@ -121,8 +154,6 @@ public class SuppliersController : Controller
     [Authorize(Roles = "Manager, Admin")]
     public async Task<IActionResult> Search(string term)
     {
-
-
         if (string.IsNullOrWhiteSpace(term))
         {
             return Json(new List<object>());
@@ -139,6 +170,13 @@ public class SuppliersController : Controller
             Address = p.Address
         }));
 
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetPurchaseOrders(int supplierId)
+    {
+        var orders = await _purchaseOrderService.GetBySupplierAsync(supplierId);
+        return ViewComponent("SupplierPurchaseOrders", new { supplierId });
     }
 
     [HttpGet]
