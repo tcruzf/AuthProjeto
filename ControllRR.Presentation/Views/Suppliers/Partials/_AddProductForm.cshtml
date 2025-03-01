@@ -5,33 +5,59 @@
     <!-- SupplierId necessario para cadastro dos produtos serem relacionados ao fornecedor -->    
     <input type="hidden" asp-for="SupplierId" />
     <div class="row">
-    <div class="col">
+   <div class="form-group col-md-5">
     <label asp-for="ProductName" class="control-label"></label>
     <input asp-for="ProductName" id="StockDto.ProductProductName" class="form-control" />
     <span asp-validation-for="ProductName" class="text-danger"></span>
     </div>
-     <div class="col">
+     <div class="form-group col-md-3">
     <label asp-for="ProductDescription"></label>
     <input asp-for="ProductDescription" id="StockDto.ProductDescription" class="form-control" />
     <span asp-validation-for="ProductDescription" class="text-danger"></span>
     </div>
-    <div class="col">
+    <div class="form-group col-md-3">
     <label asp-for="ProductApplication"></label>
     <input asp-for="ProductApplication" id="StockDto.ProductApplication" class="form-control" />
     <span asp-validation-for="ProductApplication" class="text-danger"></span>
     </div> 
-    <div class="col">
+    <div class="form-group col-md-3">
      <label asp-for="ProductReference"></label>
     <input asp-for="ProductReference" id="StockDto.ProductReference" class="form-control" />
     <span asp-validation-for="ProductReference" class="text-danger"></span>
     </div>
-     <div class="col">
+     <div class="form-group col-md-2">
      <label asp-for="ProductQuantity"></label>
     <input asp-for="ProductQuantity" id="StockDto.ProductQuantity" class="form-control" />
     <span asp-validation-for="ProductQuantity" class="text-danger"></span>
+    </div>
+   <div class="form-group col-md-3">
+     <label asp-for="PurchasePrice"></label>
+    <input asp-for="PurchasePrice" id="StockDto.PurchasePrice" class="form-control" />
+    <span asp-validation-for="PurchasePrice" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="TaxRate"></label>
+    <input asp-for="TaxRate" id="StockDto.TaxRate" class="form-control" />
+    <span asp-validation-for="TaxRate" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="SalePrice"></label>
+    <input asp-for="SalePrice" id="StockDto.SalePrice" class="form-control" />
+    <span asp-validation-for="SalePrice" class="text-danger"></span>
+    </div>
+     <div class="form-group col-md-3">
+     <label asp-for="Profit"></label>
+    <input asp-for="Profit" id="StockDto.Profit" class="form-control" />
+    <span asp-validation-for="Profit" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="PriceSugested"></label>
+    <input asp-for="PriceSugested" id="StockDto.PriceSugested" class="form-control" />
+    <span asp-validation-for="PriceSugested" class="text-danger"></span>
     </div>
     <div class="mt-4">
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#StockProduct">Inser Movimentação</button>
     <button type="submit" class="btn btn-primary">Salvar Produto</button>
     </div>
-</form>
+</form> 
+

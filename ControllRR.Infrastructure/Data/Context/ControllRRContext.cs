@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using ControllRR.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using ControllRR.Domain.Entities.BrazilianTaxs;
 
 namespace ControllRR.Infrastructure.Data.Context;
 
@@ -49,6 +50,25 @@ public partial class ControllRRContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<SaleItem> SaleItems { get; set; }
     public virtual DbSet<FinancialRecord> FinancialRecords { get; set; }
     public virtual DbSet<TaxConfiguration> TaxConfigurations { get; set; }
+    public virtual DbSet<CFOP> CFOPs {get; set;}
+    public virtual DbSet<CNAE> CNAEs {get; set;}
+    public virtual DbSet<COFINS> COFINs {get; set;}
+    public virtual DbSet<CSOSN> CSOSNs {get; set;}
+    public virtual DbSet<ICMS> ICMs {get; set;}
+    public virtual DbSet<IcmsDesoneracao> IcmsDesoneracaos {get; set;}
+    public virtual DbSet<IcmsModalidadeBC> IcmsModalidadeBCs {get; set;}
+    public virtual DbSet<IcmsModalidadeST> IcmsModalidadeSTs {get; set;}
+    public virtual DbSet<IcmsOrigem> IcmsOrigems {get; set;}
+    public virtual DbSet<IPI> IPIs {get; set;}
+    public virtual DbSet<IpiEnquadramento> IpiEnquadramentos {get; set;}
+    public virtual DbSet<IpiOperacao> IpiOperacoes {get; set;}
+    public virtual DbSet<NCM> NCMs {get; set;}
+    public virtual DbSet<NFeSource> NFeSources {get; set;}
+    public virtual DbSet<PIS> PIS {get; set;}
+
+
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)

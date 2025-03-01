@@ -62,4 +62,15 @@ public class StockRepository : BaseRepository<Stock>, IStockRepository
             .Where(s => s.SupplierId == supplierId)
             .ToListAsync();
     }
+
+    public async Task UpdatePriceItem(Stock stock)
+    {
+        var existingProduct = await GetByIdAsync(stock.Id);
+        if(existingProduct == null)
+            throw new Exception("Produto Invalido!");
+        
+        _context.Entry(existingProduct).CurrentValues.SetValues(stock);
+
+    }
+
 }

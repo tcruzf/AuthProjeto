@@ -25,6 +25,8 @@ public class PurchaseOrderDto
     [Required(ErrorMessage = "{0} é obrigatório.")]
 
     public decimal TotalTaxes { get; set; }
+
+    public decimal UnitPrice {get; set;}
     
     public int StockId {get; set;}
     public List<PurchaseItemDto> Items { get; set; } = new List<PurchaseItemDto>();

@@ -3,6 +3,7 @@ using System;
 using ControllRR.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    partial class ControllRRContextModelSnapshot : ModelSnapshot
+    [Migration("20250301005727_BrazilianTaxesConfigurationS")]
+    partial class BrazilianTaxesConfigurationS
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -894,9 +897,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("PriceSugested")
-                        .HasColumnType("decimal(65,30)");
-
                     b.Property<string>("ProductApplication")
                         .HasColumnType("longtext");
 
@@ -911,9 +911,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.Property<string>("ProductReference")
                         .HasColumnType("longtext");
-
-                    b.Property<decimal?>("Profit")
-                        .HasColumnType("decimal(65,30)");
 
                     b.Property<decimal>("PurchasePrice")
                         .ValueGeneratedOnAdd()

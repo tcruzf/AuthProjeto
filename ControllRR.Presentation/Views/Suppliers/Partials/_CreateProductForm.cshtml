@@ -28,6 +28,11 @@
     <input asp-for="StockDto.ProductQuantity" id="StockDto.ProductQuantity" class="form-control" />
     <span asp-validation-for="StockDto.ProductQuantity" class="text-danger"></span>
     </div>
+    <div class="col">
+     <label asp-for="StockDto.PurchasePrice"></label>
+    <input asp-for="StockDto.PurchasePrice" id="StockDto.PurchasePrice" class="form-control" />
+    <span asp-validation-for="StockDto.PurchasePrice" class="text-danger"></span>
+    </div>
     <div class="mt-4">
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#StockProduct">Inser Movimentação</button>
     <button type="submit" class="btn btn-primary">Salvar Produto</button>

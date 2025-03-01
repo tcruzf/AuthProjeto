@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using ControllRR.Domain.Entities;
 
 namespace ControllRR.Application.Dto;
-
+ 
 
 public class StockDto
 {
@@ -28,15 +28,26 @@ public class StockDto
     public List<StockManagementDto> Movements { get; set; } = new();
 
     [Display(Name = "Preço de Compra")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
     [DataType(DataType.Currency)]
     public decimal PurchasePrice { get; set; }
     [Display(Name = "Preço de Venda")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
     [DataType(DataType.Currency)]
     public decimal SalePrice { get; set; }
     public int? SupplierId { get; set; }
     public Supplier? Supplier { get; set; }
     [Display(Name = "Imposto (%)")]
     [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
     public decimal TaxRate { get; set; }
+    [Display(Name = "Lucro")]
+    [DataType(DataType.Currency)]
+    public decimal? Profit { get; set; }
+
+    [Display(Name = "Sugestão de preço de venda")]
+    [DataType(DataType.Currency)]
+    public decimal? PriceSugested { get; set; }
+
 }
 

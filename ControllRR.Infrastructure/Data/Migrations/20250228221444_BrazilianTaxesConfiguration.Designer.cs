@@ -3,6 +3,7 @@ using System;
 using ControllRR.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    partial class ControllRRContextModelSnapshot : ModelSnapshot
+    [Migration("20250228221444_BrazilianTaxesConfiguration")]
+    partial class BrazilianTaxesConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -657,8 +660,8 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CFOPId")
-                        .HasColumnType("longtext");
+                    b.Property<int>("CFOPId")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("CofinsAmount")
                         .HasColumnType("decimal(65,30)");
@@ -730,6 +733,8 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CFOPId");
 
                     b.HasIndex("NFeSourceId");
 
@@ -894,9 +899,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("PriceSugested")
-                        .HasColumnType("decimal(65,30)");
-
                     b.Property<string>("ProductApplication")
                         .HasColumnType("longtext");
 
@@ -911,9 +913,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.Property<string>("ProductReference")
                         .HasColumnType("longtext");
-
-                    b.Property<decimal?>("Profit")
-                        .HasColumnType("decimal(65,30)");
 
                     b.Property<decimal>("PurchasePrice")
                         .ValueGeneratedOnAdd()
@@ -1279,6 +1278,12 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ControllRR.Domain.Entities.PurchaseOrder", b =>
                 {
+                    b.HasOne("ControllRR.Domain.Entities.BrazilianTaxs.CFOP", "CFOP")
+                        .WithMany()
+                        .HasForeignKey("CFOPId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ControllRR.Domain.Entities.BrazilianTaxs.NFeSource", "NFeSource")
                         .WithMany()
                         .HasForeignKey("NFeSourceId");
@@ -1286,6 +1291,8 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.HasOne("ControllRR.Domain.Entities.Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId");
+
+                    b.Navigation("CFOP");
 
                     b.Navigation("NFeSource");
 

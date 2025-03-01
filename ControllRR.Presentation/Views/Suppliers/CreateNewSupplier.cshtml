@@ -251,6 +251,24 @@ $(document).ready(function() {
         $(this).addClass('active').parent().siblings().find('a').removeClass('active');
     });
 });
-    </script>
-   
+// Adaptei esse trecho de um sistema que havia feito em 2019 para controle de provedores.
+// Funciona, mas pode ser melhorado.
+   function myCalc() {
+    // Obter valores como números float (tratando campos vazios)
+    const PurchasePrice = parseFloat(document.getElementById('StockDto.PurchasePrice').value) || 0;
+    const TaxRate = (parseFloat(document.getElementById('StockDto.TaxRate').value) || 0) / 100; // Convertendo porcentagem para decimal
+    const Profit = parseFloat(document.getElementById('StockDto.Profit').value) || 0;
+    console.log(PurchasePrice)
+    console.log(TaxRate)
+    // Calcular preço sugerido
+    const PriceSugested = (PurchasePrice * (1 + TaxRate)) + Profit;
+    
+    // Atualizar campo (com formatação monetária)
+    document.getElementById('StockDto.PriceSugested').value = PriceSugested.toFixed(2);
+}
+//
+document.getElementById("StockDto.TaxRate").addEventListener("change", myCalc, true);
+document.getElementById("StockDto.Profit").addEventListener("change", myCalc, true);
+document.getElementById("StockDto.PurchasePrice").addEventListener("change", myCalc, true);
+</script>  
 }
