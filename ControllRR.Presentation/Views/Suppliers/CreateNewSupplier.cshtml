@@ -75,7 +75,7 @@
         {
         <div class="tab-pane fade" id="purchase-items">
                     @await Component.InvokeAsync("SupplierPurchaseOrders", new { supplierId = Model.Id })
-                    @await Html.PartialAsync("Partials/_CreatePurchaseOrderForm", new PurchaseOrderDto { SupplierId = Model.Id })
+                    @await Html.PartialAsync("Partials/_AddPurchaseItensForm", new PurchaseOrderDto { SupplierId = Model.Id })
                 </div>
         }
         @if (Model?.Id != 0)
