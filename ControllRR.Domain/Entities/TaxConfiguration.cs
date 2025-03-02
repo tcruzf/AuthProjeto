@@ -9,6 +9,7 @@ public class TaxConfiguration
     public decimal Rate { get; set; }
     public int? StockId { get; set; }
     public Stock? Stock { get; set; }
+    public string? TaxTypeBR {get; set;}
 
     public TaxConfiguration()
     {

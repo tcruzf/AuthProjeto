@@ -1,58 +1,120 @@
-@*/Views/Suppliers/Partials/_CreatePurchaseOrderForm.cshtml*@ 
 @model ControllRR.Application.Dto.PurchaseOrderDto
-
+@using ControllRR.Domain.Enums
+<!-- Modal para Movimentações -->
+<div id="nfeModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- Aumentado para extra grande -->
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Cadastro de NFe</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
 <form asp-controller="Suppliers" asp-action="CreateNewPurchaseOrder" method="post" class="row g-3">
     <input type="hidden" asp-for="SupplierId" />
-   
-    
+
+    <!-- Seção de Dados Básicos -->
     <div class="col-md-4">
         <label asp-for="OrderDate" class="form-label"></label>
-        <input asp-for="OrderDate" class="form-control" type="date" />
+        <input asp-for="OrderDate" class="form-control" type="date" required />
+    </div>
+    <div class="col-md-4">
+        <label asp-for="NFeAccessKey" class="form-label"></label>
+        <input asp-for="NFeAccessKey" class="form-control" placeholder="Chave de acesso da NFe" required />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="DeliveryDate" class="form-label"></label>
+        <input asp-for="DeliveryDate" class="form-control" type="date" />
     </div>
 
     <div class="col-md-4">
         <label asp-for="InvoiceNumber" class="form-label"></label>
-        <input asp-for="InvoiceNumber" class="form-control" />
+        <input asp-for="InvoiceNumber" class="form-control" required />
     </div>
 
-    <div id="purchaseItems" class="col-12">
-        <!-- Itens serão adicionados dinamicamente via JS -->
+    <div class="col-md-4">
+        <label asp-for="OperationType" class="form-label"></label>
+        <select asp-for="OperationType" asp-items="Html.GetEnumSelectList<NFeOperationType>()" class="form-control">
+            <option value="">Selecione...</option>
+        </select>
     </div>
 
-    <div class="col-12 d-flex gap-2">
-        <button type="button" class="btn btn-secondary" onclick="addPurchaseItem()">Adicionar Item</button>
-        <button type="submit" class="btn btn-primary">Salvar Ordem</button>
+    <!-- Seção de Dados Fiscais -->
+    <div class="col-md-4">
+        <label class="form-label">Tipo de Movimentação</label>
+         <select class="form-select" name="NFeSource" required>
+                  <option value="0">Nacional</option>
+                  <option value="1">Estrangeira compra direta</option>
+                  <option value="2">Estrangeira compra mercado interno</option>
+         </select>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="FreightMode" class="form-label"></label>
+        <select asp-for="FreightMode" asp-items="Html.GetEnumSelectList<FreightMode>()" class="form-control">
+            <option value="">Selecione...</option>
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="PaymentMethod" class="form-label"></label>
+        <select asp-for="PaymentMethod" asp-items="Html.GetEnumSelectList<PaymentMethod>()" class="form-control">
+            <option value="">Selecione...</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="NFeStatus" class="form-label"></label>
+        <select asp-for="NFeStatus" asp-items="Html.GetEnumSelectList<NFeStatus>()" class="form-control">
+            <option value="">Selecione...</option>
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="IssuerCNPJ" class="form-label"></label>
+        <input asp-for="IssuerCNPJ" class="form-control cnpj-mask" placeholder="00.000.000/0000-00" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="IssuerIE" class="form-label"></label>
+        <input asp-for="IssuerIE" class="form-control ie-mask" placeholder="000.000.000.000" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="ReferenceNFeKey" class="form-label"></label>
+        <input asp-for="ReferenceNFeKey" class="form-control" placeholder="Chave de acesso NFe referencia" />
+    </div>
+    <div class="col-md-4">
+        <label asp-for="TotalAmount" class="form-label"></label>
+        <input asp-for="TotalAmount" class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <label asp-for="TotalTaxes" class="form-label"></label>
+        <input asp-for="TotalTaxes" class="form-control"  />
+    </div>
+
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Salvar Dados da Nota</button>
+        <a asp-action="AddItems" asp-route-orderId="@Model.Id" class="btn btn-secondary">Adicionar Itens</a>
     </div>
 </form>
-
-<script>
-    let purchaseItemIndex = 0;
-
-    function addPurchaseItem() {
-        const itemHtml = `
-            <div class="row g-2 align-items-center purchase-item mb-2">
-                <div class="col-md-4">
-                    <!-- Alterado para StockId -->
-                    <select name="Items[${purchaseItemIndex}].StockId" class="form-control">
-                    @if(ViewBag.SupplierProducts != null)// Estou verifiacando se existe null
-                     {
-                        @foreach (var product in ViewBag.SupplierProducts)
-                        {
-                            <!-- Garantia que product.Id é o StockId -->
-                            <option value="@product.Id">@product.ProductName</option>
-                        }
-                      }
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <input name="Items[${purchaseItemIndex}].Quantity" type="number" class="form-control" placeholder="Quantidade" />
-                </div>
-                <div class="col-md-4">
-                    <input name="Items[${purchaseItemIndex}].UnitPrice" type="number" step="0.01" class="form-control" placeholder="Preço Unitário" />
-                </div>
             </div>
-        `;
-        $("#purchaseItems").append(itemHtml);
-        purchaseItemIndex++;
-    }
-</script>
+        </div>
+    </div>
+</div>
+<div>
+<button type="button" class="btn btn-success" 
+        data-bs-toggle="modal" 
+        data-bs-target="#nfeModal"
+        onclick="prepareMovementModal()">
+    <i class="fas fa-plus me-2"></i>Inserir NFe
+</button>
+</div>
+@section Scripts {
+    <script>
+        // Máscaras para CNPJ e IE
+        $('.cnpj-mask').mask('00.000.000/0000-00');
+        $('.ie-mask').mask('000.000.000.000');
+    </script>
+}

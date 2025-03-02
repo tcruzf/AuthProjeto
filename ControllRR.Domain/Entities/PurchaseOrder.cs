@@ -21,19 +21,11 @@ public class PurchaseOrder
     public int StockId { get; set; }
     //Novos
     public NFeSource? NFeSource { get; set; }
-    public string? CFOPId { get; set; }
-    //public CFOP? CFOP { get; set; }
-    // Enum
-    public NFeStatus? NFeStatus { get; set; }
+    public NFeStatus? NFeStatus { get; set; }//
     public string? IssuerCNPJ { get; set; }   // CNPJ da empresa que emite a nota
     public string? IssuerIE { get; set; }     // Inscrição Estadual
     public FreightMode? FreightMode { get; set; } // Não sei se frete em inglês se escreve assim. Estou confuso kkk
-    public decimal? IcmsBase { get; set; }       // Base de cálculo do ICMS
-    public decimal? IcmsAmount { get; set; }     // Valor do ICMS
-    public decimal? PisBase { get; set; }        // Base de cálculo do PIS
-    public decimal? PisAmount { get; set; }      // Valor do PIS
-    public decimal? CofinsBase { get; set; }     // Base de cálculo do COFINS
-    public decimal? CofinsAmount { get; set; }   // Valor do COFINS
+   
     public PaymentMethod? PaymentMethod { get; set; }
     // Chave de Acesso da NFe referenciada em caso de ser devolução ou nota complementar
     public string? ReferenceNFeKey { get; set; }

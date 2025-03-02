@@ -87,7 +87,7 @@ public class StocksController : Controller
         }
 
         var products = await _stockService.Search(term);
-        // Retorna a busca em formato json
+        // Retorna a busca em formato json //
         return Json(products.Select(p => new
         {
             id = p.Id,

@@ -5,7 +5,7 @@
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class System : Migration
+    public partial class TesteMudanca : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

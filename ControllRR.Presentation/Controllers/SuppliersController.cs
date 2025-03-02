@@ -92,6 +92,8 @@ public class SuppliersController : Controller
     [HttpPost]
     public async Task<IActionResult> SupplierNewProduct(StockDto model)//
     {
+        
+
         if (!ModelState.IsValid)
         {
             TempData["ErrorMessage"] = "Dados inválidos! Verifique os campos e tente novamente.";
@@ -129,10 +131,10 @@ public class SuppliersController : Controller
            // model.TotalAmount = model.Items.Sum(item => item.Quantity * item.UnitPrice);
             //model.TotalTaxes = model.TotalAmount * 0.18m; // Exemplo: 18% de imposto
             // Definir data de emissão da NF-e
-            model.NFeEmissionDate = DateTime.Now;
-            model.OrderDate = DateTime.Now;
-            model.NFeAccessKey="Fsv5474ffasdpPmj--v2";
-            var sup = model.SupplierId;
+            //model.NFeEmissionDate = DateTime.Now;
+            //model.OrderDate = DateTime.Now;
+            //model.NFeAccessKey="Fsv5474ffasdpPmj--v2";
+            //var sup = model.SupplierId;
         
             var result = await _purchaseOrderService.CreateNewSupplierOrder(model);
             if (result.Success)
@@ -178,7 +180,7 @@ public class SuppliersController : Controller
         var orders = await _purchaseOrderService.GetBySupplierAsync(supplierId);
         return ViewComponent("SupplierPurchaseOrders", new { supplierId });
     }
-
+ 
     [HttpGet]
     public async Task<IActionResult> ValidateCnpj(string cnpj)
     {

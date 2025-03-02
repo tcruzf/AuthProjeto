@@ -3,6 +3,8 @@ using ControllRR.Application.Dto;
 using ControllRR.Application.Interfaces;
 using ControllRR.Domain.Entities;
 using ControllRR.Domain.Interfaces;
+using ControllRR.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace ControllRR.Application.Services;
 
@@ -35,7 +37,12 @@ public class PurchaseOrderService : IPurchaseOrderService
     {
         throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// Cria uma nova ordem de fornecimento com base nos dados fornecidos.
+    /// </summary>
+    /// <param name="purchaseOrderDto">Dados da ordem de fornecimento.</param>
+    /// <returns>Resultado da operação.</returns>
     public async Task<OperationResultDto> CreateNewSupplierOrder(PurchaseOrderDto purchaseOrderDto)
     {
         if (purchaseOrderDto == null)
@@ -45,36 +52,41 @@ public class PurchaseOrderService : IPurchaseOrderService
         {
             await _uow.BeginTransactionAsync();
 
-            // Mapeia DTO para entidade 
+            // Mapeia DTO para entidade e salva a ordem para obter o ID.
             var order = _mapper.Map<PurchaseOrder>(purchaseOrderDto);
- 
-            // Salva a ordem primeiro para obter o ID
             var purchaseOrderRepo = _uow.GetRepository<IPurchaseOrderRepository>();
             var purchaseItemRepo = _uow.GetRepository<IPurchaseItemRepository>();
             var stockRepo = _uow.GetRepository<IStockRepository>();
-            //Gostaria de atualizar o preço do produto com o valor que vem em purchaseOrderDto
-            order.TotalAmount =  purchaseOrderDto.Items.Sum(item => item.Quantity * item.UnitPrice);
-            order.TotalTaxes = purchaseOrderDto.TotalTaxes = purchaseOrderDto.TotalAmount * 0.18m;
-            order.CFOPId = "1.126";
+
+            // TODO: Verificar quais campos são necessários para a NFe (nota fiscal) e adicionar suporte a isso.
+            // Atualmente, CFOPId é fixo porque ainda não é recuperado na tela de cadastro.
+
+            //order.TotalAmount = purchaseOrderDto.Items.Sum(item => item.Quantity * item.UnitPrice);
+            //order.TotalTaxes = order.TotalAmount * 0.18m;
+            //order.NFeSource = NFeSource.Nacional;
+
             await purchaseOrderRepo.AddAsync(order);
             await _uow.SaveChangesAsync(); // Gera o ID da ordem
 
-            // Atribui o ID da ordem aos itens e salva
+            // Associa os itens à ordem e os salva.
             foreach (var itemDto in purchaseOrderDto.Items)
             {
                 var item = _mapper.Map<PurchaseItem>(itemDto);
-                item.PurchaseOrderId = order.Id; // Define a chave estrangeira
-                
+                item.PurchaseOrderId = order.Id;
+                //item.PurchaseOrder.CFOPId = order.CFOPId;
                 await purchaseItemRepo.AddAsync(item);
 
-                /*var stockItem = await stockRepo.GetByIdAsync(itemDto.StockId);
+                // FIXME: Ao atualizar o preço de compra no estoque, todos os produtos recebem o mesmo valor.
+                // Isso precisa ser corrigido antes de reativar esta parte do código.
+                /* 
+                var stockItem = await stockRepo.GetByIdAsync(itemDto.StockId);
                 if(stockItem != null)
                 {
                     stockItem.PurchasePrice = itemDto.UnitPrice;
                     await stockRepo.UpdateAsync(stockItem);
-                }*/
+                }
+                */
             }
-           
 
             await _uow.SaveChangesAsync();
             await _uow.CommitAsync();
@@ -83,7 +95,25 @@ public class PurchaseOrderService : IPurchaseOrderService
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message);
+            throw new Exception(ex.Message); // TODO: Melhorar tratamento de erro (evitar capturar e relançar sem contexto adicional).
         }
+    }
+
+    public async Task<List<PurchaseOrderDto>> Search(string term)
+    {
+        var stockRepo = _uow.GetRepository<IPurchaseOrderRepository>();
+        var stocksFind = await stockRepo.SearchAsync(
+            term,
+            additionalFilter: null, //  filtro adicional 
+            includes: q => q
+                .Include(s => s.Supplier)
+                    ,
+            x => x.IssuerCNPJ,
+            x => x.IssuerIE,
+            x => x.NFeAccessKey,
+            x => x.InvoiceNumber
+        );
+
+        return _mapper.Map<List<PurchaseOrderDto>>(stocksFind);
     }
 }

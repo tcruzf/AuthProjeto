@@ -30,13 +30,29 @@ public class Stock
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
     [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
     public decimal TaxRate { get; set; }
-      [Display(Name = "Lucro")]
+    [Display(Name = "Lucro")]
     [DataType(DataType.Currency)]
     public decimal? Profit { get; set; }
 
     [Display(Name = "Sugestão de preço de venda")]
     [DataType(DataType.Currency)]
     public decimal? PriceSugested { get; set; }
+    [Display(Name = "Codigo Interno do Produto")]
+    public string? ProductInternalCode { get; set; }
+    [Display(Name = "Codigo de Barras do Produto")]
+    public string? ProductBarCode { get; set; }
+    public int? Quantity { get; set; }
+    public decimal? UnitPrice { get; set; }
+    public decimal? TaxAmount { get; set; }
+    public decimal? IcmsBase { get; set; }       // Base de cálculo do ICMS
+    public decimal? IcmsAmount { get; set; }     // Valor do ICMS
+    public decimal? PisBase { get; set; }        // Base de cálculo do PIS
+    public decimal? PisAmount { get; set; }      // Valor do PIS
+    public decimal? CofinsBase { get; set; }     // Base de cálculo do COFINS
+    public decimal? CofinsAmount { get; set; }   // Valor do COFINS
+   
+    public int? PurchaseOrderId {get; set;}
+
 
     public Stock()
     {
@@ -52,10 +68,22 @@ public class Stock
         string? productReference,
         decimal purchasePrice,
         decimal salePrice,
-        Supplier supplier ,
+        Supplier supplier,
         decimal taxRate,
         decimal? profit,
-        decimal? priceSugested
+        decimal? priceSugested,
+        string? productInternalCode,
+        string? productBarCode,
+        decimal? taxAmount,
+        decimal? icmsBase,
+        decimal? icmsAmount,
+        decimal? pisBase,
+        decimal? pisAmount,
+        decimal? cofinsBase,
+        decimal? cofinsAmount
+       
+
+
         )
     {
         Id = id;
@@ -71,6 +99,17 @@ public class Stock
         TaxRate = taxRate;
         Profit = profit;
         PriceSugested = priceSugested;
+        ProductInternalCode = productInternalCode;
+        ProductBarCode = productBarCode;
+        TaxAmount = taxAmount;
+        IcmsBase = icmsBase;
+        IcmsAmount = icmsAmount;
+        PisAmount = pisAmount;
+        PisBase = pisBase;
+        CofinsAmount = cofinsAmount;
+        CofinsBase = cofinsBase;
+       
+       
 
     }
 

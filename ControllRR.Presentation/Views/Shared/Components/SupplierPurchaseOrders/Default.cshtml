@@ -8,6 +8,7 @@
                 <th>Data</th>
                 <th>Nota Fiscal</th>
                 <th>Total</th>
+                <th>Ação</th>
             </tr>
         </thead>
         <tbody>
@@ -17,6 +18,9 @@
                     <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
                     <td>@order.InvoiceNumber</td>
                     <td>@order.TotalAmount.ToString("C")</td>
+                    <td>
+                     <a class="btn btn-sm btn-success" href="/Suppliers/ShowNfeDetails/@order.Id" onclick="displayBusyIndicator()"><span class="fa fa-eye"></span> Ver</a>
+                    </td>
                 </tr>
             }
         </tbody>

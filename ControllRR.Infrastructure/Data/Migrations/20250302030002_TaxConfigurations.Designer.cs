@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    [Migration("20250301022954_FiledPriceSugested")]
-    partial class FiledPriceSugested
+    [Migration("20250302030002_TaxConfigurations")]
+    partial class TaxConfigurations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -357,20 +357,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.ToTable("NCMs");
                 });
 
-            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.NFeSource", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("NFeTypeOperation")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("NFeSources");
-                });
-
             modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.PIS", b =>
                 {
                     b.Property<int>("Id")
@@ -630,6 +616,27 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("CFOPId")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("CofinsAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("CofinsBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("IcmsAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("IcmsBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PisAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PisBase")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<int?>("PurchaseOrderId")
                         .HasColumnType("int");
 
@@ -660,26 +667,11 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CFOPId")
-                        .HasColumnType("longtext");
-
-                    b.Property<decimal?>("CofinsAmount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("CofinsBase")
-                        .HasColumnType("decimal(65,30)");
-
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("FreightMode")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("IcmsAmount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("IcmsBase")
-                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("InvoiceNumber")
                         .HasColumnType("longtext");
@@ -696,7 +688,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("NFeEmissionDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("NFeSourceId")
+                    b.Property<int?>("NFeSource")
                         .HasColumnType("int");
 
                     b.Property<int?>("NFeStatus")
@@ -710,12 +702,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.Property<int?>("PaymentMethod")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("PisAmount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("PisBase")
-                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("ReferenceNFeKey")
                         .HasColumnType("longtext");
@@ -733,8 +719,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NFeSourceId");
 
                     b.HasIndex("OrderDate")
                         .HasDatabaseName("IX_PurchaseOrders_OrderDate");
@@ -897,13 +881,37 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("CofinsAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("CofinsBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("IcmsAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("IcmsBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PisAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PisBase")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<decimal?>("PriceSugested")
                         .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("ProductApplication")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProductBarCode")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ProductDescription")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProductInternalCode")
                         .HasColumnType("longtext");
 
                     b.Property<string>("ProductName")
@@ -923,16 +931,25 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasDefaultValue(0m);
 
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("SalePrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("TaxAmount")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<decimal>("TaxRate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(5,2)")
                         .HasDefaultValue(0m);
+
+                    b.Property<decimal?>("UnitPrice")
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
@@ -1282,15 +1299,9 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ControllRR.Domain.Entities.PurchaseOrder", b =>
                 {
-                    b.HasOne("ControllRR.Domain.Entities.BrazilianTaxs.NFeSource", "NFeSource")
-                        .WithMany()
-                        .HasForeignKey("NFeSourceId");
-
                     b.HasOne("ControllRR.Domain.Entities.Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId");
-
-                    b.Navigation("NFeSource");
 
                     b.Navigation("Supplier");
                 });

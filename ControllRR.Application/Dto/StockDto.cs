@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using ControllRR.Domain.Entities;
 
 namespace ControllRR.Application.Dto;
- 
+
 
 public class StockDto
 {
@@ -48,6 +48,47 @@ public class StockDto
     [Display(Name = "Sugestão de preço de venda")]
     [DataType(DataType.Currency)]
     public decimal? PriceSugested { get; set; }
+    [Display(Name = "Codigo Interno do Produto")]
+    public string? ProductInternalCode { get; set; }
+    [Display(Name = "Codigo de Barras do Produto")]
+    public string? ProductBarCode { get; set; }
+    [Display(Name = "Quantidade")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    public int? Quantity { get; set; }
+    [Display(Name = "Preço Unitario")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    [DataType(DataType.Currency)]
+    public decimal? UnitPrice { get; set; }
+    [Display(Name = "Total Impostos")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    public decimal? TaxAmount { get; set; }
+    [Display(Name = "ICMS Base")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    public decimal? IcmsBase { get; set; }       // Base de cálculo do ICMS
+    [Display(Name = "Total ICMS")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    public decimal? IcmsAmount { get; set; }     // Valor do ICMS
+    [Display(Name = "PIS Base")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    public decimal? PisBase { get; set; }        // Base de cálculo do PIS
+    [Display(Name = "Total PIS")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    public decimal? PisAmount { get; set; }      // Valor do PIS
+    [Display(Name = "COFINS Base")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    public decimal? CofinsBase { get; set; }     // Base de cálculo do COFINS
+    [Display(Name = "Total COFINS")]
+    [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
+    [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
+    public decimal? CofinsAmount { get; set; }   // Valor do COFINS
+    public string? PurchaseOrderId {get; set;}
+
 
 }
 

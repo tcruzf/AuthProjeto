@@ -41,11 +41,7 @@ public class PurchaseOrderRepository : BaseRepository<PurchaseOrder>, IPurchaseO
         .ToListAsync() ?? new List<PurchaseOrder>();
     }
 
-    public Task<List<PurchaseOrder>> SearchAsync(string term)
-    {
-        throw new NotImplementedException();
-    }
-
+  
     public async Task CreateNewSupplierOrder(PurchaseOrder purchaseOrder)
     {
         await AddAsync(purchaseOrder);

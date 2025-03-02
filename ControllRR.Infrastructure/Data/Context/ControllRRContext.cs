@@ -63,7 +63,8 @@ public partial class ControllRRContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<IpiEnquadramento> IpiEnquadramentos {get; set;}
     public virtual DbSet<IpiOperacao> IpiOperacoes {get; set;}
     public virtual DbSet<NCM> NCMs {get; set;}
-    public virtual DbSet<NFeSource> NFeSources {get; set;}
+    // NFeSource foi transformado em um Enum. Portanto, não é necessario sua presença no context.
+    //public virtual DbSet<NFeSource> NFeSources {get; set;}
     public virtual DbSet<PIS> PIS {get; set;}
 
 

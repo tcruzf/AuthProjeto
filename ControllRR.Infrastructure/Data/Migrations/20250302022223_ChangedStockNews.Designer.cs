@@ -3,6 +3,7 @@ using System;
 using ControllRR.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    partial class ControllRRContextModelSnapshot : ModelSnapshot
+    [Migration("20250302022223_ChangedStockNews")]
+    partial class ChangedStockNews
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -878,24 +881,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("CofinsAmount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("CofinsBase")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("IcmsAmount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("IcmsBase")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("PisAmount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("PisBase")
-                        .HasColumnType("decimal(65,30)");
-
                     b.Property<decimal?>("PriceSugested")
                         .HasColumnType("decimal(65,30)");
 
@@ -923,16 +908,10 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<decimal?>("Profit")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<int?>("PurchaseOrderId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("PurchasePrice")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(18,2)")
                         .HasDefaultValue(0m);
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("SalePrice")
                         .HasColumnType("decimal(18,2)");
@@ -940,16 +919,10 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("TaxAmount")
-                        .HasColumnType("decimal(65,30)");
-
                     b.Property<decimal>("TaxRate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(5,2)")
                         .HasDefaultValue(0m);
-
-                    b.Property<decimal?>("UnitPrice")
-                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
@@ -1080,9 +1053,6 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.Property<int>("TaxType")
                         .HasColumnType("int");
-
-                    b.Property<string>("TaxTypeBR")
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

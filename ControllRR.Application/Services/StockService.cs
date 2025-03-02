@@ -3,6 +3,7 @@ using ControllRR.Application.Dto;
 using ControllRR.Domain.Entities;
 using ControllRR.Domain.Enums;
 using ControllRR.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ControllRR.Application.Interfaces;
 
@@ -29,12 +30,22 @@ public class StockService : IStockService
     // Para realizar busca vinda do controller 
     public async Task<List<StockDto>> Search(string term)
     {
-        await _uow.BeginTransactionAsync();
         var stockRepo = _uow.GetRepository<IStockRepository>();
-        var stocksFind = await stockRepo.SearchAsync(term);
+        var stocksFind = await stockRepo.SearchAsync(
+            term,
+            additionalFilter: null, //  filtro adicional 
+            includes: q => q
+                .Include(s => s.Movements)
+                    .ThenInclude(m => m.Maintenance)
+                .Include(s => s.Supplier),
+            x => x.ProductName,
+            x => x.ProductDescription,
+            x => x.ProductReference,
+            x => x.ProductApplication
+        );
+
         return _mapper.Map<List<StockDto>>(stocksFind);
     }
-
     //
     public async Task<StockDto> CreateProductWithInitialMovementAsync(StockDto stockDto)
     {
@@ -68,7 +79,7 @@ public class StockService : IStockService
             throw;
         }
     }
-    
+
 
     public async Task<List<StockDto>> GetBySupplierIdAsync(int supplierId)
     {

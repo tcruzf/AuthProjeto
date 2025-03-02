@@ -5,21 +5,15 @@
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FiledPriceSugested : Migration
+    public partial class PurchaseOrderID : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<decimal>(
-                name: "PriceSugested",
+            migrationBuilder.AddColumn<int>(
+                name: "PurchaseOrderId",
                 table: "Stocks",
-                type: "decimal(65,30)",
-                nullable: true);
-
-            migrationBuilder.AddColumn<decimal>(
-                name: "Profit",
-                table: "Stocks",
-                type: "decimal(65,30)",
+                type: "int",
                 nullable: true);
         }
 
@@ -27,11 +21,7 @@ namespace ControllRR.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PriceSugested",
-                table: "Stocks");
-
-            migrationBuilder.DropColumn(
-                name: "Profit",
+                name: "PurchaseOrderId",
                 table: "Stocks");
         }
     }

@@ -1,10 +1,17 @@
 @*/Views/Suppliers/Partials/_AddProductForm.cshtml*@ 
-@model ControllRR.Application.Dto.StockDto
+@using ControllRR.Application.Dto
+@model StockDto
 
 <form asp-controller="Suppliers" asp-action="SupplierNewProduct" method="post">
     <!-- SupplierId necessario para cadastro dos produtos serem relacionados ao fornecedor -->    
     <input type="hidden" asp-for="SupplierId" />
     <div class="row">
+      
+         <div class="form-group col-md-5">
+    <label asp-for="PurchaseOrderId" class="control-label"></label>
+      <input id="purchaseOrderSearch" class="form-control" 
+       placeholder="Procure pelo número da Ordem ou CNPJ" />
+      </div>
    <div class="form-group col-md-5">
     <label asp-for="ProductName" class="control-label"></label>
     <input asp-for="ProductName" id="StockDto.ProductProductName" class="form-control" />
@@ -25,6 +32,11 @@
     <input asp-for="ProductReference" id="StockDto.ProductReference" class="form-control" />
     <span asp-validation-for="ProductReference" class="text-danger"></span>
     </div>
+    <div class="form-group col-md-3">
+     <label asp-for="ProductInternalCode"></label>
+    <input asp-for="ProductInternalCode" id="StockDto.ProductInternalCode" class="form-control" />
+    <span asp-validation-for="ProductInternalCode" class="text-danger"></span>
+    </div>
      <div class="form-group col-md-2">
      <label asp-for="ProductQuantity"></label>
     <input asp-for="ProductQuantity" id="StockDto.ProductQuantity" class="form-control" />
@@ -41,23 +53,143 @@
     <span asp-validation-for="TaxRate" class="text-danger"></span>
     </div>
     <div class="form-group col-md-3">
-     <label asp-for="SalePrice"></label>
-    <input asp-for="SalePrice" id="StockDto.SalePrice" class="form-control" />
-    <span asp-validation-for="SalePrice" class="text-danger"></span>
-    </div>
-     <div class="form-group col-md-3">
      <label asp-for="Profit"></label>
     <input asp-for="Profit" id="StockDto.Profit" class="form-control" />
     <span asp-validation-for="Profit" class="text-danger"></span>
     </div>
     <div class="form-group col-md-3">
+     <label asp-for="SalePrice"></label>
+    <input asp-for="SalePrice" id="StockDto.SalePrice" class="form-control" />
+    <span asp-validation-for="SalePrice" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
      <label asp-for="PriceSugested"></label>
-    <input asp-for="PriceSugested" id="StockDto.PriceSugested" class="form-control" />
+    <input asp-for="PriceSugested" id="StockDto.PriceSugested" class="form-control" readonly/>
     <span asp-validation-for="PriceSugested" class="text-danger"></span>
     </div>
+    <div class="form-group col-md-3">
+     <label asp-for="ProductBarCode"></label>
+    <input asp-for="ProductBarCode" id="StockDto.ProductBarCode" class="form-control"/>
+    <span asp-validation-for="ProductBarCode" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="UnitPrice"></label>
+    <input asp-for="UnitPrice" id="StockDto.UnitPrice" class="form-control"/>
+    <span asp-validation-for="UnitPrice" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="TaxAmount"></label>
+    <input asp-for="TaxAmount" id="StockDto.TaxAmount" class="form-control"/>
+    <span asp-validation-for="TaxAmount" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="IcmsAmount"></label>
+    <input asp-for="IcmsAmount" id="StockDto.IcmsAmount" class="form-control"/>
+    <span asp-validation-for="IcmsAmount" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="IcmsBase"></label>
+    <input asp-for="IcmsBase" id="StockDto.IcmsBase" class="form-control"/>
+    <span asp-validation-for="IcmsBase" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="PisBase"></label>
+    <input asp-for="PisBase" id="StockDto.PisBase" class="form-control"/>
+    <span asp-validation-for="PisBase" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="PisAmount"></label>
+    <input asp-for="PisAmount" id="StockDto.PisAmount" class="form-control"/>
+    <span asp-validation-for="PisAmount" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="CofinsBase"></label>
+    <input asp-for="CofinsBase" id="StockDto.CofinsBase" class="form-control"/>
+    <span asp-validation-for="CofinsBase" class="text-danger"></span>
+    </div>
+    <div class="form-group col-md-3">
+     <label asp-for="CofinsAmount"></label>
+    <input asp-for="CofinsAmount" id="StockDto.CofinsAmount" class="form-control"/>
+    <span asp-validation-for="CofinsAmount" class="text-danger"></span>
+    </div>
+    <div id="purchaseItems" class="col-12">
+        <!-- Itens serão adicionados dinamicamente via JS -->
+    </div>
+
     <div class="mt-4">
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#StockProduct">Inser Movimentação</button>
     <button type="submit" class="btn btn-primary">Salvar Produto</button>
+     <button type="button" class="btn btn-secondary" onclick="addPurchaseItem()">Adicionar Item</button>
     </div>
 </form> 
 
+<script>
+    let purchaseItemIndex = 0;
+
+    function addPurchaseItem() {
+        const itemHtml = `
+            <div class="row g-2 align-items-center purchase-item mb-2">
+                <div class="col-md-4">
+                    <!-- Alterado para StockId -->
+                    <select name="Items[${purchaseItemIndex}].StockId" class="form-control">
+                    @if(ViewBag.SupplierProducts != null)// Estou verifiacando se existe null
+                     {
+                        @foreach (var product in ViewBag.SupplierProducts)
+                        {
+                            <!-- Garantia que product.Id é o StockId -->
+                            <option value="@product.Id">@product.ProductName</option>
+                        }
+                      }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input name="Items[${purchaseItemIndex}].Quantity" type="number" class="form-control" placeholder="Quantidade" />
+                </div>
+                <div class="col-md-4">
+                    <input name="Items[${purchaseItemIndex}].UnitPrice" type="number" step="0.01" class="form-control" placeholder="Preço Unitário" />
+                </div>
+            </div>
+        `;
+        $("#purchaseItems").append(itemHtml);
+        purchaseItemIndex++;
+    }
+    
+  
+</script>
+<script>
+$(document).ready(function() {
+    $("#purchaseOrderSearch").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: '@Url.Action("Search", "PurchaseOrders")', // Geração segura da URL
+                type: 'GET',
+                dataType: 'json',
+                data: { term: request.term },
+                success: function(data) {
+                    console.log("Dados recebidos:", data); // Debug
+                    response($.map(data, function(item) {
+                        return {
+                            label: item.invoiceNumber + " - " + (item.issuerCNPJ || 'Sem CNPJ'),
+                            value: item.invoiceNumber,
+                            data: item
+                        };
+                    }));
+                },
+                error: function(xhr, status, error) {
+                    console.error("Erro na requisição:", status, error);
+                }
+            });
+        },
+        minLength: 2, // Busca após 2 caracteres
+        select: function(event, ui) {
+            console.log("Item selecionado:", ui.item); // Debug
+            $("#invoiceNumber").val(ui.item.data.invoiceNumber);
+            
+            // Preencha outros campos conforme necessário
+            $("#StockDto_ProductName").val(ui.item.data.productName || '');
+            
+            return false;
+        }
+    });
+});
+</script>

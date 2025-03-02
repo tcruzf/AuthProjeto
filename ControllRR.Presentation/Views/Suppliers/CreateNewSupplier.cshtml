@@ -48,7 +48,10 @@
                 <a class="nav-link" href="#add-product">Adicionar Produto</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#purchase-orders">Ordens de Compra</a>
+                <a class="nav-link" href="#purchase-orders">Ordens de Compra/Notas Fiscais</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#purchase-items">Itens</a>
             </li>
         }
     </ul>
@@ -64,6 +67,13 @@
         @if(Model?.Id != 0)
         {
         <div class="tab-pane fade" id="purchase-orders">
+                    @await Component.InvokeAsync("SupplierPurchaseOrders", new { supplierId = Model.Id })
+                    @await Html.PartialAsync("Partials/_CreatePurchaseOrderForm", new PurchaseOrderDto { SupplierId = Model.Id })
+                </div>
+        }
+         @if(Model?.Id != 0)
+        {
+        <div class="tab-pane fade" id="purchase-items">
                     @await Component.InvokeAsync("SupplierPurchaseOrders", new { supplierId = Model.Id })
                     @await Html.PartialAsync("Partials/_CreatePurchaseOrderForm", new PurchaseOrderDto { SupplierId = Model.Id })
                 </div>

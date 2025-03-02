@@ -5,25 +5,24 @@
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class SupplierChanges : Migration
+    public partial class PurchaseOrderIDRms : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "FantasyName",
-                table: "Suppliers",
-                type: "longtext",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.AddColumn<int>(
+                name: "PurchaseOrderId",
+                table: "Stocks",
+                type: "int",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "FantasyName",
-                table: "Suppliers");
+                name: "PurchaseOrderId",
+                table: "Stocks");
         }
     }
 }

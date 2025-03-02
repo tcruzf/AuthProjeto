@@ -22,8 +22,12 @@ public class StockRepository : BaseRepository<Stock>, IStockRepository
         return stock;
     }
 
+    /*
+    Movi este metodo por completo para o BaseRepository. Agora o metodo é generico e pode ser reaproveitado em qualquer outro service 
     public async Task<List<Stock>> SearchAsync(string term)
     {
+       
+
         return await _context.Stocks
          .Where(s => s.ProductName.Contains(term) ||
                     s.ProductDescription.Contains(term) ||
@@ -32,7 +36,7 @@ public class StockRepository : BaseRepository<Stock>, IStockRepository
          .Include(s => s.Movements)
              .ThenInclude(m => m.Maintenance) // Carrega a manutenção relacionada
          .ToListAsync();
-    }
+    }*/
 
 
     /// <summary>

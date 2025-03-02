@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllRR.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ControllRRContext))]
-    [Migration("20250227233153_Order")]
-    partial class Order
+    [Migration("20250302033458_CofinsBase")]
+    partial class CofinsBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,6 +99,282 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.CFOP", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Codigo_Cfop")
+                        .HasColumnType("double");
+
+                    b.Property<string>("Desc_Cfop")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CFOPs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.CNAE", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Codigo_Cnae")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Desc_Cnae")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CNAEs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.COFINS", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Codigo_Cofins")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Desc_Cofins")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("COFINs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.CSOSN", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Codigo_Csosn")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Desc_Csosn")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name_Csosn")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CSOSNs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.ICMS", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Codigo_Icms")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Desc_Icms")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("Id_Icms")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ICMs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.IPI", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Cod_Ipi")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Desc_Ipi")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Id_Ipi")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IPIs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.IcmsDesoneracao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Codigo_Icms_Desoneracao")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Desc_Icms_Desoneracao")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("Id_Icms_Desoneracao")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IcmsDesoneracaos");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.IcmsModalidadeBC", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Codigo_Icms_Modalidade_bc")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Desc_Icms_Modalidade_bc")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("Id_Icms_Modalidade_bc")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IcmsModalidadeBCs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.IcmsModalidadeST", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Codigo_Icms_Modalidade_st")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Desc_Icms_Modalidade_st")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("Id_Icms_Modalidade_st")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IcmsModalidadeSTs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.IcmsOrigem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Codigo_Icms_Origem")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Desc_Icms_Origem")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Id_Icms_Origem")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IcmsOrigems");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.IpiEnquadramento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Codigo_Ipi_Enquadramento")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Desc_Ipi_Enquadramento")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Id_Ipi_Enquadramento")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id_Ipi_Operacao")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IpiOperacaoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IpiOperacaoId");
+
+                    b.ToTable("IpiEnquadramentos");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.IpiOperacao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id_Ipi_Operacao")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nome_Ipi_Operacao")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IpiOperacoes");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.NCM", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Cod_Ncm")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Id_Ncm")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nome_Ncm")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NCMs");
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.PIS", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Cod_Pis")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Desc_Pis")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Id_Pis")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PIS");
                 });
 
             modelBuilder.Entity("ControllRR.Domain.Entities.Customer", b =>
@@ -340,6 +616,27 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("CFOPId")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("CofinsAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("CofinsBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("IcmsAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("IcmsBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PisAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PisBase")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<int?>("PurchaseOrderId")
                         .HasColumnType("int");
 
@@ -373,7 +670,16 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("FreightMode")
+                        .HasColumnType("int");
+
                     b.Property<string>("InvoiceNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IssuerCNPJ")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IssuerIE")
                         .HasColumnType("longtext");
 
                     b.Property<string>("NFeAccessKey")
@@ -382,8 +688,23 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("NFeEmissionDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("NFeSource")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NFeStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OperationType")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("OrderDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReferenceNFeKey")
+                        .HasColumnType("longtext");
 
                     b.Property<int>("StockId")
                         .HasColumnType("int");
@@ -560,10 +881,37 @@ namespace ControllRR.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<decimal>("CofinsAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("CofinsBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("IcmsAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("IcmsBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PisAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PisBase")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("PriceSugested")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<string>("ProductApplication")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProductBarCode")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ProductDescription")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProductInternalCode")
                         .HasColumnType("longtext");
 
                     b.Property<string>("ProductName")
@@ -575,10 +923,16 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<string>("ProductReference")
                         .HasColumnType("longtext");
 
+                    b.Property<decimal?>("Profit")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<decimal>("PurchasePrice")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(18,2)")
                         .HasDefaultValue(0m);
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("SalePrice")
                         .HasColumnType("decimal(18,2)");
@@ -586,10 +940,16 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("TaxAmount")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<decimal>("TaxRate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(5,2)")
                         .HasDefaultValue(0m);
+
+                    b.Property<decimal?>("UnitPrice")
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
@@ -720,6 +1080,9 @@ namespace ControllRR.Infrastructure.Data.Migrations
 
                     b.Property<int>("TaxType")
                         .HasColumnType("int");
+
+                    b.Property<string>("TaxTypeBR")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -854,6 +1217,15 @@ namespace ControllRR.Infrastructure.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ControllRR.Domain.Entities.BrazilianTaxs.IpiEnquadramento", b =>
+                {
+                    b.HasOne("ControllRR.Domain.Entities.BrazilianTaxs.IpiOperacao", "IpiOperacao")
+                        .WithMany()
+                        .HasForeignKey("IpiOperacaoId");
+
+                    b.Navigation("IpiOperacao");
                 });
 
             modelBuilder.Entity("ControllRR.Domain.Entities.Device", b =>
