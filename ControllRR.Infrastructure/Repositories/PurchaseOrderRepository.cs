@@ -47,4 +47,13 @@ public class PurchaseOrderRepository : BaseRepository<PurchaseOrder>, IPurchaseO
         await AddAsync(purchaseOrder);
        
     }
+
+    public async Task<PurchaseOrder>  GetOrderByInvoiceNumber(int? invoiceNumber)
+    {
+        if (invoiceNumber == null)
+            throw new Exception("O id fornecido não é valido!");
+
+        return await _context.PurchaseOrders
+                             .FirstOrDefaultAsync(po => po.InvoiceNumber == invoiceNumber.ToString());
+    }
 }

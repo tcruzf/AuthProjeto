@@ -134,7 +134,7 @@ public class DevicesController : Controller
             return View(viewModel);
         }
         await _deviceService.InsertAsync(deviceDto);
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(List));
     }
 
     [Authorize(Roles = "Manager, Admin")]

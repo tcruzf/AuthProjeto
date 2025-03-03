@@ -45,10 +45,10 @@
                 <a class="nav-link" href="#supplier-products">Produtos</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#add-product">Adicionar Produto</a>
+                <a class="nav-link" href="#purchase-orders">Ordens de Compra/Notas Fiscais</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#purchase-orders">Ordens de Compra/Notas Fiscais</a>
+                <a class="nav-link" href="#add-product">Adicionar Produto</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#purchase-items">Itens</a>
@@ -280,5 +280,43 @@ $(document).ready(function() {
 document.getElementById("StockDto.TaxRate").addEventListener("change", myCalc, true);
 document.getElementById("StockDto.Profit").addEventListener("change", myCalc, true);
 document.getElementById("StockDto.PurchasePrice").addEventListener("change", myCalc, true);
+
 </script>  
+
+<script>
+
+
+   $(document).ready(function() {
+    $("#invoiceNumberSearch").autocomplete({ // ID do campo visível
+        source: function(requisicao, resposta) {
+            $.ajax({
+                url: '@Url.Action("SearchOrder", "PurchaseOrders")',
+                type: 'GET',
+                data: { filtro: requisicao.term },
+                success: function(dadosRetorno) {
+                    resposta($.map(dadosRetorno, function(item) {
+                        return {
+                            label: item.invoiceNumber + " - " + (item.issuerCNPJ || 'Sem CNPJ'),
+                            value: item.invoiceNumber,
+                            dados: item
+                        };
+                    }));
+                },
+                error: function(xhr, status, erro) {
+                    console.error("Erro na busca:", status, erro);
+                }
+            });
+        },
+        minLength: 3,
+        select: function(event, ui) {
+            // Atualiza o campo HIDDEN com o valor selecionado
+            $("#invoiceNumberHidden").val(ui.item.dados.invoiceNumber); 
+            // Atualiza o campo visível (opcional)
+            $("#invoiceNumberSearch").val(ui.item.dados.invoiceNumber); 
+            $("#purchaseOrderId").val(ui.item.dados.purchaseOrderId)
+            return false;
+        }
+    });
+});
+</script>
 }

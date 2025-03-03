@@ -87,7 +87,12 @@ public class StockDto
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
     [Range(0, 100, ErrorMessage = "Taxa deve ser entre 0 e 100%")]
     public decimal? CofinsAmount { get; set; }   // Valor do COFINS
-    public string? PurchaseOrderId {get; set;}
+    public int? PurchaseOrderId {get; set;}
+    [Display(Name = "Nº da NFe ")]
+    public int? InvoiceNumber {get; set;}
+    [Display(Name = "Nº da NFe ")]
+    public string? CFOPId {get; set;}
+
 
 
 }

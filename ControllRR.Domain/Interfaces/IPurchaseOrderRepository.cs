@@ -9,4 +9,5 @@ public interface IPurchaseOrderRepository : IRepository<PurchaseOrder>
     Task<PurchaseOrder?> GetByIdAsync(int? id);
     Task<List<PurchaseOrder>> GetBySupplierAsync(int supplierId);
     Task CreateNewSupplierOrder(PurchaseOrder purchaseOrder);
+    Task<PurchaseOrder> GetOrderByInvoiceNumber(int? invoiceNumber);
 }

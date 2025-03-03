@@ -92,18 +92,22 @@ public class SuppliersController : Controller
     [HttpPost]
     public async Task<IActionResult> SupplierNewProduct(StockDto model)//
     {
-        
+        if(model.InvoiceNumber != null)
+            //TempData["ProductSuccessMessage"] = "Invoice não é nulo!";
+            System.Console.WriteLine("############################################################");
+            System.Console.WriteLine(model.InvoiceNumber);
+            System.Console.WriteLine("############################################################");
 
-        if (!ModelState.IsValid)
+        /*if (!ModelState.IsValid)
         {
             TempData["ErrorMessage"] = "Dados inválidos! Verifique os campos e tente novamente.";
             return RedirectToAction("CreateNewSupplier", new { id = model.SupplierId });
-        }
+        }*/
 
         try
         {
             await _stockService.CreateProductWithInitialMovementAsync(model);
-            TempData["ProductSuccessMessage"] = "Produto cadastrado com sucesso!";
+            TempData["ProductSuccessMessage"] = $"Produto cadastrado com sucesso para a nota : {model.InvoiceNumber}!";
             return RedirectToAction("CreateNewSupplier", new { id = model.SupplierId });
         }
         catch (Exception ex)

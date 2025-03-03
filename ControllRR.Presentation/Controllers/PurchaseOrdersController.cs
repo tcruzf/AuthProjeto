@@ -12,17 +12,18 @@ public class PurchaseOrdersController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Search(string term)
+    public async Task<IActionResult> SearchOrder(string filtro)
     {
-        if (string.IsNullOrWhiteSpace(term))
+        if (string.IsNullOrWhiteSpace(filtro))
         {
             return Json(new List<object>());
         }
 
-        var purchaseSearch = await _purchaseOrderService.Search(term);
+        var purchaseSearch = await _purchaseOrderService.Search(filtro);
 
         return Json(purchaseSearch.Select(x => new
         {
+            Id = x.Id.ToString(),
             IssuerCNPJ = x.IssuerCNPJ,
             IssuerIE = x.IssuerIE,
             NFeAccessKey = x.NFeAccessKey,

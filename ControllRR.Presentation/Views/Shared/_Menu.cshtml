@@ -264,6 +264,30 @@ Desativa loading
                         </li>
                     </ul>
                 </li>
+                 <!-- Devices -->
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-building"></i>
+                        <p>
+                            Dispositivos
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-action="List" asp-controller="Devices" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Ver Todos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="CreateNew" asp-controller="Devices" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Novo</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
                 <!-- Sistema -->
                 <li class="nav-item has-treeview">

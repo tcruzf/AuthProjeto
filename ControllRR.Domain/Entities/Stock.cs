@@ -51,7 +51,9 @@ public class Stock
     public decimal? CofinsBase { get; set; }     // Base de cálculo do COFINS
     public decimal? CofinsAmount { get; set; }   // Valor do COFINS
    
-    public int? PurchaseOrderId {get; set;}
+    public int? PurchaseOrderId {get; set;} // Que bosta
+    public int? InvoiceNumber {get; set;}
+    public string? CFOPId {get; set;}
 
 
     public Stock()
@@ -74,13 +76,18 @@ public class Stock
         decimal? priceSugested,
         string? productInternalCode,
         string? productBarCode,
+        int? quantity,
+        decimal? unitprice,
         decimal? taxAmount,
         decimal? icmsBase,
         decimal? icmsAmount,
         decimal? pisBase,
         decimal? pisAmount,
         decimal? cofinsBase,
-        decimal? cofinsAmount
+        decimal? cofinsAmount,
+        int? invoiceNumber,
+        string? cfopId,
+        int? purchaseOrderId
        
 
 
@@ -101,6 +108,8 @@ public class Stock
         PriceSugested = priceSugested;
         ProductInternalCode = productInternalCode;
         ProductBarCode = productBarCode;
+        Quantity = quantity;
+        UnitPrice = unitprice;
         TaxAmount = taxAmount;
         IcmsBase = icmsBase;
         IcmsAmount = icmsAmount;
@@ -108,6 +117,9 @@ public class Stock
         PisBase = pisBase;
         CofinsAmount = cofinsAmount;
         CofinsBase = cofinsBase;
+        InvoiceNumber = invoiceNumber;
+        CFOPId = cfopId;
+        PurchaseOrderId = purchaseOrderId;
        
        
 
