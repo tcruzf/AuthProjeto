@@ -23,7 +23,7 @@ Sistema para controle de manutenções e gestão de produtos com interface web.
 
 ## 🛠️ Pré-requisitos
 - .NET 6.0 SDK
-- Mysql 14+
+- MariaDB 10.11+
 - Entity Framework Core CLI
 
 ## 🚀 Instalação
