@@ -3,18 +3,18 @@
 
     ViewData["Title"] = "Listagem de Manutenções por Dispositivos";
 }
-<h2></h2>
-@if (TempData["SuccessMessage"] != null)
+
+@if (TempData["MaintenanceSucessMessage"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-    @TempData["SuccessMessage"]
+    @TempData["MaintenanceSucessMessage"]
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 }
-@if (TempData["ErrorMessage"] != null)
+@if (TempData["MaintenanceErrorMessage"] != null)
 {
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    @TempData["ErrorMessage"]
+    @TempData["MaintenanceErrorMessage"]
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 }

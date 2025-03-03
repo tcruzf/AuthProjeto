@@ -173,11 +173,12 @@ public class MaintenancesController : Controller
         try
         {
             await _maintenanceService.InsertAsync(maintenanceDto);
-            TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
+            TempData["MaintenanceSuccessMessage"] = $"Manutençao cadastrada com sucesso com numero : {maintenanceDto.MaintenanceNumber}!";
             return RedirectToAction(nameof(MaintenanceList));
         }
         catch (Exception ex)
         {
+            TempData["MaintenanceErrorMessage"] = $"Não foi possivel cadastrar a manutenção! Erro : {ex.Message}!";
             throw new Exception(ex.Message);
         }
 
@@ -236,11 +237,12 @@ public class MaintenancesController : Controller
         try
         {
             await _maintenanceService.UpdateAsync(maintenanceDto);
-            TempData["SuccessMessage"] = "Manutenção alterada com sucesso.";
+            TempData["MaintenanceChangeSuccess"] = "Manutenção alterada com sucesso.";
             return RedirectToAction(nameof(MaintenanceList));
         }
         catch (Exception ex)
         {
+            TempData["MaintenanceErrorMessage"] = "Manutenção não pode ser alterada.";
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return Json(new

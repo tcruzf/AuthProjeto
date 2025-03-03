@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ControllRR.Domain.Enums;
 
 namespace ControllRR.Application.Dto;
 
@@ -26,5 +27,16 @@ public class SupplierDto
     [Required(ErrorMessage = "O campo {0} é obrigatorio ")]
     [StringLength(20, MinimumLength = 5, ErrorMessage = "{0} minimo {2} e no maximo {1} caracteres")]
     public string? Address { get; set; }
+    [Display(Name = "CEP")]
+     public string? CEP { get; set; }
+     [Display(Name = "Códio de regime tributário")]
+    public string? CRT { get; set; }
+    [Display(Name = "Inscrição Estadual")]
+    public string? IssuerIE { get; set; }
+    [Display(Name = "Tipo de pessoa")]
+    public PersonType? PersonType { get; set; }
+    [Display(Name = "Área/Ramo de atuação")]
+    public string? ActivityArea { get; set; }
+
 
 }

@@ -23,7 +23,7 @@ public class PurchaseOrdersController : Controller
 
         return Json(purchaseSearch.Select(x => new
         {
-            Id = x.Id.ToString(),
+            //Id = x.Id.ToString(),
             IssuerCNPJ = x.IssuerCNPJ,
             IssuerIE = x.IssuerIE,
             NFeAccessKey = x.NFeAccessKey,

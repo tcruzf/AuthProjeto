@@ -17,6 +17,8 @@ public class MaintenanceNumberControlRepository : GenericRepository<MaintenanceN
         {
             control = new MaintenanceNumberControl { CurrentNumber = 99 };
             await _context.AddAsync(control);
+            System.Console.WriteLine("###################################");
+            System.Console.WriteLine(control);
         }
         return control;
     }

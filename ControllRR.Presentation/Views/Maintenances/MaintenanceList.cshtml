@@ -53,5 +53,28 @@
                         }
                     },
                 });
+
+                 @if (TempData["MaintenanceSuccessMessage"] != null)
+                 {
+                    <text>
+                    Swal.fire({
+                        icon: 'success',
+                        title: '@TempData["MaintenanceSuccessMessage"]',
+                        showConfirmButton: true
+                    });
+                    </text>
+                  }
+                   @if (TempData["MaintenanceErrorMessage"] != null)
+                 {
+                    <text>
+                    Swal.fire({
+                        icon: 'error',
+                        title: '@TempData["MaintenanceErrorMessage"]',
+                        showConfirmButton: true
+                    });
+                    </text>
+                  }
+
+
             </script>
         }

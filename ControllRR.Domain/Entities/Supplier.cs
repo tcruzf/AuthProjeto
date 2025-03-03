@@ -1,3 +1,5 @@
+using ControllRR.Domain.Enums;
+
 namespace ControllRR.Domain.Entities;
  
 
@@ -10,13 +12,32 @@ public class Supplier
     public string? ContactEmail { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Address { get; set; }
+    public string? CEP { get; set; }
+    public string? CRT { get; set; }
+    public string? IssuerIE { get; set; }
+    public PersonType? PersonType { get; set; }
+    public string? ActivityArea { get; set; }
+
+
 
     public Supplier()
     {
 
     }
 
-    public Supplier(int id, string? name, string fantasyName, string cnpj, string contactEmail, string phoneNumber, string address)
+    public Supplier(int id,
+     string? name,
+     string fantasyName,
+     string cnpj,
+     string contactEmail,
+     string phoneNumber,
+     string address,
+     string? cep,
+     string? crt,
+     string? issuerIE,
+     PersonType? personType,
+     string? activityArea  
+     )
     {
         if(string.IsNullOrWhiteSpace(cnpj))
             throw new ArgumentException("CNPJ Não pode ser vazio ou conter espaços!");
@@ -32,6 +53,13 @@ public class Supplier
         ContactEmail = contactEmail;
         PhoneNumber = phoneNumber;
         Address = address;
+        CEP = cep;
+        CRT = crt;
+        IssuerIE = issuerIE;
+        PersonType = personType;
+        ActivityArea = activityArea;
+
+
     }
    
     public static bool ValidarCNPJ(string cnpj)
