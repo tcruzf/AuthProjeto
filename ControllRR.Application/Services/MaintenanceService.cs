@@ -59,11 +59,11 @@ public class MaintenanceService : IMaintenanceService
             var control = await controlRepo.GetCurrentControlAsync();
             control.CurrentNumber += 1;
             maintenance.MaintenanceNumber = control.CurrentNumber;
-            System.Console.WriteLine("###################################################################");
-            System.Console.WriteLine(maintenance.MaintenanceNumber);
-            System.Console.WriteLine("###################################################################");
+            //System.Console.WriteLine("###################################################################");
+            //System.Console.WriteLine(maintenance.MaintenanceNumber);
+            //System.Console.WriteLine("###################################################################");
             await _uow.SaveChangesAsync();
- 
+
             var maintenanceRepo = _uow.GetRepository<IMaintenanceRepository>();
             await maintenanceRepo.AddAsync(maintenance);
             await _uow.SaveChangesAsync();

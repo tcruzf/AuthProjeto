@@ -76,7 +76,7 @@ public class StockService : IStockService
             );
             var purchaseOrderRepo = _uow.GetRepository<IPurchaseOrderRepository>();
             var orderResult = await purchaseOrderRepo.GetOrderByInvoiceNumber(stock.InvoiceNumber);
-            
+
             var purchaseItemDto = new PurchaseItemDto
             {
                 PurchaseOrderId = orderResult.Id,

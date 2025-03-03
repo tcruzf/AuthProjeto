@@ -48,6 +48,12 @@ public class PurchaseOrderRepository : BaseRepository<PurchaseOrder>, IPurchaseO
        
     }
 
+    /// <summary>
+    /// Busca uma PurchaseOrder com base no numero de NFe cadastrada - Util para tratar em locais onde não se tem acesso a PurchaseOrderId
+    /// </summary>
+    /// <param name="invoiceNumber"></param>
+    /// <returns>Uma PurchaseOrder com todos os valores contidos no ato do cadastro</returns>
+    /// <exception cref="Exception">Somente se o numero da nota fornecido não for valido</exception>
     public async Task<PurchaseOrder>  GetOrderByInvoiceNumber(int? invoiceNumber)
     {
         if (invoiceNumber == null)

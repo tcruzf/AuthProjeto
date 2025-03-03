@@ -19,6 +19,10 @@ public class SectorRepository : BaseRepository<Sector>, ISectorRepository
         
     }
 
+    /// <summary>
+    /// Busca por setores presentes no banco de dados
+    /// </summary>
+    /// <returns>Uma lista de setores</returns>
     public async Task<List<Sector>> FindAllAsync()
     {
         return await _context.Sectors
@@ -26,11 +30,21 @@ public class SectorRepository : BaseRepository<Sector>, ISectorRepository
         .ToListAsync();
     }
 
+    /// <summary>
+    /// Insere um novo setor com base nos dados fornecidos
+    /// </summary>
+    /// <param name="sector"></param>
+    /// <returns>bool</returns>
     public async Task InsertAsync(Sector sector)
     {
         await _context.Sectors.AddAsync(sector);
     }
 
+    /// <summary>
+    /// Busca um setor com base no id(int) fornecido
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Um conjunto de dados referente a um unico setor</returns>
     public async Task<Sector?> FindByIdAsync(int id)
     {
         return await _context.Sectors
@@ -39,7 +53,8 @@ public class SectorRepository : BaseRepository<Sector>, ISectorRepository
     }
 
   
-
+    // Isso agora pode ser simplificado
+    // TODO: Simplificar o metodo, criar metodos para simplificar a leitura e compreensão da busca
     public async Task<(IEnumerable<object> Data, int TotalRecords, int FilteredRecords)> GetSectorAsync(
       int start,
       int length,

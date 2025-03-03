@@ -10,6 +10,11 @@ public class MaintenanceNumberControlRepository : GenericRepository<MaintenanceN
 {
     public MaintenanceNumberControlRepository(ControllRRContext context) : base(context) { }
 
+
+    /// <summary>
+    /// Checa o valor do controle de manutenções diretamente no banco de dados
+    /// </summary>
+    /// <returns>Um numero de manutenção pre determinado para inicio de controle</returns>
     public async Task<MaintenanceNumberControl> GetCurrentControlAsync()
     {
         var control = await _context.MaintenanceNumberControls.FirstOrDefaultAsync();
@@ -17,8 +22,6 @@ public class MaintenanceNumberControlRepository : GenericRepository<MaintenanceN
         {
             control = new MaintenanceNumberControl { CurrentNumber = 99 };
             await _context.AddAsync(control);
-            System.Console.WriteLine("###################################");
-            System.Console.WriteLine(control);
         }
         return control;
     }

@@ -212,13 +212,21 @@ public class MaintenanceRepository : GenericRepository<Maintenance>, IMaintenanc
         : query = query.OrderBy(x => x.Id);
     }
     #endregion
+    /// <summary>
+    /// Metodo para verificar a existencia de uma manutenção no banco de dados
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>true ou false</returns>
     public async Task<bool> ExistsAsync(int id)
     {
 
         return await _context.Maintenances.AnyAsync(x => x.Id == id);
     }
 
-    // Return quantity of maintenances in dabase
+    /// <summary>
+    /// Para usar diretament no dashboard ou em serviços que tenham como requisito a contagem de manutenções
+    /// </summary>
+    /// <returns>Um numero(int) contendo o total de manutenções registradas no banco de dados</returns>
     public async Task<int> CountMaintenance()
     {
         return await _context.Maintenances.CountAsync();

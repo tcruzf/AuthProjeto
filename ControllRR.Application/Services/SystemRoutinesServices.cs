@@ -48,7 +48,7 @@ public class SystemRoutines : ISystemRoutines
     /// Testa pelo sistema operacional, caso seja linux, chama o metodo reponsavel por colher as informações referentes
     /// a hardware disponiveis 
     /// </summary>
-    /// <returns></returns>
+    /// <returns> Metricas com base na versão do sistema operacional</returns>
     public async Task<(double CpuUsage, double MemoryUsage)> GetServerStatus()
     {
         if (IsLinux())
@@ -67,7 +67,7 @@ public class SystemRoutines : ISystemRoutines
     /// Pega as informações referentes ao hardware(memoria e cpu) para montar o json com os valores que serão exibidos
     /// no dashboard
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Retorna metricas do Linux</returns>
     private async Task<(double CpuUsage, double MemoryUsage)> GetLinuxMetricsAsync()
     {
         try
@@ -99,7 +99,7 @@ public class SystemRoutines : ISystemRoutines
     /// <summary>
     /// Faz a leitura dos dados relacionados a cpu do servidor que hospeda a aplicação
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Dados de consumo de CPU</returns>
     private async Task<(double total, double idle)> ReadCpuStats()
     {
         var cpuLine = (await File.ReadAllLinesAsync("/proc/stat"))[0];
@@ -113,7 +113,7 @@ public class SystemRoutines : ISystemRoutines
     /// <summary>
     /// Faz a leitura dos dados relacionados a memoria do servidor que hospeda a aplicação
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Dados de consumo de memoria</returns>
     private async Task<(double used, double total)> ReadMemoryStats()
     {
         var memLines = await File.ReadAllLinesAsync("/proc/meminfo");
